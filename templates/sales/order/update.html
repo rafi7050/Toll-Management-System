@@ -1,0 +1,15 @@
+{% extends 'layouts/default/main.html' %}
+{% block content %}
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Order Add Form
+                </h3>
+            </div>
+        </div>
+        <form action="" method="post" enctype="multipart/form-data" class="kt-form kt-form--label-right">
+            {% include 'includes/form.html' %}
+        </form>
+    </div>
+{% endblock %}

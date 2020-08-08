@@ -1,0 +1,249 @@
+<!------ Include the above in your HEAD tag ---------->
+{% load static crispy_forms_tags %}
+{% block content %}
+    <div class="section-body full-height  full-height">
+        <div class="row full-height ">
+            <div class="col-12 col-md-12 col-lg-12 full-height ">
+                <div class="customer-option full-height ">
+                    <section class=" full-height">
+                        <div class="row  full-height">
+                            <div class="col-md-12  full-height">
+                                <div class="full-height ">
+                                    <div class="card-header  bg-1b5f8d d-block" style="height: 50px;">
+                                        <div class="row">
+                                            <div class="col-sm-6 text-left">
+                                                <h4 class="mb-0 text-white">#{{ order.code }} Invoice </h4>
+                                                <input type="hidden" value="{{ order.id }}" name="application_id">
+                                            </div>
+                                            <div class="col-sm-6 text-right application-right-area">
+                                                <button type="button" class="close application-close"
+                                                        data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="card-body p-0 bg-white modal-content-body fileupdate_modal_content">
+                                        <div class="p-3 bg-white">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="invoice-title">
+                                                        <h2>Invoice</h2>
+                                                        <h3 class="float-right">Order # {{ order.code }}</h3>
+                                                    </div>
+                                                    <hr>
+                                                    <div class="row">
+                                                        <div class="col-6">
+
+                                                            <address>
+                                                                <strong>Billed To:</strong><br>
+                                                                John Smith<br>
+                                                                1234 Main<br>
+                                                                Apt. 4B<br>
+                                                                Springfield, ST 54321
+                                                            </address>
+                                                        </div>
+                                                        <div class="col-6 text-right">
+                                                            <address>
+                                                                <strong>Shipped To:</strong><br>
+                                                                Jane Smith<br>
+                                                                1234 Main<br>
+                                                                Apt. 4B<br>
+                                                                Springfield, ST 54321
+                                                            </address>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <address>
+                                                                <strong>Payment Method:</strong><br>
+                                                                Visa ending **** 4242<br>
+                                                                jsmith@email.com
+                                                            </address>
+                                                        </div>
+                                                        <div class="col-6 text-right">
+                                                            <address>
+                                                                <strong>Order Date:</strong><br>
+                                                                March 7, 2014<br><br>
+                                                            </address>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-heading">
+                                                            <h3 class="panel-title"><strong>Order summary</strong></h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-condensed">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <td><strong>Package</strong></td>
+                                                                        <td class="text-center"><strong>Price</strong>
+                                                                        </td>
+                                                                        <td class="text-center">
+                                                                            <strong>Quantity</strong></td>
+                                                                        <td class="text-right"><strong>Totals</strong>
+                                                                        </td>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <!-- foreach ($order->lineItems as $line) or some such thing here -->
+                                                                    {% for item in order_details %}
+                                                                        <tr>
+                                                                            <td>{{ item.package }}</td>
+                                                                            <td class="text-center">BDT {{ item.price }}</td>
+                                                                            <td class="text-center">{{ item.quantity }}</td>
+                                                                            <td class="text-right">BDT {{ item.total_price }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+
+                                                                    <tr>
+                                                                        <td class="thick-line"></td>
+                                                                        <td class="thick-line"></td>
+                                                                        <td class="thick-line text-center"><strong>Subtotal</strong>
+                                                                        </td>
+                                                                        <td class="thick-line text-right">BDT {{ total_amount.total }}</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="no-line"></td>
+                                                                        <td class="no-line"></td>
+                                                                        <td class="no-line text-center">
+                                                                            <strong>Shipping</strong></td>
+                                                                        <td class="no-line text-right">BDT 0</td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td class="no-line"></td>
+                                                                        <td class="no-line"></td>
+                                                                        <td class="no-line text-center">
+                                                                            <strong>Total</strong></td>
+                                                                        <td class="no-line text-right">BDT {{ total_amount.total }}</td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{#{% block js %}#}
+{#    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>#}
+{#    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>#}
+{#{% endblock js %}#}
+{% block css %}
+    {#    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">#}
+    <link rel="stylesheet" href="{% static 'modules/customer/customer.css' %}">
+    <style>
+        .invoice-title h2, .invoice-title h3 {
+            display: inline-block;
+        }
+
+        .table > tbody > tr > .no-line {
+            border-top: none;
+        }
+
+        .table > thead > tr > .no-line {
+            border-bottom: none;
+        }
+
+        .table > tbody > tr > .thick-line {
+            border-top: 2px solid;
+        }
+    </style>
+    <style>
+        .all_data {
+            padding: 0 20px;
+        }
+
+        .updateupdata .row div {
+            padding: 15px 0 !important;
+        }
+
+        .all_data p {
+            padding: 10px 0;
+            text-transform: uppercase;
+        }
+
+        .file-update-top .sinlge-col:first-child, .file-update-top .sinlge-col:nth-child(2) {
+            width: 329px;
+            margin-right: 30px;
+        }
+
+        .file-update-top {
+            padding: 15px 20px;
+            background: #ecf5f2;
+        }
+
+        .file-update-top .sinlge-col:nth-child(3) {
+            width: calc(100% - 660px);
+        }
+
+        .file-update-top .sinlge-col input {
+            width: calc(100% - 160px);
+        }
+
+        .file-update-top .sinlge-col .btn {
+            padding: 10px 44px;
+            background: #399e72;
+            font-weight: 500;
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            transition: all .30s linear;
+        }
+
+        .file-update-top select, .file-update-top input {
+            height: 50px !important;
+            line-height: 50px !important;
+            border: 1px solid #d0cfcf;
+            color: #585858;
+            font-size: 16px !important;
+            font-weight: 500;
+            font-family: 'Roboto', sans-serif;
+            padding: 0 15px !important;
+        }
+
+        .file-update-top .sinlge-col .btn:hover, .file-update-top .sinlge-col .btn:focus {
+            background: #318460;
+        }
+
+        .file-update-top select:focus, .file-update-top input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .file-update-top .sinlge-col h6 {
+            color: #585858;
+            font-family: 'Roboto', sans-serif;
+            line-height: 24px;
+        }
+
+        select option[disabled]:first-child {
+            display: none;
+        }
+
+        #theModal .update_history_modal.modal-dialog.modal-dialog-centered {
+            max-width: 90% !important;
+        }
+    </style>
+{% endblock %}
+

@@ -1,0 +1,75 @@
+{% extends 'layouts/default/main_lock_page.html' %}
+{% load static %}
+{% block title %}Lock{% endblock %}
+{% block header_image %}
+
+{% endblock %}
+
+{% block content %}
+
+    <link rel="stylesheet" href="{% static 'css/lock.min.css' %}">
+    <div class="page-lock">
+        <div class="page-logo">
+            <a class="brand" href="index.html">
+                <img src="{% if domain.image %}{{ domain.image.url }}{% else %}{% static 'img/logo.png' %}{% endif %}"
+                     alt="logo">
+            </a>
+        </div>
+        <div class="page-body">
+            <div class="lock-head"> Locked</div>
+            <div class="lock-body">
+                <div class="lock-cont">
+                    <div class="lock-item">
+                        <div class="pull-left lock-avatar-block">
+                            {% if user.userprofile.profile_image %}
+                                <img src="{{ user.userprofile.profile_image.url }}"
+                                     class="lock-avatar"></div>
+                            {% else %}
+                                {% if user.userprofile.gender == '2' %}
+                                    <img src="{% static 'img/avatar/female.jpg' %}" class="lock-avatar"></div>
+                                {% else %}
+                                    <img src="{% static 'img/avatar/male.jpg' %}" class="lock-avatar"></div>
+                                {% endif %}
+                            {% endif %}
+
+            </div>
+            <div class="lock-item lock-item-full">
+                <form class="lock-form pull-left" action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <h4>
+                        {% if  user.first_name %}
+                            {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+
+                    </h4>
+                    <div class="form-group">
+                        <input type="hidden" name="username" value="{{ user.username }}">
+                        <input class="form-control placeholder-no-fix" type="password" autocomplete="off"
+                               placeholder="Password" name="password"></div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn red uppercase">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="lock-bottom">
+        <a href="{% url 'logout' %}">Not {% if  user.first_name %}
+            {{ user.first_name }} {{ user.last_name }}
+        {% else %}
+            {{ user.username }}
+        {% endif %}?</a>
+    </div>
+    </div>
+    </div>
+    <style>
+        .page-lock {
+            margin: 90px auto 30px;
+            width: 450px;
+        }
+    </style>
+
+{% endblock %}

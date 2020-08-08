@@ -1,0 +1,94 @@
+{% extends "dashboard/main_without_title.html" %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'plugins/owlcarousel2/dist/assets/owl.carousel.min.css' %}">
+{% endblock %}
+{% block content %}
+    {% if request.user.is_staff %}
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-primary">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total Order</h4>
+                        </div>
+                        <div class="card-body">
+                            10
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-danger">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total Packages</h4>
+                        </div>
+                        <div class="card-body">
+                            120
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-warning">
+                        <i class="far fa-user"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total Customer</h4>
+                        </div>
+                        <div class="card-body">
+                            10,201
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+                <div class="card card-statistic-1">
+                    <div class="card-icon bg-success">
+                        <i class="far fa-file"></i>
+                    </div>
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Total Item</h4>
+                        </div>
+                        <div class="card-body">
+                            500
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row ">
+            <div class="col-sm-12">
+                <div class="card card-statistic-2">
+                    <div class="card-stats">
+                        <div class="text-center card-stats-title"><h4>Welcome to E-Commerce</h4></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+{% endblock content %}
+{% block js %}
+    <!-- JS Libraies -->
+    <script src="{% static 'plugins/simple-weather/jquery.simpleWeather.min.js' %}"></script>
+    <script src="{% static 'plugins/chart.min.js' %}"></script>
+    <script src="{% static 'plugins/owlcarousel2/dist/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'plugins/summernote/summernote-bs4.js' %}"></script>
+    <script src="{% static 'plugins/chocolat/dist/js/jquery.chocolat.min.js' %}"></script>
+
+    <!-- Page Specific JS File -->
+    <script src="{% static 'js/page/dashboard-ecommerce.js' %}"></script>
+{% endblock %}

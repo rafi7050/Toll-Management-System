@@ -1,0 +1,108 @@
+{% extends 'main.html' %}
+
+{% block page_title %}
+
+    {% if form.instance.pk %}
+        Update
+    {% else %}
+        Add
+    {% endif %}
+    Team
+{% endblock page_title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="card">
+                <form action="" method="post">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        {% include 'includes/form.html' %}
+                    </div>
+                    <div class="card-footer text-left">
+                        <a href="{% url 'team_list' %}" class="w-10 btn btn-danger">Cancel</a>
+                        <button class="w-10 btn btn-primary">Submit</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $(".related-widget-wrapper:has(table)").addClass('related-widget-wrapper-user-permissions');
+            $('#perm_view_select_all').on('change', function () {
+                var state = $(this).prop('checked');
+                $('#tabular_permissions').find('tr td.view').find('input').each(function (i, e) {
+                    $(e).prop('checked', state)
+                })
+            });
+            $('#perm_add_select_all').on('change', function () {
+                var state = $(this).prop('checked');
+                $('#tabular_permissions').find('tr td.add').find('input').each(function (i, e) {
+                    $(e).prop('checked', state)
+                })
+            });
+            $('#perm_change_select_all').on('change', function () {
+                var state = $(this).prop('checked');
+                $('#tabular_permissions').find('tr td.change').find('input').each(function (i, e) {
+                    $(e).prop('checked', state)
+                })
+            });
+            $('#perm_delete_select_all').on('change', function () {
+                var state = $(this).prop('checked');
+                $('#tabular_permissions').find('tr td.delete').find('input').each(function (i, e) {
+                    $(e).prop('checked', state)
+                })
+            });
+            $('.select-all.select-row').on('change', function () {
+                var $this = $(this);
+                $this.parents('tr').find('.checkbox').not('.select-all').each(function (i, elem) {
+                    $(elem).prop('checked', $this.prop('checked'));
+                })
+            });
+
+            $('tbody tr').find('.view').closest('tr').each(function () {
+                let checked_input = $(this).find('.view,.change,.delete,.add').find('input:checked').length
+                let all_input = $(this).find('.view,.change,.delete,.add').find('input').length
+
+                if (checked_input == all_input) {
+                    $(this).find('.select-all').prop('checked', true)
+                }
+
+            })
+
+            $('.view,.delete,.add,.change').on('change', function () {
+                let checked_input = $(this).closest('tr').find('.view,.change,.delete,.add').find('input:checked').length
+                let all_input = $(this).closest('tr').find('.view,.change,.delete,.add').find('input').length
+                $(this).closest('tr').find('.select-all').prop('checked', false)
+                if (checked_input == all_input) {
+                    $(this).closest('tr').find('.select-all').prop('checked', true)
+                }
+            })
+
+
+            $('[type="checkbox"]').on('change', function () {
+                set_permissions()
+            });
+            set_permissions();
+        });
+        let set_permissions = function () {
+            $('[name="group-permissions"]').html('');
+            $('tbody .select-all').each(function () {
+                let model_name = $(this).attr('data-model-name')
+                if (model_name) {
+                    $(this).closest('tr').find('input.view,input.add,input.change,input.delete').each(function () {
+                        if ($(this).is(':checked')) {
+                            let value = $(this).attr('data-perm-id')
+                            $('[name="group-permissions"]').append($("<option></option>").val(value).prop('selected', true))
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+{% endblock %}

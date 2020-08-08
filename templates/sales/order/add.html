@@ -1,0 +1,26 @@
+{% extends 'layouts/default/main.html' %}
+{% block content %}
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Order Add Form
+                </h3>
+            </div>
+        </div>
+        <form  method="post" enctype="multipart/form-data" class="kt-form kt-form--label-right">
+            {% include 'includes/form.html' %}
+        </form>
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+    $(function () {
+        $('html').on('change','.package_select select',function () {
+        let url = '/api/v1/packages//'
+        console.log($(this).val())
+        })
+
+    })
+    </script>
+{% endblock js %}

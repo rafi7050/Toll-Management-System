@@ -1,0 +1,102 @@
+{% extends 'main.html' %}
+{% load static availability_tags %}
+
+{% block page_title %}User List{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card pt-0">
+                <div class="card-header bg-transparent">
+                    <h4></h4>
+                    {% if perms.auth.add_user %}
+                        <div class="card-header-action ">
+                            <a href="{% url 'user_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i> New
+                                User </a>
+                        </div>
+                    {% endif %}
+                </div>
+                <td class="card-body">
+                    {% if users %}
+                        <div class="table-responsive userTable">
+                            <table class="table table-sm ">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">User Name</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Team</th>
+                                    <th scope="col">Created By</th>
+                                    <th scope="col">Date</th>
+                                    {% if perms.auth.change_user or perms.auth.delete_user %}
+                                        <th scope="col">Action</th>
+                                    {% endif %}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user in users %}
+                                    <tr height="54px">
+                                        <td scope="row" class="align-middle">{{ forloop.counter }}</td>
+                                        <td class="align-middle">
+                                            <img class="img-circle" src="{% if user.user.profile_image %}{{ user.user.profile_image.url }} {% else %} {% static 'img/avatar/avatar-1.png' %} {% endif %}">
+                                        </td>
+                                        <td class="align-middle">{{ user.user.username }}</td>
+                                        <td class="align-middle">{{ user.user.first_name }} {{ user.user.last_name }}</td>
+                                        <td class="align-middle">{{ user.user.email }}</td>
+                                        <td class="align-middle">
+                                            {% for g in user.user.groups.all %}
+                                                {{ g.name|capfirst|strip_domain }} {% if forloop.last %}{% else %},{% endif %}
+                                            {% endfor %}
+                                        </td>
+                                        <td class="align-middle">{{ user.created_by }}</td>
+                                        <td class="align-middle">{{ user.created_at }}</td>
+                                        {% if perms.auth.change_user or perms.auth.delete_user %}
+                                            <td class="align-middle">
+                                                {% if perms.auth.change_user %}
+                                                    <a href="{% url 'user_update' user.user.id %}"
+                                                       class="btn btn-outline-warning">
+                                                        <i class="far fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+                                                {% if perms.auth.delete_user %}
+                                                    <a href="{% url 'user_delete' user.user.id %}"
+                                                       class="btn btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div>
+                            No Data Found!
+                        </div>
+                    {% endif %}
+                </div>
+{#                <div class="card-footer text-right">#}
+{#                    <nav class="d-inline-block">#}
+{##}
+{#                    </nav>#}
+{#                </div>#}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $("table").dataTable();
+    </script>
+{% endblock %}

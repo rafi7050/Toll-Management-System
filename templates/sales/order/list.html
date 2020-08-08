@@ -1,0 +1,296 @@
+{% extends 'layouts/default/main.html' %}
+{% block title %}Order{% endblock %}
+{% block page_title %}Order List{% endblock page_title %}
+
+{% block content %}
+    <style>
+        .customer_name {
+            font-weight: 500;
+            color: #555555;
+            font-size: 18px;
+            margin: 0;
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .item {
+            font-size: 16px;
+            color: #7d7878;
+            margin: 0;
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .code {
+            font-size: 16px;
+            color: #e7827d;
+            font-weight: 700;
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .status {
+            padding: 10px 5px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #00000005;
+        }
+    </style>
+    <div class="row">
+        <div class="col-12">
+            <div class="card pt-0">
+                <div class="card-header bg-transparent">
+                    <h4></h4>
+                    <div class="card-header-action w-100">
+                        <a href="{% url 'active_order_invoice_pdf' %}" class="btn btn-warning"><i
+                                class="fas fa-print"></i> Active Order Invoice</a>
+                        <a href="{% url 'order_create' %}" class="btn btn-primary  float-right"><i
+                                class="fas fa-plus"></i> New Order</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive userTable">
+                        <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Code</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Mobile</th>
+                                <th scope="col">Total Amount</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Updated At</th>
+                                {#                                <th scope="col">Status</th>#}
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div id="order_item_container"></div>
+                </div>
+                <div class="card-footer text-right">
+                    <nav class="d-inline-block">
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            do_filter()
+            var table = $('#datatable').DataTable({
+                'serverSide': true,
+                ajax: '/api/v1/orders/?format=datatables',
+                'columns': [
+                    {
+                        'data': 'id',
+                        'class': 'text-center',
+                        "searchable": false,
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {'data': 'code'},
+                    {'data': 'customer_name', 'name': 'customer.first_name'},
+                    {'data': 'mobile_number'},
+                    {'data': 'total_amount'},
+                    {
+                        'data': 'order_status',
+                        render: function (data, type, row, meta) {
+                            let status = ORDER_STATUS[data]
+                            let status_style = status.replace(' ', '_')
+                            return '<span class="status_' + status_style + '">' + status + '</span>'
+                        }
+                    },
+                    {'data': 'updated_at'},
+                    {
+                        "data": null,
+                        'class': 'text-center',
+                        "bSortable": false,
+                        "mRender": function (data) {
+                            return `
+                            <a class="btn btn-outline-warning" href=/sales/order/edit/${data['id']}><i class="fa fa-edit"></i></a>
+                            <button class="btn btn-outline-warning application-update forward_modal" data-ajax-url="/sales/order/${data['id']}/status_update/" data-type="update_history" >
+                                <i class="icon-update application-icon"></i>
+                            </button>
+                            <button class="btn btn-outline-warning invoice_print forward_modal" data-ajax-url="/sales/order/${data['id']}/invoice/" data-type="invoice_print" >
+                            <i class="icon-update application-icon"></i>
+                            </button>
+
+{#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+
+        let reload_table = function () {
+            $('#datatable').DataTable().ajax.reload();
+        }
+    </script>
+
+    <script>
+
+
+        $('html').on('click', '.forward_modal', function (e) {
+            $('#ajaxModal').modal('show').find('.modal-content').html('')
+            let _this = this
+            let application_id = $(this).attr('data-value');
+            let status = $(this).attr('data-status');
+            let modal_type = $(this).attr('data-type');
+            let modal_class = modal_type + '_modal'
+            e.preventDefault();
+            let ajax_url = $(this).attr('data-ajax-url')
+
+            $('#ajaxModal').modal('show').find('.modal-content').load($(this).attr('data-ajax-url'), function () {
+                $('#ajaxModal').find('.modal-dialog.modal-dialog-centered').removeClass()
+                    .addClass(modal_class).addClass('modal-dialog modal-dialog-centered')
+                $('.datepicker').datetimepicker({
+                    timepicker: false,
+                    format: 'Y-m-d'
+                });
+                $('.datetimepicker').datetimepicker({
+                    format: 'Y-m-d H:i'
+                });
+                let type = $('#ajaxModal').find('.modal-content').find('[name="type"]').val()
+                if (modal_type == 'sms_history') {
+                    sms_get(application_id, type)
+                    let phone_number = $(_this).attr('data-mobile');
+                    let customer_name = $(_this).attr('data-user_name');
+
+                    $('#ajaxModal').find('.modal-content').find('.sms_number').val(phone_number)
+                    $('#ajaxModal').find('.modal-content').find('.send_all_documents,.send_extra_documents').attr('data-user_name', customer_name)
+                    let textarea = $('#ajaxModal').find('.modal-content').find('textarea')
+                    let result = $('#ajaxModal').find('.modal-content').find('.results');
+
+                    $(textarea).on('input', function () {
+                        var v = wordCount(this.value);
+                        result.text(v)
+                    })
+
+                } else if (modal_type == 'mail_history') {
+                    mail_get(application_id, type);
+                    let customer_name = $(_this).attr('data-user_name');
+                    let email = $(_this).attr('data-email');
+                    $('#ajaxModal').find('.modal-content').find('.email_address').val(email)
+                    $('#ajaxModal').find('.modal-content').find('.send_all_documents,.send_extra_documents').attr('data-user_name', customer_name)
+                } else if (modal_type == 'followup_history') {
+                    followup_get(application_id);
+                    let option_group2 = $('[name="current_status"]')
+                    option_group2.find('optgroup').each(function () {
+                        let options = $(this).find('option').attr('data-group', $(this).attr('label'))
+                        option_group2.append(options)
+                        $(this).remove()
+                        option_group2.find('option').hide()
+
+                    })
+                    $('html').on('change', '[name="call_purpose"]', function () {
+                        let group = $(this).val()
+                        option_group2.find('option').prop('selected', false)
+                        option_group2.find('option').hide()
+                        option_group2.find('option[data-group="' + group + '"]').show()
+                    })
+                } else if (modal_type == 'forward_history') {
+                    forward_get(application_id);
+                    let institute = $('[name="selectinstitute"]');
+                    $('.no-member').hide();
+                    institute.on('change', function () {
+                        team_get($(this).val());
+                        area_get($(this).val());
+                    })
+                    team_get(institute.val());
+                    area_get(institute.val());
+
+                    $(this).find('.forwardarea').hide();
+                } else if (modal_type == 'update_history') {
+                    {#applicationupdate_get(application_id);#}
+                    $('.decline, .hold, .disbursed, .under_review').hide();
+                } else if (modal_type == 'document') {
+                    {#app_document_get(application_id, string_to_boolean("{{ request.user.is_staff }}"));#}
+                }
+            });
+
+        });
+
+        $("html").on('click', '.file_update_btn', function (e) {
+            e.preventDefault();
+            $(this).closest('#ajaxModal').find('.alert').remove();
+            let application_id = $(this).closest('.modal-content').find('[name="application_id"]').val()
+            console.log($(this).closest('form').serializeArray())
+            let data = objectifyForm($(this).closest('form').serializeArray())
+            data['order'] = application_id
+            if (!data['status_value']) {
+                data['status_value'] = null
+            }
+            console.log(data)
+            axios.post('/api/v1/order/status_update/', data, {
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            })
+                .then(function (response) {
+                    $.growl.notice({
+                        message: 'File updated successfully'
+                    });
+                    {#applicationupdate_get(application_id);#}
+                    reload_table()
+                    $("#ajaxModal .close").click()
+                    {#do_filter()#}
+                })
+                .catch(function (error) {
+                    if (error.response.data.status) {
+                        $('.fileupdate_modal_content').before(perform_error_html('Please check your input'))
+                    } else {
+                        $('.fileupdate_modal_content').before(perform_error_html(error.response.data.detail))
+                    }
+                });
+        })
+    </script>
+    <script>
+        let text_slug = function (chr, prefix = null) {
+            let slug = prefix
+            let text = chr.replace(' ', '_')
+            return slug + text
+        }
+        let do_filter = function () {
+            axios.get('/api/v1/orders/').then(function (response) {
+                let data = response.data.results
+                $('#order_item_container').html('')
+                let order_item_container = $('#order_item_container')
+                data.forEach(function (item) {
+                    let template = $($('#order_row_item').html())
+                    template.find('.order_id').text(item.code)
+                    template.find('.order_status').text(item.order_status_name)
+                    template.find('.order_status').addClass(text_slug(item.order_status_name, 'status_'))
+                    template.find('.order_date').text(item.created_at)
+
+                    template.find('.customer_name').text(item.customer_name)
+                    template.find('.mobile').text(item.mobile_number)
+                    template.find('.address_line_1').text(item.address_line_1)
+                    template.find('.address_line_2').text(item.address_line_2)
+                    template.find('.place').text(item.place)
+                    order_item_container.append(template)
+                })
+            })
+        }
+
+    </script>
+    <script type="text/html" id="order_row_item">
+        <div class="single_item row border p-3 my-4 bg-whitesmoke">
+            <div class="col">
+                <div class="code"><span>Order ID # </span><span class="order_id"></span></div>
+                <div><span class="status">Status : <span class="order_status"></span></span></div>
+                <div><span>Order Create Date : </span><span class="order_date"></span></div>
+            </div>
+            <div class="col">
+                <div class="customer_name"></div>
+                <div class="item"><i class="fas fa-phone"></i> <span class="mobile"></span></div>
+                <div class="address_line_1 item"></div>
+                <div class="address_line_2 item"></div>
+                <div class="item"><i class="fa fa-map-marker-alt" aria-hidden="true"></i> <span class="place"></span>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </script>
+{% endblock %}

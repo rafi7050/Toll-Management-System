@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+
+
+    <title>Hello, world!</title>
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+	<textarea class="editor"></textarea>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="tinymce.min.js"></script>
+	<script>
+	$(document).ready(function () {
+   tinymce.init({
+       mode: 'textareas',
+       height: 200,
+       editor_selector: 'editor',
+       menubar: false,
+       plugins: [
+           'advlist autolink lists link image charmap print preview anchor textcolor',
+           'searchreplace visualblocks code fullscreen',
+           'insertdatetime media table contextmenu paste code help wordcount'
+       ],
+       toolbar: 'insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+       // content_css: [
+       //     '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+       //     '//www.tinymce.com/css/codepen.min.css']
+   });
+
+   $('.select').select2();
+});
+	</script>
+  </body>
+</html>

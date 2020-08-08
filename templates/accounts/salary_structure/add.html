@@ -1,0 +1,383 @@
+{% extends 'main.html' %}
+{% block page_title %} Add Salary Structure {% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="card">
+                <form action="" method="post" enctype="multipart/form-data" id="salary_structure_form">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="team_name" class="col-2">Team</label>
+                            <select class="form-control col-3 rounded-0 common_field" id="team_name" name="team"
+                                    required>
+                                <option value="">Select Team</option>
+                                {% for item in team %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <label for="employee_name" class="col-2">Employee</label>
+                            <select class="form-control col-3 rounded-0 common_field" id="employee_name" name="employee"
+                                    required>
+                                <option value="">Select Employee</option>
+                                {% for item in employee %}
+                                    <option value="{{ item.id }}"
+                                            data-team="{{ item.groups.all|custom_list }}">{{ item.first_name }} {{ item.last_name }}({{ item.username }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <label for="institute_name" class="col-2">Institute</label>
+                            <select class="form-control col multiple_select common_field" id="institute_name"
+                                    name="institute"
+                                    multiple required>
+                                {% for item in institute %}
+                                    <option value="{{ item.id }}">{{ item.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group row">
+                            <label for="gross_salary" class="col-2">Gross Salarly</label>
+                            <input type="text" class="form-control col-3 integer-with-commas common_field"
+                                   name="gross_salary"
+                                   id="gross_salary"
+                                   required
+                                   placeholder="Gross Salary">
+                        </div>
+                        <div class="form-group row">
+                            <label for="max_commission" class="col-2">Max Commission</label>
+                            <input type="text" class="form-control col-3 integer-with-commas common_field"
+                                   name="max_commission"
+                                   id="max_commission"
+                                   required
+                                   placeholder="Max Commission">
+                        </div>
+
+                        <div class="salary_details">
+
+                        </div>
+
+                    </div>
+                    <div class="card-footer text-left">
+                        <a href="{% url 'salary_structure_list' %}" class="w-10 btn btn-danger">Cancel</a>
+                        <button class="w-10 btn btn-primary" type="button" id="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block css %}
+    <style>
+        .selectmultiple > button {
+            height: 100%;
+            width: 100%;
+            border: none !important;
+            line-height: 39px !important;
+        }
+
+        .selectmultiple > button:focus {
+            outline: none;
+        }
+
+        .ms-drop {
+            left: 0;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        let institute_dict = $('#institute_name').find('option').map(function () {
+            {#return ({[this.value]: this.text});#}
+            return {'id': this.value, 'name': this.text};
+        }).get()
+        $('.multiple_select').multipleSelect(
+            {
+                minimumCountSelected: 30
+            }
+        )
+        $('html').on('change', '#team_name', function () {
+            team_member_set($(this).val())
+        })
+        $('html').on('click', '.income_row .add_income_row', function (e) {
+            e.preventDefault()
+            let income_row = $(this).closest('.income_row').clone()
+            income_row.find('input').val('')
+            income_row.find('.add_income_row').addClass('remove_row  btn-danger').removeClass('add_income_row btn-primary')
+                .find('.fa-plus-circle').addClass('fa-minus-circle').removeClass('fa-plus-circle')
+            $(this).closest('.income_container').find('.income_row:last').after(income_row)
+        })
+        $('html').on('click', '.income_row .remove_row', function (e) {
+            e.preventDefault()
+            $(this).closest('.income_row').remove()
+        })
+        $('html').on('change', '[name="commission_type"]', function (e) {
+            e.preventDefault()
+            let commission_type = $(this).val()
+
+            if (commission_type == 'number') {
+                $(this).closest('.input-group').find('[name="commission"]').addClass('integer-with-commas').removeClass('number-with-dot').val('').removeAttr('data-max')
+                $(this).closest('.input-group').find('.input-group-text').text('BDT')
+            } else {
+                $(this).closest('.input-group').find('[name="commission"]').removeClass('integer-with-commas').addClass('number-with-dot').val('').attr('data-max', 100)
+                $(this).closest('.input-group').find('.input-group-text').text('%')
+            }
+        })
+
+        $('html').on('change', '#institute_name', function () {
+            let institute = $(this).val()
+            if (institute) {
+                institute.forEach(function (item) {
+                    let institute_income_container = $($('#institute_income_container').html())
+                    institute_income_container.find('[name="institute"]').val(item)
+                    institute_income_container.find('.institute_title').text(institute_dict.find(x => x.id == item).name)
+                    if (!$('.salary_details').find('.single_loan_details [name="institute"][value="' + item + '"]').length) {
+                        $('.salary_details').append(institute_income_container)
+                    }
+
+                })
+            }
+
+            $('.salary_details').find('[name="institute"]').each(function () {
+                if (!institute.includes($(this).val())) {
+                    $(this).closest('.single_loan_details').remove()
+                }
+            })
+        })
+
+        let form_serialize = function () {
+            let data = objectNumberWithoutCommas(objectifyForm($('form .common_field').serializeArray()))
+            data['institute'] = $('.common_field[name="institute"]').val()
+            data['salary_description'] = salary_description_serialize()
+            return data
+        }
+
+        let salary_description_serialize = function () {
+            let salary_description = []
+            $('.salary_details .single_loan_details').each(function () {
+                let institute = $(this).find('[name="institute"]').val()
+                $(this).find('.single_loan_rate').each(function () {
+                    let product = $(this).find('.product_group [name="product"]').val()
+                    let income_container = objectNumberWithoutCommas(objectifyFormListWithAttributeRename($(this).find('.income_container').find('input,select').serializeArray()))
+                    if (product) {
+                        income_container.filter(x => x.product = product)
+                    }
+                    income_container.filter(x => x.institute = institute)
+                    salary_description = salary_description.concat(income_container)
+                })
+            })
+
+            return salary_description
+        }
+
+        $('html').on('click', '#submit', function (e) {
+            e.preventDefault()
+            let formdata = form_serialize()
+            let is_valid = form_valid('#salary_structure_form')
+            if (is_valid) {
+                axios.post('/api/v1/salary_structure/', formdata, {
+                    headers: {"X-CSRFToken": "{{ csrf_token }}"},
+                })
+                    .then(function (response) {
+                        $.growl.notice({
+                            message: 'Save send successfully'
+                        });
+                        window.location = '/billing/salary_structure/'
+
+                    })
+                    .catch(function (error) {
+                        obj = error.response.data;
+                    });
+            } else {
+                $.growl.warning({
+                    message: 'Some information went wrong.'
+                });
+            }
+
+        })
+
+        $(window).on('load', function () {
+            team_name_set()
+            team_member_set(0)
+        })
+
+
+        function team_name_set() {
+            $('#team_name').find('option').each(function () {
+                $(this).text($(this).text().replace("bcbd-", ""))
+            })
+        }
+
+        function team_member_set(team) {
+            $('#employee_name').find('option').each(function () {
+                let employee_team = $(this).attr('data-team')
+                let employee_id = $(this).val()
+                if (employee_id) {
+                    if (employee_team.includes(team)) {
+                        $(this).prop('disabled', false).show()
+                    } else {
+                        $(this).prop('disabled', true).hide()
+                    }
+                }
+            })
+        }
+
+
+    </script>
+    <script type="text/html" id="institute_income_container">
+        <div class="card-body p-1 border-box single_loan_details" data-id="0">
+            <div class="row border border-bottom-0 no-gutters bg-white p-2">
+                <input type="hidden" name="institute" value="">
+                <label class="fz-17 fw-8 institute_title">SCB</label>
+            </div>
+            <div class="row border no-gutters bg-white">
+                <div class="col-1 p-2 d-flex align-items-center text-center border-right">
+                    Product
+                </div>
+                <div class="col">
+                    <div class="row no-gutters income_container">
+                        <div class="col-12 row no-gutters income_row">
+                            <div class="col p-2 border-right text-center d-flex align-items-center ">
+                                Type
+                            </div>
+                            <div class="col p-2 border-right text-center d-flex align-items-center ">
+                                From
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                To
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                Comission
+                            </div>
+                            <div class="col-1 p-2 d-flex text-center align-items-center">
+                                Action
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row border border-top-0 no-gutters bg-white new-loan-container single_loan_rate"
+                 data-product="loan">
+                <div class="col-1 p-2 d-flex align-items-center text-center border-right product_group">
+                    Loan
+                </div>
+                <div class="col">
+                    <div class="row no-gutters income_container">
+                        <div class="col-12 row no-gutters income_row">
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <select name="product" required class="form-control form-control-sm rounded-0">
+                                    <option value="">Select Type</option>
+                                    {% for item in loan_types %}
+                                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right tenure_range">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" name="from" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" name="to" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <select name="commission_type" required
+                                            class="form-control-sm form-control">
+                                        <option value="number">Number</option>
+                                        <option value="percentage">Percentage</option>
+                                    </select>
+                                    <input type="text" name="commission" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-1 p-2 d-flex text-center align-items-center">
+                                <button class="btn btn-primary add_income_row" type="button"
+                                        style="right: 5px; bottom: 5px;z-index: 99;">
+                                    <i class="fas fa-plus-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row border border-top-0 no-gutters bg-white new-loan-container single_loan_rate"
+                 data-product="credit_card">
+                <div class="col-1 p-2 d-flex align-items-center text-center border-right product_group">
+                    Credit Card
+                    <input type="hidden" name="product" value="1">
+                </div>
+                <div class="col">
+                    <div class="row no-gutters income_container">
+                        <div class="col-12 row no-gutters income_row">
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <select name="product_type" required class="form-control form-control-sm rounded-0">
+                                    <option value="">Select Type</option>
+                                    {% for item in card_types %}
+                                        <option value="{{ item.id }}">{{ item.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right tenure_range">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" name="from" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" name="to" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col p-2 d-flex text-center align-items-center border-right">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <select name="commission_type" required
+                                            class="form-control-sm form-control">
+                                        <option value="number">Number</option>
+                                    </select>
+                                    <input type="text" name="commission" required
+                                           class="form-control integer-with-commas">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">BDT</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-1 p-2 d-flex text-center align-items-center">
+                                <button class="btn btn-primary add_income_row" type="button"
+                                        style="right: 5px; bottom: 5px;z-index: 99;">
+                                    <i class="fas fa-plus-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+{% endblock %}

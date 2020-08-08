@@ -1,0 +1,129 @@
+{% extends 'main.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %} Add User {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="card">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                {{ form.profile.profile_image|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user.username|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user.email|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user.first_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user.last_name|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.gender|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.user.groups|as_crispy_field }}
+                            </div>
+                        </div>
+                        {% if request.user.is_staff %}
+                            <div class="form-row">
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.profile.is_team_leader|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ form.profile.extension_no|as_crispy_field }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.location|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.dob|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.can_see_dashboard|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.zone|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.speed|as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.profile.application_bank|as_crispy_field }}
+                            </div>
+                        </div>
+
+
+                        <div class="form-row">
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.profile.address|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <a href="{% url 'user_list' %}" class="btn btn-danger">Cancel</a>
+                        <button class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <style>
+        .selectmultiple > button {
+            height: 100%;
+            width: 100%;
+            border: none !important;
+            line-height: 39px !important;
+        }
+
+        .selectmultiple > button:focus {
+            outline: none;
+        }
+
+        .ms-drop {
+            left: 0;
+        }
+    </style>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $('[name="user-groups"] option').each(function () {
+            $(this).text($(this).text().split('-')[1])
+        });
+        $('[name="user-groups"]').multipleSelect({
+            'placeholder': 'Select Groups',
+            'width': '100%'
+        });
+        $('[name="profile-zone"]').multipleSelect({
+            'placeholder': 'Select Groups',
+            'width': '100%'
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% load static auth_extras %}
+
+<div class="main-sidebar">
+    <aside id="sidebar-wrapper" class="sibar-wrapper">
+        <div class="sidebar-brand">
+            <a href="{% url 'dashboard' %}">
+                <img src="{% static 'img/logo.png' %}" style="padding: 10px;width: 80%;" alt="Logo">
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            {% if not request.user|has_group:"seo" %}
+                <li>
+                    <a href="{% url 'dashboard' %}" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i><span>Dashboard</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if perms.auth %}
+                <li class="menu-header">Account Section</li>
+
+                <li class="dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                        <i class="fas fa-user"></i> <span>Manage User</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-list"></i>User list
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-user-plus"></i>Create User
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                        <i class="fas fa-user"></i> <span>Manage Customer</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-list"></i>Customer list
+                            </a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-user-plus"></i>Create Customer
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            {% endif %}
+
+            <li class="menu-header">Product Section</li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Product</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'product_list' %}">
+                            <i class="fas fa-list"></i>Product list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'product_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Product
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Package</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'package_list' %}">
+                            <i class="fas fa-list"></i>Package list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'package_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Package
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Age Group</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'age_group_list' %}">
+                            <i class="fas fa-list"></i>Age Group list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'age_group_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Age Group
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Nutrition Point</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'nutrition_point_list' %}">
+                            <i class="fas fa-list"></i>Nutrition Point list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'nutrition_point_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Nutrition Point
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="menu-header">Order Section</li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Order</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'order_list' %}">
+                            <i class="fas fa-list"></i>Order list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'order_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Order
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="{% url 'ordered_product' %}" class="nav-link">
+                    <i class="fas fa-user"></i> <span>Ordered Products</span>
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'ordered_product_size_list' %}" class="nav-link">
+                    <i class="fas fa-user"></i> <span>Ordered Product Size</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'ordered_package' %}" class="nav-link">
+                    <i class="fas fa-user"></i> <span>Ordered Packages</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{% url 'zone_order' %}" class="nav-link">
+                    <i class="fas fa-user"></i> <span>Zone Order</span>
+                </a>
+            </li>
+
+
+        </ul>
+    </aside>
+</div>
+
+{% block css %}
+    <style>
+        .sibar-wrapper {
+            background: #2b333b;
+        }
+    </style>
+{% endblock %}

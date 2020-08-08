@@ -1,0 +1,100 @@
+{% extends 'layouts/default/main.html' %}
+{% block title %}Ordered Product{% endblock %}
+{% block page_title %}Ordered Product Size Quantity List{% endblock page_title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card pt-0">
+                <div class="card-body">
+                    <div class="table-responsive userTable">
+			<div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-secondary order_status" value="active">Active</button>
+                            <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
+                            </button>
+                        </div>
+                        <!-- Default checked -->
+                        <section class="section-preview">
+                            <!-- Material checked -->
+                            <div class="switch" style="font-size: 25px;">
+                                <label>
+                                    Live
+                                    <input type="checkbox" name="order_status" value="upcoming">
+                                    <span class="lever"></span> Upcoming
+                                </label>
+                            </div>
+                        </section>
+                        <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Size</th>
+                                <th scope="col">Quantity</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <nav class="d-inline-block">
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+
+            let table = $('#datatable').DataTable({
+                'serverSide': true,
+                'ajax': '/sales/order/product_size/api/?format=datatables',
+                'columns': [
+                    {
+                        'data': 'id',
+                        'class': 'text-center',
+                        "searchable": false,
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        'data': 'image', "searchable": false,
+                        "mRender": function (data) {
+                            if (data) {
+                                return `<img src="${data}"  style="max-width: 200px; max-height: 75px;"/>`
+                            } else {
+                                return `<img src="/static/img/no-image-available.jpg" style="max-width: 200px; max-height: 75px;"/>`
+                            }
+                        }
+                    },
+                    {'data': 'name'},
+                    {'data': 'product_size'},
+                    {'data': 'count'},
+                ]
+            });
+
+
+	$(document).ready(function () {
+            $('html').on('click', '.order_status', function () {
+                let order_type = $(this).val()
+                console.log(order_type, 'Order Type')
+                table.ajax.url('/sales/order/product_size/api/?format=datatables&order_type=' + order_type)
+                table.draw()
+            })
+            $('html').on('change', '[name="order_status"]', function () {
+                let order_type_checked = $(this).is(':checked')
+                let order_type = 'active'
+                if (order_type_checked) {
+                    order_type = 'upcoming'
+                }
+                table.ajax.url('/sales/order/product_size/api/?format=datatables&order_type=' + order_type)
+                table.draw()
+            })
+        });
+
+    </script>
+{% endblock %}

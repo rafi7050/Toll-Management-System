@@ -1,0 +1,40 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>E-Commerce | {% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'img/favicon-32x32.png' %}" type="image/x-icon">
+
+    {#    Add css to includes/css.html   #}
+    {% include 'includes/css.html' %}
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper">
+        {% include 'includes/navbar.html' %}
+        {% include 'includes/sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section">
+                {% block content %}
+
+                {% endblock %}
+            </section>
+        </div>
+        {% include 'includes/footer.html' %}
+    </div>
+{#    {% include 'template.html' %}#}
+{#    {% include 'scheduled_product_modal.html' %}#}
+</div>
+{#    Add js to includes/js.html   #}
+{% include 'includes/js.html' %}
+
+{% block js %}{% endblock %}
+</body>
+</html>

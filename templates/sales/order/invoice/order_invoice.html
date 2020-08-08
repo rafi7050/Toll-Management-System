@@ -1,0 +1,119 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}">
+<style>
+    .order_details .row {
+        margin: 0 !important;
+    }
+
+    .col-2_5 {
+        -ms-flex: 0 0 20.833333333%;
+        flex: 0 0 20.833333333%;
+        max-width: 20.833333333%;
+    }
+</style>
+<div class="order_cost_details">
+    <div class="row">
+        {% for order in order_list %}
+            <div class="col-6">
+                <div class="single_item_cost"
+                     style="background: #f2f3f8;margin: 10px 0px;padding: 5px;border-bottom: 8px solid #1dc9b7;">
+                    <div class="invoice-title row" style="font-size: 17px;font-weight: 800;">
+                        <div class="col">Invoice</div>
+                        <div class="col text-right">Order # {{ order }}</div>
+                    </div>
+                    <hr/>
+                    <div class="contact_details border-bottom" style="font-size: 13px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <address>
+                                    <strong>Billed To:</strong><br>
+                                    {{ order.customer.get_full_name }}<br>
+                                    {{ order.address_line_1 }}<br>
+                                    {{ order.address_line_2 }}<br>
+                                    {{ order.place }}
+                                </address>
+                            </div>
+                            <div class="col-6 text-right">
+                                <address>
+                                    <strong>Shipped To:</strong><br>
+                                    {{ order.customer.get_full_name }}<br>
+                                    {{ order.address_line_1 }}<br>
+                                    {{ order.address_line_2 }}<br>
+                                    {{ order.place }}
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order_details row" style="font-size: 8px !important;">
+                        <div class="col">
+                            <div class="row"
+                                 style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
+                                <div class="col">Package</div>
+                                <div class="col">Quantity</div>
+                                <div class="col">Price</div>
+                                <div class="col">Total Price</div>
+                            </div>
+                            {% for item in order.orderdetails_set.all %}
+                                <div class="row"
+                                     style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 8px;">
+                                    <div class="col">{{ item.package }}</div>
+                                    <div class="col">{{ item.quantity }}</div>
+                                    <div class="col">{{ item.price }}</div>
+                                    <div class="col">{{ item.total_price }}</div>
+                                </div>
+                                <div class="div pl-2">
+                                    <div class="row"
+                                         style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;">
+                                        <div class="col-2_5">Product</div>
+                                        <div class="col">Quantity</div>
+                                        <div class="col">Price</div>
+                                        <div class="col-2_5">Regular Price</div>
+                                        <div class="col">Discount</div>
+                                        <div class="col-2">Total Price</div>
+                                    </div>
+                                    {% for package_product in item.package.packageproduct_set.all %}
+                                        <div class="row border-bottom" style="font-style: italic;">
+                                            <div class="col-2_5">+ {{ package_product.product }}</div>
+                                            <div class="col">{{ package_product.quantity }}</div>
+                                            <div class="col">{{ package_product.product.price }}</div>
+                                            <div class="col-2_5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
+                                            <div class="col">{{ item.package.discount_percentage }}%</div>
+                                            <div class="col-2">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <div class="row">
+                                <div class="col"><b>Net Premium</b></div>
+                                <div class="col"><b>TK <span class="Net_Premium">{{ order.total_amount }}</span></b>
+                                </div>
+                            </div>
+                            <div class="row" style="border-bottom: 1px solid #1dc9b7">
+                                <div class="col">+ <span class="vat">15</span>% Vat</div>
+                                <div class="col">TK <span
+                                        class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col"><b>Total Premium</b></div>
+                                <div class="col"><b>TK <span
+                                        class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>
+                                </div>
+                            </div>
+                            <div class="row" style="border-bottom: 1px solid #1dc9b7">
+                                <div class="col">Delivery Cost</div>
+                                <div class="col">TK <span class="Delivery_Cost">50</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col"><b>Grand Total</b></div>
+                                <div class="col"><b>TK <span
+                                        class="Grand_Total">{{ order.total_amount | percentage_add:15 | add:50 }}</span></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

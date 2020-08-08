@@ -1,0 +1,134 @@
+{% extends 'layouts/default/main.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    {% if form.instance.pk %}
+        Update
+    {% else %}
+        Add
+    {% endif %} Order {% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="flat">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+                        {% crispy form %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block css %}
+{% endblock css %}
+{% block js %}
+    <script>
+        $(function () {
+            $('html').on('change', '.package_select select', function () {
+                let package = $(this).val()
+                let __this = $(this)
+                if (package) {
+                    let url = '/api/v1/packages/' + package + '/';
+                    axios.get(url).then(function (response) {
+                        let price = response.data.total_amount
+                        __this.closest('.dynamic-form').find('.price_select').find('input').val(price)
+                        calculate_package_price(__this)
+                    }).catch(function (e) {
+                        console.log(e)
+                    })
+                }
+            })
+
+            $('html').on('change', '.price_select input,.quantity_select input', function () {
+                let __this = $(this)
+                calculate_package_price(__this)
+            })
+
+            let calculate_package_price = function (__this) {
+                let price = __this.closest('.dynamic-form').find('.price_select').find('input').val()
+                let quantity = __this.closest('.dynamic-form').find('.quantity_select').find('input').val()
+                let total_price = price * quantity
+                __this.closest('.dynamic-form').find('.total_price_select').find('input').val(total_price)
+
+                calculate_total_price()
+            }
+
+            let calculate_total_price = function () {
+                let total_amount = 0
+                $('.total_price_select input').each(function () {
+                    let price = parseFloat($(this).val())
+                    total_amount += price
+                })
+
+                $('[name="total_amount"]').val(total_amount)
+            }
+
+            let autocomplete = new google.maps.places.Autocomplete(
+                /** @type {!HTMLInputElement} */ (
+                    document.getElementById('id_place')), {
+                    // types: ['address'],
+                    componentRestrictions: {country: "bd"},
+                });
+            autocomplete.addListener('place_changed', get_lat_long);
+
+            function get_lat_long() {
+                var place = autocomplete.getPlace();
+                console.log(place)
+                var lat = place.geometry.location.lat(),
+                    lng = place.geometry.location.lng();
+                set_lat_lng_zone(lat, lng)
+            }
+
+            function set_lat_lng_zone(lat, lng) {
+                $('[name="latitude"]').val(lat)
+                $('[name="longitude"]').val(lng)
+                $('[name="zone"]').val('')
+                axios.get('/location_service/api/location_zone', {
+                    params: {lat: lat, lng: lng}
+                }).then(function (response) {
+                    let data = response.data
+                    if (data) {
+                        $('[name="zone"]').val(data.id)
+                    }
+                }).catch(function (error) {
+                    console.log(error)
+                })
+            }
+
+
+        });
+
+        function order_form_submit() {
+            let url = '/api/v1/orders/'
+            var sample_order = {
+                "total_amount": "342",
+                "customer": "2",
+                "mobile_number": "3534543",
+                "address_line_1": "34535",
+                "address_line_2": "435",
+                "place": "Aamartaka.com, Dhaka, Bangladesh",
+                "latitude": "23.7847301",
+                "longitude": "90.4008518",
+                "zip": "3434",
+                "zone": "3",
+                "order_details": [
+                    {"package": "1", "price": "180.5", "quantity": "1", "total_price": "180.5"},
+                    {"product": "1", "price": "180.5", "quantity": "1", "total_price": "180.5"},
+                    {
+                        "package": "2",
+                        "price": "80.75",
+                        "quantity": "2",
+                        "total_price": "161.5"
+                    }
+                ]
+            }
+            axios.post(url, sample_order, {
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            }).then(function (response) {
+
+            })
+        }
+    </script>
+{% endblock js %}

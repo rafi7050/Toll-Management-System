@@ -1,0 +1,41 @@
+{% extends 'layouts/default/main.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_title %}
+    {% if form.instance.pk %}
+        Update
+    {% else %}
+        Add
+    {% endif %} Nutrition Point {% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12 col-md-12 col-lg-12">
+            <div class="">
+                <form action="" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+                        {% csrf_token %}
+                        {% include 'includes/form.html' %}
+                    </div>
+                    <button class="btn invisible  btn-primary mr-2">
+                        Submit
+                    </button>
+                    <div class="card-footer text-right">
+                        <a href="{% url 'nutrition_point_list' %}" class="btn btn-danger">Cancel</a>
+                        <button class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block css %}
+{% endblock css %}
+{% block js %}
+    <script>
+        $(function () {
+
+        });
+    </script>
+{% endblock js %}

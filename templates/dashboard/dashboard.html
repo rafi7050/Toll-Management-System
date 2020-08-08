@@ -1,0 +1,848 @@
+{% extends "dashboard/main_without_title.html" %}
+{% block title %}Dashboard{% endblock %}
+{% load static %}
+
+{% block content %}
+    {% if can_view_dashboard or request.user.is_superuser or request.user.userprofile.can_see_dashboard %}
+        <div class="search_data">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h4 class="p-3">Search Data</h4>
+                </div>
+            </div>
+            <div class="border">
+                <div class="row rounded-0 p-1 m-0 month_picker border-bottom bg-custom-primary">
+                    <div class="col px-1">
+                        <select name="day_month_filter" class="form-control" id="product">
+                            <option value="">Select Criteria</option>
+                            <option value="1">Day</option>
+                            <option value="2" selected>Month</option>
+                        </select>
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="From Date" name="from_date_day">
+                        <input type="text" class="from_monthpicker form-control bg-white" placeholder="From Month"
+                               name="from_date_month" value="01-2019">
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="To Date" name="to_date_day">
+                        <input type="text" class="to_monthpicker form-control bg-white" placeholder="To Month"
+                               name="to_date_month" value="{% now "m-Y" %}">
+                    </div>
+                    <div class="col px-1 d-flex justify-content-center align-items-center">
+                        <select name="search_eligibility" class="form-control">
+                            <option value="1">All</option>
+                            <option value="2">Eligible</option>
+                            <option value="3">Non Eligible</option>
+
+                        </select>
+                    </div>
+                    <div class="col px-1">
+                        <select multiple name="search_product_type" class="form-control selectmultiple ">
+                            {% for item in product_types %}
+                                <option value="{{ item.0 }}" selected>{{ item.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1 px-1">
+                        <div class="btn btn-primary form-control do_filter">GO</div>
+                    </div>
+                </div>
+                <div class="row aamartaka_row  p-1 m-0">
+                    <div class="col-2">
+                        <div class="row">
+                            <div class="col px-0">
+                                <div class="card px-0">
+                                    <div class="card-body p-0">
+                                        <span class="">Total Search</span><span class="badge gross_total"></span>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="row eligible_non_eligible border m-0">
+                                                    <div class="col-7  border-right p-2">Eligible</div>
+                                                    <div class="col-5  p-2 gross_eligible"></div>
+                                                </div>
+                                                <div class="row eligible_non_eligible border m-0">
+                                                    <div class="col-7  border-right p-2">Non Eligible</div>
+                                                    <div class="col-5  p-2 gross_non_eligible"></div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col px-2">
+                        <div class="row ml-0">
+                            <div class="col single_search_data px-2">
+                                <div class="card px-0">
+                                    <div class="card-body p-0">
+                                        <span class="search_title">Credit Card</span><span
+                                            class="badge search_number">5000</span>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="row eligible_non_eligible border m-0">
+                                                    <div class="col-7 p_name border-right py-2"></div>
+                                                    <div class="col-5 p_count py-2"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row  p-1 m-0">
+                    <div class="col">
+                        <div class="chart-container">
+                            <canvas id="chartjs" style="height: 300px!important;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-5 aamartaka_data">
+            <div class="row">
+                <div class="col">
+                    <div class="text-center p-3"><h4>E-Commerce Data</h4></div>
+                </div>
+            </div>
+            <div class="border">
+                <div class="row rounded-0 p-1 m-0 month_picker">
+                    <div class="col px-1">
+                        <select name="day_month_filter" class="form-control" id="product">
+                            <option value="">Select Criteria</option>
+                            <option value="1">Day</option>
+                            <option value="2" selected>Month</option>
+                        </select>
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="From Date" name="from_date_day">
+                        <input type="text" class="from_monthpicker form-control bg-white" placeholder="From Month"
+                               name="from_date_month" value="01-2019">
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="To Date" name="to_date_day">
+                        <input type="text" class="to_monthpicker form-control bg-white" placeholder="To Month"
+                               name="to_date_month" value="{% now "m-Y" %}">
+                    </div>
+                    {% if request.user.is_staff %}
+                        <div class="col px-1">
+                            <select name="m_type" class="form-control team-filter">
+                                <option value="1">Application</option>
+
+                                <option value="2">Search</option>
+                                <option value="3">Lead</option>
+
+
+                            </select>
+                        </div>
+                    {% else %}
+                        <input type="hidden" name="m_type" value="1">
+                    {% endif %}
+                    {% if request.user.is_superuser %}
+                        <div class="col px-1">
+                            <select name="team-filter" class="form-control team-filter">
+                                <option value="">All Team</option>
+                                {% for team in teams %}
+                                    <option value="{{ team.id }}">{{ team.name }}</option>
+                                {% endfor %}
+
+                            </select>
+                        </div>
+                        <div class="col px-1">
+                            <select name="agent_filter" class="form-control select2">
+                                <option value="">All Agent</option>
+                                {% for item in agents %}
+                                    <option value="{{ item.id }}">{{ item.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    {% elif not request.user.is_superuser and request.user.is_staff %}
+                        <input type="hidden" name="agent_filter" value="{{ request.user.id }}">
+                    {% endif %}
+                    <div class="col px-1">
+                        <select multiple name="search_product_type" class="form-control selectmultiple ">
+                            {% for item in product_types %}
+                                <option value="{{ item.0 }}" selected>{{ item.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {
+                    <div class="col-1 px-1">
+                        <div class="btn btn-primary form-control do_filter">GO</div>
+                    </div>
+                </div>
+                <div class="row rounded-0 p-1 m-0">
+                    <div class="col-6">
+                        <canvas id="aamartaka_applicaiton"></canvas>
+                    </div>
+                    <div class="col-6">
+                        {#                        <canvas id="application_bar"></canvas>#}
+                        <div class="row">
+                            <div class="col status_summery">
+                                <div class="row border m-0 bg-secondary fz-17">
+                                    <div class="col-7 as_name border-right py-2">Status</div>
+                                    <div class="col-5 as_count py-2">Number</div>
+                                </div>
+                                <div class="row border m-0 single_item">
+                                    <div class="col-7 as_name border-right py-2">Sample Title</div>
+                                    <div class="col-5 as_count py-2">count</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="mt-5 bank_application_data">
+            <div class="row">
+                <div class="col">
+                    <div class="text-center p-3"><h4><span class="bank_name"></span>Bank Application Data</h4></div>
+                </div>
+            </div>
+            <div class="border">
+                <div class="row rounded-0 p-1 m-0 month_picker">
+                    <div class="col px-1">
+                        <select name="day_month_filter" class="form-control" id="product">
+                            <option value="">Select Criteria</option>
+                            <option value="1">Day</option>
+                            <option value="2" selected>Month</option>
+                        </select>
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="From Date" name="from_date_day">
+                        <input type="text" class="from_monthpicker form-control bg-white" placeholder="From Month"
+                               name="from_date_month" value="01-2019">
+                    </div>
+                    <div class="col px-1">
+                        <input type="text" class="form-control" placeholder="To Date" name="to_date_day">
+                        <input type="text" class="to_monthpicker form-control bg-white" placeholder="To Month"
+                               name="to_date_month" value="{% now "m-Y" %}">
+                    </div>
+                    <div class="col px-1">
+                        <select multiple name="search_product_type" class="form-control selectmultiple ">
+                            {% for item in product_types %}
+                                <option value="{{ item.0 }}" selected>{{ item.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1 px-1">
+                        <div class="btn btn-primary form-control do_filter">GO</div>
+                    </div>
+                </div>
+                <div class="row rounded-0 p-1 m-0">
+                    <div class="col-6 px-0">
+                        <canvas id="bank_application"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <div class="col status_summery">
+                            <div class="row border m-0 bg-secondary fz-17">
+                                <div class="col-7 as_name border-right py-2">Status</div>
+                                <div class="col-5 as_count py-2">Number</div>
+                            </div>
+                            <div class="row border m-0 single_item">
+                                <div class="col-7 as_name border-right py-2">Sample Title</div>
+                                <div class="col-5 as_count py-2">count</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row rounded-0 p-1 m-0">
+                    <div class="col-12 mt-5">
+                        <div class="text-center">
+                            <div class="card">
+                                <div class="">
+                                    <h5>Disbursed Information</h5>
+                                </div>
+                                <div class="card-body text-left">
+                                    <div class="row no-gutters border">
+
+                                        <div class="col p-3 border-right">
+                                            <div class="row no-gutters fw-7">
+                                                <div class="col-6 p-2 border">Card Type</div>
+                                                <div class="col-6 p-2 border border-left-0">Number</div>
+                                            </div>
+                                            <div class="row no-gutters card_type_container">
+                                                <div class="col-6 p-2 border border-top-0 card_type_name"></div>
+                                                <div class="col-6 p-2 border-right border-bottom card_type_count"></div>
+                                            </div>
+                                            <div class="row no-gutters card_type_total">
+                                                <div class="col-6 p-2 border border-top-0">Total</div>
+                                                <div class="col-6 p-2 border-right border-bottom card_type_total_count"></div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col p-3" style="display: none;">
+                                            <div class="row no-gutters fw-7">
+                                                <div class="col-6 p-2 border">Loan Type</div>
+                                                <div class="col-6 p-2 border border-left-0">Amount</div>
+                                            </div>
+                                            <div class="row no-gutters loan_type_container">
+                                                <div class="col-6 p-2 border border-top-0 loan_type_name"></div>
+                                                <div class="col-6 p-2 border-right border-bottom loan_type_amount"></div>
+                                            </div>
+                                            <div class="row no-gutters loan_type_total">
+                                                <div class="col-6 p-2 border border-top-0">Total</div>
+                                                <div class="col-6 p-2 border-right border-bottom loan_type_total_amount"></div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    {% else %}
+        <div class="bg-white">
+            <h1 class="text-center">Welcome to E-Commerce</h1>
+        </div>
+    {% endif %}
+
+{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
+    <link rel="stylesheet" href="{% static 'plugins/jquery-month-picker/MonthPicker.css' %}">
+    <style>
+        .p_status {
+            display: flex;
+            align-items: center;
+            outline: 1px solid #dee2e6;
+            height: 100%;
+            padding-left: 15px;
+        }
+
+        .chart-legend {
+            font-size: 0.8em;
+        }
+
+        .chart-legend li {
+            list-style: none;
+        }
+
+        .chart-legend td span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin-right: 5px;
+        }
+
+        .chart-legend ul.fz-15 li {
+            line-height: 40px;
+        }
+
+        .chart-legend ul.fz-15 li span {
+            width: 15px !important;
+            height: 15px !important;
+        }
+
+        .badge {
+            position: absolute;
+            right: 30px;
+        {#background: #ccc;#} background: #d3e8ff;
+        }
+
+        .selectmultiple > button {
+            height: 100%;
+            width: 100%;
+            border: none !important;
+            line-height: 39px !important;
+        }
+
+        .selectmultiple > button:focus {
+            outline: none;
+        }
+
+        .ms-drop {
+            left: 0;
+        }
+
+        .selectmultiple .ms-choice > div {
+            top: 8px !important;
+        }
+
+        .ui-widget-header.month-picker-header.ui-corner-all {
+            border: none;
+            background: transparent;
+        }
+
+        a.ui-button.ui-corner-all.ui-widget {
+            background: transparent;
+        }
+
+        a.ui-button.ui-corner-all.ui-widget.ui-state-active {
+            background: #4198d2;
+            border-color: #4198d2;
+            color: #fff;
+        }
+
+        .aamartaka_row .card, .bank_row .card {
+            padding: 0 !important;
+        }
+
+    </style>
+{% endblock %}
+{% block js %}
+    <!-- JS Libraies -->
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@0.4.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="{% static 'plugins/jquery-month-picker/MonthPicker.js' %}"></script>
+    <script src="{% static 'js/page/dashboard-ecommerce.js' %}"></script>
+
+
+    <script>
+        /*
+            let loan_type_color = {
+                'Car_Loan': {
+                    'Eligible': '#4B0082',
+                    'Non Eligible': '#000080'
+                },
+                'Credit_Card': {
+                    'Eligible': '#E52B50',
+                    'Non Eligible': '#FFBF00'
+                },
+                'Home_Loan': {
+                    'Eligible': '#007BA7',
+                    'Non Eligible': '#00FF3F'
+                },
+                'Personal_Loan': {
+                    'Eligible': '#9966CC',
+                    'Non Eligible': '#007FFF'
+                }
+            }
+
+    */
+        let color = [
+            '#FFBF00',
+            '#E52B50',
+            '#9966CC',
+            '#E52B50',
+            '#007BA7',
+            '#E52B50',
+            '#4B0082',
+            '#E52B50']
+        let loan_type_color = {
+            'Car_Loan': {
+                'Eligible': '#4B0082',
+                'Non Eligible': '#E52B50'
+            },
+            'Credit_Card': {
+                'Eligible': '#FFBF00',
+                'Non Eligible': '#E52B50'
+            },
+            'Home_Loan': {
+                'Eligible': '#007BA7',
+                'Non Eligible': '#E52B50'
+            },
+            'Personal_Loan': {
+                'Eligible': '#9966CC',
+                'Non Eligible': '#E52B50'
+            }
+        }
+
+        $(function () {
+            set_bank_aplication_data($('.bank_application_data'))
+            $('.bank_application_data').on('click', '.do_filter', function () {
+                set_bank_aplication_data($('.bank_application_data'))
+            })
+            set_aamartaka_aplication_data($('.aamartaka_data'))
+
+            $('.aamartaka_data').on('click', '.do_filter', function () {
+                set_aamartaka_aplication_data($('.aamartaka_data'))
+            })
+        })
+        $('.team-filter option').each(function () {
+            $(this).text($(this).text().split('-')[1])
+        })
+        $('.aamartaka_data').on('change', '[name="team-filter"]', function () {
+            get_team_agent($('.aamartaka_data'))
+        })
+        $('.selectmultiple').multipleSelect({
+            'placeholder': 'All Product',
+            'width': '100%'
+        });
+        $('select.selectmultiple').hide()
+        {#$(".selectmultiple").chosen({});#}
+        $('[name="from_date_day"]').hide()
+        $('[name="to_date_day"]').hide()
+        $('[name="day_month_filter"]').change(function () {
+            if ($(this).val() == 1) {
+                $(this).closest('.row').find('[name="from_date_month"]').hide()
+                $(this).closest('.row').find('[name="to_date_month"]').hide()
+                $(this).closest('.row').find('[name="to_date_day"]').show()
+                $(this).closest('.row').find('[name="from_date_day"]').show()
+            } else {
+                $(this).closest('.row').find('[name="from_date_month"]').show()
+                $(this).closest('.row').find('[name="to_date_month"]').show()
+                $(this).closest('.row').find('[name="from_date_day"]').hide()
+                $(this).closest('.row').find('[name="to_date_day"]').hide()
+            }
+        });
+
+        let search_function = function (template, params = {}) {
+            axios.get('/api/v1/dashboard/?is_search=true', {params: params})
+                .then(function (response) {
+                    let data = response.data
+                    if (params['bank']) {
+                        var search_data = data.bank_data
+                    } else {
+                        var search_data = data.search_data
+                    }
+                    var total_eligible = 0
+                    var total_non_eligible = 0
+                    template.find('.single_search_data').not(":first").remove()
+                    Object.entries(search_data).map(obj => {
+                        var search_template = template.find('.single_search_data:first').clone()
+                        search_template.find('.eligible_non_eligible').not(":first").remove()
+                        const key = obj[0];
+                        const value = obj[1];
+                        let color = loan_type_color[key]
+                        search_template.find('.search_title').text(key.replace('_', ' '));
+                        var total = 0
+
+                        value.forEach(function (i, v) {
+                            Object.entries(i).forEach(([key, val]) => {
+                                var eligible_non_eligible = search_template.find('.eligible_non_eligible:first').clone()
+
+                                if (key === 'Eligible') {
+                                    eligible_non_eligible.attr('style', 'font-weight: 600;color:#fff;background-color:' + color[key])
+                                } else {
+                                    eligible_non_eligible.attr('style', 'color:' + color[key])
+                                }
+
+                                eligible_non_eligible.find('.p_name').text(key)
+                                eligible_non_eligible.find('.p_count').text(val)
+
+                                search_template.find('.eligible_non_eligible:last').after(eligible_non_eligible)
+                                total = total + val
+                                if (key === 'Eligible') {
+                                    total_eligible = total_eligible + val
+                                } else {
+                                    total_non_eligible = total_non_eligible + val
+                                }
+                            })
+
+                        })
+
+                        search_template.find('.search_number').text(total);
+
+                        search_template.find('.eligible_non_eligible:first').remove()
+                        template.find('.single_search_data:last').after(search_template)
+                    });
+                    template.find('.gross_total').text(total_non_eligible + total_eligible);
+                    template.find('.gross_eligible').text(total_eligible);
+                    template.find('.gross_non_eligible').text(total_non_eligible);
+                    template.find('.single_search_data:first').remove()
+                })
+                .catch(function (error) {
+                })
+                .then(function () {
+                    // always executed
+                });
+        }
+        search_function($('.aamartaka_row'), {})
+
+
+        axios.get('/api/v1/dashboard/?is_application=true')
+            .then(function (response) {
+                let data = response.data.data
+                {#chartGenerate(application_bar_chart, data)#}
+                chartGenerate(donut_chart, data)
+
+                generate_status_table(data, $('.aamartaka_data'))
+            })
+            .catch(function (error) {
+            })
+            .then(function () {
+                // always executed
+            });
+        axios.get('/api/v1/dashboard/?is_application=true&bank_application=true')
+            .then(function (response) {
+                let data = response.data.data
+                let disbursed_bank = response.data.disbursed_bank
+                chartGenerate(bank_application_bar_chart, data)
+                disbursed_bank.forEach(function (item, index) {
+                    console.log(item, index)
+                })
+                $('.loan_total').text(numberWithCommas(number_or_zero(disbursed_bank.loan)))
+                count_zero_to_total($('.loan_total'))
+                $('.creditcard_total').text(disbursed_bank.credit_card)
+                generate_status_table(data, $('.bank_application_data'))
+
+            })
+            .catch(function (error) {
+            })
+            .then(function () {
+                // always executed
+            });
+        $('.bank_row').hide()
+        $('.search_data').on('click', '.do_filter', function () {
+            var bank = {% if request.user.is_staff %}$('.search_data').find('[name="search_bank_filter"]').val()
+            {% else %}{{ request.user.userprofile.institute.id }}{% endif %}
+            var bank_name = {% if request.user.is_staff %}$('.search_data')
+                .find('[name="search_bank_filter"] option:selected').text(){% endif %}
+            $('.bank_row').find('.bank_name').text(bank_name)
+            var criteria = $('.search_data').find('[name="day_month_filter"]').val()
+            var from_month = null
+            var to_month = null
+            var is_eligible = $('.search_data').find('[name="search_eligibility"]').val()
+            var product_type = $('.search_data').find('[name="search_product_type"]').val()
+            if (criteria == 1) {
+                from_month = $('.search_data').find('[name="from_date_day"]').val()
+                to_month = $('.search_data').find('[name="to_date_day"]').val()
+            } else if (criteria == 2) {
+                from_month = $('.search_data').find('[name="from_date_month"]').val()
+                to_month = $('.search_data').find('[name="to_date_month"]').val()
+            }
+
+            var params1 = {
+                day_criteria: criteria,
+                from_day: from_month,
+                end_day: to_month,
+                is_eligible: is_eligible,
+                p_type: product_type.join()
+            }
+
+
+            if (criteria && from_month && to_month) {
+                search_function($('.aamartaka_row'), params1)
+            }
+            if (bank) {
+                var params2 = {
+                    day_criteria: criteria,
+                    from_day: from_month,
+                    end_day: to_month,
+                    is_eligible: is_eligible,
+                    p_type: product_type.join(),
+                    bank: {% if request.user.is_staff %}bank{% else %}{{ request.user.userprofile.institute.id }}{% endif %}
+                }
+
+                if (criteria, from_month, to_month) {
+                    $('.bank_row').show()
+                    axios.get('/api/v1/dashboard/?is_search=true&is_graph=true', {params: params2})
+                        .then(function (response) {
+                            let data = response.data.data
+                            chartGenerate(bar_chart, data)
+                        })
+                        .catch(function (error) {
+                        })
+                        .then(function () {
+
+                        });
+                    search_function($('.bank_row'), params2)
+                }
+            } else {
+                if (criteria, from_month, to_month) {
+                    axios.get('/api/v1/dashboard/?is_search=true&is_graph=true', {params: params1})
+                        .then(function (response) {
+                            let data = response.data.data
+                            chartGenerate(bar_chart, data)
+                        })
+                        .catch(function (error) {
+                        })
+                        .then(function () {
+
+                        });
+                }
+                $('.bank_row').hide()
+            }
+
+        })
+
+
+
+        let set_aamartaka_aplication_data = function (container) {
+            let criteria = container.find('[name="day_month_filter"]').val()
+            let from_month = container.find('[name="from_date_month"]').val()
+            let to_month = container.find('[name="to_date_month"]').val()
+            let product_type = container.find('[name="search_product_type"]').val()
+            let m_type = container.find('[name="m_type"]').val()
+            let application_bank_filter = {% if request.user.is_staff %}container.find('[name="application_bank_filter"]').val()
+            {% else %}{{ request.user.userprofile.institute.id }}{% endif %}
+            let team = container.find('[name="team-filter"]').val()
+            let agent = container.find('[name="agent_filter"]').val()
+            if (criteria == 1) {
+                from_month = container.find('[name="from_date_day"]').val()
+                to_month = container.find('[name="to_date_day"]').val()
+            }
+
+            let params = {
+                day_criteria: criteria,
+                from_day: from_month,
+                end_day: to_month,
+                p_type: product_type.join(),
+                bank: application_bank_filter,
+                team: team,
+                agent: agent,
+                m_type: m_type,
+            }
+            if (criteria && from_month && to_month) {
+                axios.get('/api/v1/dashboard/?is_application=true', {params: params})
+                    .then(function (response) {
+                        let data = response.data.data
+                        {#chartGenerate(application_bar_chart, data)#}
+                        chartGenerate(donut_chart, data)
+                        generate_status_table(data, $('.aamartaka_data'))
+                    })
+                    .catch(function (error) {
+                    })
+                    .then(function () {
+                        // always executed
+                    });
+            }
+        }
+        let get_team_agent = function (content) {
+            let team = content.find('[name="team-filter"]').val()
+            let params = {user__groups: team}
+            axios.get('/api/v1/profile/', {params: params})
+                .then(function (response) {
+                    let data = response.data.results
+                    content.find('[name="agent_filter"] option').not(':first').remove()
+                    data.forEach(function (item) {
+                        content.find('[name="agent_filter"] option:last').after($('<option></option>').val(item.user).text(item.full_name))
+                    })
+                })
+                .catch(function (error) {
+                })
+                .then(function () {
+                    // always executed
+                });
+        }
+
+        let generate_status_table = function (data, container) {
+            let status = data['labels']
+            let status_data = data["datasets"][0].data
+            let color = data["datasets"][0].backgroundColor
+            container.find('.status_summery .single_item').not(':first').remove()
+            let total = 0
+            status.forEach(function (item, key) {
+                if (key) {
+                    let single_item = container.find('.status_summery .single_item:first').clone()
+                    container.find('.status_summery .single_item:last').after(single_item)
+                }
+                container.find('.status_summery .single_item').eq(key).find('.as_name').text(item).css('color', color[key])
+                container.find('.status_summery .single_item').eq(key).find('.as_count').text(status_data[key])
+                total = total + status_data[key]
+            })
+            let single_item = container.find('.status_summery .single_item:first').clone()
+            container.find('.status_summery .single_item:last').after(single_item)
+
+            container.find('.status_summery .single_item:last').find('.as_name').text('Total').css('color', '#6c757d')
+            container.find('.status_summery .single_item:last').find('.as_count').text(total)
+            container.find('.status_summery .single_item:last').addClass('fz-16 fw-6')
+        }
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            {% if not request.user.is_staff %}
+                $('.do_filter').click()
+            {% endif %}
+            $('.from_monthpicker').MonthPicker({
+                Button: false,
+                MaxMonth: 0,
+                MinMonth: '01-2019',
+                MonthFormat: 'mm-yy'
+            });
+
+            $('.to_monthpicker').MonthPicker({
+                Button: false,
+                MaxMonth: 0,
+                MinMonth: '02-2019',
+                MonthFormat: 'mm-yy'
+            });
+
+            $('.monthpicker').MonthPicker({
+                Button: false,
+                MaxMonth: 0,
+                MonthFormat: 'mm-yy'
+            });
+
+            $('.search_data [name="from_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+                onSelectDate: function (ct, $i) {
+                    $('.search_data [name="to_date_day"]').datetimepicker({minDate: $i.val()})
+                    $('.search_data [name="to_date_day"]').prop('disabled', false)
+                }
+            });
+
+            $('.aamartaka_data [name="from_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+                onSelectDate: function (ct, $i) {
+                    $('.aamartaka_data [name="to_date_day"]').datetimepicker({minDate: $i.val()})
+                    $('.aamartaka_data [name="to_date_day"]').prop('disabled', false)
+                }
+            });
+            $('.bank_application_data [name="from_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+                onSelectDate: function (ct, $i) {
+                    $('.bank_application_data [name="to_date_day"]').datetimepicker({minDate: $i.val()})
+                    $('.bank_application_data [name="to_date_day"]').prop('disabled', false)
+                }
+            });
+
+            $('[name="to_date_day"]').prop('disabled', true)
+
+            $('.search_data [name="to_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+            });
+
+            $('.aamartaka_data [name="to_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+            });
+
+            $('.bank_application_data [name="to_date_day"]').datetimepicker({
+                timepicker: false,
+                format: 'Y-m-d',
+                maxDate: 0,
+                scrollMonth: false,
+            });
+
+
+            $('[name="from_date_day"]').on('input', function (e) {
+                e.preventDefault()
+                let value = $(this).val('')
+
+            })
+
+            $('[name="to_date_day"]').on('input', function (e) {
+                e.preventDefault()
+                $(this).val('')
+            })
+            {% if not request.user.is_superuser %}
+                scheduled_product()
+            {% endif %}
+        });
+    </script>
+{% endblock %}

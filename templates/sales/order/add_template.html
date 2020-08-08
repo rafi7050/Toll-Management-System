@@ -1,0 +1,358 @@
+{% extends 'main.html' %}
+{% block content %}
+    <div class="kt-portlet">
+        <div class="kt-portlet__head">
+            <div class="kt-portlet__head-label">
+                <h3 class="kt-portlet__head-title">
+                    Order Add Form
+                </h3>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-8">
+                <div class="row px-4 m-0">
+                    <div class="col">
+                        <div id="div_id_orderdetails_set-0-vehicle" class="form-group">
+                            <label for="id_orderdetails_set-0-vehicle" class="">
+                                Type
+                            </label>
+                            <div class="">
+                                <select name="type" class="select form-control" id="id_orderdetails_set-0-vehicle">
+                                    <option value="" selected="">Select Type</option>
+                                    {% for item in types %}
+                                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col company_or_customer_container">
+
+                    </div>
+                </div>
+                <div id="type_selected_option_dom"></div>
+            </div>
+            <div class="col-4">
+                <div class="order_cost_details">
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script type="text/html" id="company_list">
+        <div id="div_id_orderdetails_set-0-vehicle" class="form-group">
+            <label for="id_orderdetails_set-0-vehicle" class="">
+                Company
+            </label>
+            <div class="">
+                <select name="company_customer" class="select form-control"
+                        id="id_orderdetails_set-0-vehicle">
+                    <option value="" selected="">Select Company</option>
+                    {% for item in company_list %}
+                        <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="customer_list">
+        <div id="div_id_orderdetails_set-0-vehicle" class="form-group">
+            <label for="id_orderdetails_set-0-vehicle" class="">
+                Customer
+            </label>
+            <div class="">
+                <select name="company_customer" class="select form-control"
+                        id="id_orderdetails_set-0-vehicle">
+                    <option value="" selected="">Select Customer</option>
+                    {% for item in customer_list %}
+                        <option value="{{ item.id }}">{{ item.get_full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </script>
+
+{% endblock %}
+{% block js %}
+    <script type="text/html" id="InsuranceCostTemplate">
+        <div class="single_item_cost"
+             style="background: #f2f3f8;margin: 30px;padding: 30px;border-bottom: 8px solid #1dc9b7;">
+            <div class="row text-center">
+                <h2> Act Liability breakdown </h2>
+                <hr>
+            </div>
+            <div class="row">
+                <div class="col">Type</div>
+                <div class="col">Act Liability Insurance</div>
+            </div>
+            <div class="row">
+                <div class="col">CC</div>
+                <div class="col"><span class="VehicleCC"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">Act Liabilities</div>
+                <div class="col">TK <span class="Act_Liabilities"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">+ <span class="Passenger"></span> Passenger @ <span
+                        class="Passenger_Amount"></span></div>
+                <div class="col">TK <span class="Passenger_Cost"></span></div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid #1dc9b7">
+                <div class="col">+ Driver</div>
+                <div class="col">TK <span class="Driver_Amount"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Net Premium</b></div>
+                <div class="col"><b>TK <span class="Net_Premium"></span></b></div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid #1dc9b7">
+                <div class="col">+ <span class="vat"></span>% Vat</div>
+                <div class="col">TK <span class="Vat_Amount"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Total Premium</b></div>
+                <div class="col"><b>TK <span class="Total_premium"></span></b></div>
+            </div>
+            <div class="row" style="border-bottom: 1px solid #1dc9b7">
+                <div class="col">Delivery Cost</div>
+                <div class="col">TK <span class="Delivery_Cost"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Grand Total</b></div>
+                <div class="col"><b>TK <span class="Grand_Total"></span></b></div>
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="TaxTokenCostTemplate">
+        <div class="single_item_cost"
+             style="background: #f2f3f8;margin: 30px;padding: 30px;border-bottom: 8px solid #1dc9b7;">
+            <div class="row text-center">
+                <h2> Tax Token Breakdown </h2>
+                <hr>
+            </div>
+            <div class="row font-weight-bold">
+                <div class="col">Name of Item</div>
+                <div class="col Name_of_Item"></div>
+            </div>
+            <div class="row">
+                <div class="col">Main Fee</div>
+                <div class="col">TK <span class="Main_Fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">+ Inspection Fee</div>
+                <div class="col">TK <span class="Inspection_fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">+ Label Fee</div>
+                <div class="col">TK <span class="Label_fee"></span></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Late Fee</div>
+                <div class="col">TK <span class="Late_fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Total</b></div>
+                <div class="col"><b>TK <span class="Total"></span></b></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Vat</div>
+                <div class="col">TK <span class="VAT"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Total Premium</b></div>
+                <div class="col"><b>TK <span class="Total_Premium"></span></b></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Service Charge</div>
+                <div class="col">TK <span class="service_charge"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Grand Total</b></div>
+                <div class="col"><b>TK <span class="Grand_Total"></span></b></div>
+            </div>
+
+        </div>
+    </script>
+    <script type="text/html" id="FitnessCertificateCostTemplate">
+        <div class="single_item_cost"
+             style="background: #f2f3f8;margin: 30px;padding: 30px;border-bottom: 8px solid #1dc9b7;">
+            <div class="row text-center">
+                <h2> Fitness Certificate Breakdown </h2>
+                <hr>
+            </div>
+            <div class="row font-weight-bold">
+                <div class="col">Name of Item</div>
+                <div class="col Name_of_Item"></div>
+            </div>
+            <div class="row">
+                <div class="col">Main Fee</div>
+                <div class="col">TK <span class="Main_Fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">+ Inspection Fee</div>
+                <div class="col">TK <span class="Inspection_fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col">+ Label Fee</div>
+                <div class="col">TK <span class="Label_fee"></span></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Late Fee</div>
+                <div class="col">TK <span class="Late_fee"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Total</b></div>
+                <div class="col"><b>TK <span class="Total"></span></b></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Vat</div>
+                <div class="col">TK <span class="VAT"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Total Premium</b></div>
+                <div class="col"><b>TK <span class="Total_Premium"></span></b></div>
+            </div>
+            <div class="row border-bottom border-success">
+                <div class="col">+ Service Charge</div>
+                <div class="col">TK <span class="service_charge"></span></div>
+            </div>
+            <div class="row">
+                <div class="col"><b>Grand Total</b></div>
+                <div class="col"><b>TK <span class="Grand_Total"></span></b></div>
+            </div>
+        </div>
+    </script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.formset/1.2.2/jquery.formset.js"></script>
+
+    <script>
+        $(function () {
+            type_select_options()
+            $('html').on('change', '[name="type"]', function (e) {
+                e.preventDefault()
+                type_select_options()
+            })
+
+            $('html').on('change', '[name="type"],[name="company_customer"]', function (e) {
+                e.preventDefault()
+                load_type_selected_dom()
+            })
+
+
+        })
+
+        let type_select_options = function () {
+            let type = $('[name="type"]').val()
+            if (type == 'customer') {
+                let customer_options = $('#customer_list').html()
+                $('.company_or_customer_container').html(customer_options)
+            } else if (type == 'company') {
+                let company_options = $('#company_list').html()
+                $('.company_or_customer_container').html(company_options)
+            } else {
+                $('.company_or_customer_container').html('')
+            }
+        }
+
+        let load_type_selected_dom = function () {
+            let type = $('[name="type"]').val()
+            let company_customer = $('[name="company_customer"]').val()
+            console.log(type, company_customer)
+            if (type && company_customer) {
+                $('#type_selected_option_dom').load('/sales/order/' + type + '/' + company_customer + '/add/')
+            } else {
+                $('#type_selected_option_dom').html('')
+            }
+        }
+
+        $('html').on('change', '.vehicle_select select,.service_type_select select', function () {
+            calculate_order_price_details()
+        })
+
+
+        let calculate_order_price_details = function () {
+            let vehicle_ids = $('.vehicle_select').find('select').map(function () {
+                return this.value
+            }).get();
+
+            let data = objectifyFormListWithAttributeRename($('.form_set_container .dynamic-form .form-group').find('input,select').serializeArray())
+            $('.order_cost_details').html('')
+            $('.price_select').find('input[type="number"]').val('')
+            axios.post('/pricing/api/order/price/calculation/', {data}, {headers: {"X-CSRFToken": '{{ csrf_token }}'}}).then(function (response) {
+                let data = response.data
+                data.forEach(function (item) {
+                    if (item.type == 'Insurance') {
+                        let template = $($('#InsuranceCostTemplate').html())
+                        Object.entries(item).forEach(([key, value]) => {
+                            template.find('.' + key).text(value)
+                            console.log(key, value)
+                        })
+                        $('.order_cost_details').append(template)
+                        let VehicleID = item.VehicleID
+                        let GrandTotal = item.Grand_Total
+                        let service_type = item.service_type
+                        $('.vehicle_select').find('select').each(function () {
+                            if ($(this).val() == VehicleID) {
+                                let service_type_val = $(this).closest('.row1').find('.service_type_select select').val()
+                                console.log(service_type_val, service_type)
+                                if (service_type_val == service_type) {
+                                    $(this).closest('.row1').find('input[type="number"]').val(GrandTotal)
+                                }
+                            }
+                        })
+                    } else if (item.type == 'TaxToken') {
+                        let TaxTokenCostTemplate = $($('#TaxTokenCostTemplate').html())
+                        Object.entries(item).forEach(([key, value]) => {
+                            TaxTokenCostTemplate.find('.' + key.replace(/\s/g, '_')).text(value)
+                            console.log(key.replace(/\s/g, '_'))
+                        })
+                        $('.order_cost_details').append(TaxTokenCostTemplate)
+
+                        let VehicleID = item.VehicleID
+                        let GrandTotal = item['Grand Total']
+                        let service_type = item.service_type
+                        console.log(VehicleID, GrandTotal, service_type)
+                        $('.vehicle_select').find('select').each(function () {
+                            if ($(this).val() == VehicleID) {
+                                let service_type_val = $(this).closest('.row1').find('.service_type_select select').val()
+                                console.log(service_type_val, service_type)
+                                if (service_type_val == service_type) {
+                                    $(this).closest('.row1').find('input[type="number"]').val(GrandTotal)
+                                }
+                            }
+                        })
+                    } else if (item.type == 'FitnessCertificate') {
+                        let TaxTokenCostTemplate = $($('#FitnessCertificateCostTemplate').html())
+                        Object.entries(item).forEach(([key, value]) => {
+                            TaxTokenCostTemplate.find('.' + key.replace(/\s/g, '_')).text(value)
+                            console.log(key.replace(/\s/g, '_'))
+                        })
+                        $('.order_cost_details').append(TaxTokenCostTemplate)
+
+                        let VehicleID = item.VehicleID
+                        let GrandTotal = item['Grand Total']
+                        let service_type = item.service_type
+                        console.log(VehicleID, GrandTotal, service_type)
+                        $('.vehicle_select').find('select').each(function () {
+                            if ($(this).val() == VehicleID) {
+                                let service_type_val = $(this).closest('.row1').find('.service_type_select select').val()
+                                console.log(service_type_val, service_type)
+                                if (service_type_val == service_type) {
+                                    $(this).closest('.row1').find('input[type="number"]').val(GrandTotal)
+                                }
+                            }
+                        })
+                    }
+
+                })
+            }).catch(function (error) {
+                // handle error
+                console.log(error);
+            })
+        }
+    </script>
+{% endblock %}
+

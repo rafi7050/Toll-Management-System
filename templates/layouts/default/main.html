@@ -1,0 +1,188 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
+    <title>E-Commerce | {% block title %}{% endblock %}</title>
+    <link rel="shortcut icon" href="{% static 'img/favicon-32x32.png' %}" type="image/x-icon">
+    {#    Add css to includes/css.html   #}
+    {% include 'includes/css.html' %}
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+<div id="app">
+    <div class="main-wrapper">
+        <div class="navbar-bg"></div>
+        <nav class="navbar navbar-expand-lg main-navbar">
+            <form class="form-inline mr-auto">
+                <ul class="navbar-nav mr-3">
+                    <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg burgerManue"><img
+                            src="{% static 'img/btn-open-menu.png' %}" class="opaciy-6"
+                            style="padding: 10px;width: 80%;" alt="burgerManue"></a></li>
+                </ul>
+                <span class="page_title">{% block page_title %}{% endblock page_title %}</span>
+            </form>
+            <ul class="navbar-nav navbar-right">
+                {% if request.user.is_superuser %}
+                    <li class="dropdown dropdown-list-toggle">
+                        <a href="#" id="notification_btn" data-toggle="dropdown"
+                           class="nav-link notification-toggle nav-link-lg beep">
+                            <div class="reports" data-toggle="dropdown">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-list dropdown-menu-right">
+                            <div class="dropdown-header">Messages
+                                <div class="float-right">
+                                    <a href="#">Mark All As Read</a>
+                                </div>
+                            </div>
+                            <div>
+                                <a href="#" class="dropdown-item dropdown-item-unread">
+                                    <img alt="image" src="{% static 'img/avatar/avatar-1.png' %}"
+                                         class="rounded-circle dropdown-item-img">
+                                    <div class="dropdown-item-desc">
+                                        <b>Kusnaedi</b> has moved task <b>Fix bug header</b> to <b>Done</b>
+                                        <div class="time">10 Hours Ago</div>
+                                    </div>
+                                </a>
+                                <a href="#" class="dropdown-item dropdown-item-unread">
+                                    <img alt="image" src="{% static 'img/avatar/avatar-2.png' %}"
+                                         class="rounded-circle dropdown-item-img">
+                                    <div class="dropdown-item-desc">
+                                        <b>Ujang Maman</b> has moved task <b>Fix bug footer</b> to <b>Progress</b>
+                                        <div class="time">12 Hours Ago</div>
+                                    </div>
+                                </a>
+
+                            </div>
+                            <div class="dropdown-footer text-center">
+                                <a href="#">View All <i class="fas fa-chevron-right"></i></a>
+                            </div>
+                        </div>
+                    </li>
+                {% endif %}
+                <li class="dropdown dropdown-list-toggle">
+                    <a href="#" id="notification_btn" data-toggle="dropdown"
+                       class="nav-link notification-toggle nav-link-lg beep">
+                        <div class="reports" data-toggle="dropdown">
+                            <i class="far fa-bell"></i>
+                        </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-list dropdown-menu-right">
+                        <div class="dropdown-header">Notifications
+                            <div class="float-right">
+                                <a href="#">Mark All As Read</a>
+                            </div>
+                        </div>
+                        <div class="dropdown-list-content notification_all">
+                            <a href="#" class="dropdown-item single_notification">
+                                <img alt="image" src="{% static 'img/avatar/avatar-1.png' %}"
+                                     class="rounded-circle dropdown-item-img">
+                                <div class="dropdown-item-desc">
+                                    <p></p>
+                                    <div class="time"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="dropdown-footer text-center">
+{#                            <a href="{% url 'notification_list' %}">View All <i class="fas fa-chevron-right"></i></a>#}
+                        </div>
+                    </div>
+                </li>
+                <li class="dropdown flex-center ml-15px"><a href="#" data-toggle="dropdown"
+                                                            class="nav-link dropdown-toggle nav-link-lg nav-link-user new-hello-msg">
+                    <img alt="image" src="
+
+
+                            {% if request.user.userprofile.profile_image %}{{ request.user.userprofile.profile_image.url }}{% else %}{% static 'img/avatar/avatar-1.png' %}{% endif %}"
+                         width="25" class="rounded-circle mr-1">
+                    <div class="d-sm-none d-lg-inline-block logined_user" id="{{ request.user.id }}">
+                        Hello {{ request.user }}</div>
+                </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <div class="dropdown-title">Last Logged in <p
+                                class="text-info">{{ request.user.last_login }}</p>
+                        </div>
+                        {% if request.user.is_staff %}
+{#                            <a href="{% url 'user_profile' %}" class="dropdown-item has-icon">#}
+{#                                <i class="far fa-user"></i> Profile#}
+{#                            </a>#}
+                            <a href="#" class="dropdown-item has-icon">
+                                <i class="fas fa-bolt"></i> Activities
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'lock' %}" class="dropdown-item has-icon">
+                            <i class="fas fa-lock"></i> Lock
+                        </a>
+                        <a href="{% url 'password_change' %}" class="dropdown-item has-icon">
+                            <i class="fas fa-cog"></i> Settings
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{% url 'logout' %}" class="dropdown-item has-icon text-danger">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        {% include 'includes/sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <section class="section" id="main_section">
+                {#                <div class="section-header">#}
+                {#                    <h1>{% block page_title %}{% endblock page_title %}</h1>#}
+                {#        <div class="section-header-breadcrumb">#}
+                {#            <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>#}
+                {#            <div class="breadcrumb-item"><a href="#">Credit Card</a></div>#}
+                {#            <div class="breadcrumb-item">Credit Card Eligibility</div>#}
+                {#        </div>#}
+                {#                </div>#}
+                {% include 'includes/messages.html' %}
+                {% block content %}
+
+                {% endblock %}
+            </section>
+        </div>
+
+        <div id="ajaxModal" class="modal" data-easein="bounceIn" tabindex="-1" role="dialog"
+             aria-labelledby="costumModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            ×
+                        </button>
+                        <h4 class="modal-title">
+                            Modal Header
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">
+                            Close
+                        </button>
+                        <button class="btn btn-primary">
+                            Save changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% include 'includes/footer.html' %}
+    </div>
+{#    {% include 'template.html' %}#}
+{#    {% include 'scheduled_product_modal.html' %}#}
+</div>
+{#    Add js to includes/js.html   #}
+{% include 'includes/js.html' %}
+
+{% block js %}{% endblock %}
+</body>
+</html>

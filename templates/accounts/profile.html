@@ -1,0 +1,533 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block css %}
+
+    <style>
+        .no-shadow .nav-link {
+            box-shadow: none !important;
+        }
+    </style>
+{% endblock %}
+{% block page_title %}
+    User Profile
+{% endblock page_title %}
+
+{% block content %}
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row no-gutters">
+                <div class="col">
+                    <img src="data:image/jpeg;base64,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"
+                         class="thumbnail rounded-circle no_image" alt="">
+                </div>
+                <div class="col-md-9 profile-info">
+                    <h1>
+                        {{ user.first_name }} {{ user.last_name }}
+                        {% if user.is_active %}
+                            <sup style="color: green">
+                                <small><i class="fa fa-circle"></i></small>
+                            </sup>
+                        {% endif %}
+                    </h1>
+                    <p>
+                        Gender: {{ user.userprofile.get_gender_display }}
+                        <br>
+                        Date joined: {{ user.date_joined|date:"M d, Y" }}
+                    </p>
+                    <ul class="list-inline">
+                        <li>
+                            <i class="fa fa-user"></i> {{ user.username }}
+                        </li>
+                        <li>
+                            <i class="fa fa-envelope"></i> {{ user.email }}
+                        </li>
+                        {% if user.userprofile.address %}
+                            <li>
+                                <i class="fa fa-map-marker"></i> {{ user.userprofile.address }}
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="card personal_overview_container">
+        <div class="alert alert-primary m-0 rounded-0">
+            <h5 class="mb-0">Personal Overview</h5>
+        </div>
+        <div class="card-body p-0 m-0">
+            <div class="filter_container border border-top-0 p-2">
+                <div class="row no-gutters">
+                    <div class="col py-2 pl-0">
+                        <div class="input-group input-group-sm rounded-0">
+                            <input type="text" class="form-control datepicker" name="from_date" placeholder="From Date">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-light-center">-</div>
+                            </div>
+                            <input type="text" class="form-control datepicker" name="to_date" placeholder="To Date">
+                        </div>
+                    </div>
+                    <div class="col-3 p-2">
+                        <select name="product" class="form-control form-control-sm rounded-0">
+                            <option value="">Select Product</option>
+                            {% for item in all_services %}
+                                <option value="{{ item.0 }}">{{ item.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1 py-2 pr-0">
+                        <button class="btn btn-primary w-100 rounded-0" id="get_personal_overview">GO</button>
+                    </div>
+                </div>
+            </div>
+            <div class="output_container  border border-top-0 p-2 fz-15">
+                <div class="table_container border-left border-top">
+                    <div class="row no-gutters table-head bg-secondary-light fw-7">
+                        <div class="col border-right border-bottom p-2">Type</div>
+                        <div class="col border-right border-bottom p-2">Count</div>
+                    </div>
+                    <div class="table_body">
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Search</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="search_count">0</span>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Lead</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="lead_count">0</span>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Application</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="application_count">0</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card commission_container">
+        <div class="alert alert-primary m-0 rounded-0">
+            <h5 class="mb-0">Commission</h5>
+        </div>
+        <div class="card-body p-0 m-0">
+            <div class="filter_container border border-top-0 p-2">
+                <div class="row no-gutters">
+                    <div class="col py-2 pl-0">
+                        <div class="input-group input-group-sm rounded-0">
+                            <input type="text" class="form-control datepicker" name="from_date" placeholder="From Date">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-light-center">-</div>
+                            </div>
+                            <input type="text" class="form-control datepicker" name="to_date" placeholder="To Date">
+                        </div>
+                    </div>
+                    <div class="col-1 py-2 pl-2 pr-0">
+                        <button class="btn btn-primary w-100 rounded-0" id="get_commission">GO</button>
+                    </div>
+                </div>
+            </div>
+            <div class="output_container  border border-top-0 p-2 fz-15">
+                <div class="table_container border-left border-top">
+                    <div class="row no-gutters table-head bg-secondary-light fw-7">
+                        <div class="col border-right border-bottom p-2">Product</div>
+                        <div class="col border-right border-bottom p-2">Amount</div>
+                    </div>
+                    <div class="table_body">
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Credit Card</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="credit_card_amount product_commission_amount" data-product="1">0</span>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Personal Loan</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="personal_loan_amount product_commission_amount"
+                                      data-product="2">0</span>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Home Loan</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="home_loan_amount product_commission_amount"
+                                      data-product="3">0</span>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col border-right border-bottom p-2">Car Loan</div>
+                            <div class="col border-right border-bottom p-2">
+                                <span type="text" class="car_loan_amount product_commission_amount"
+                                      data-product="4">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card schedule_container">
+        <div class="alert alert-primary m-0 rounded-0">
+            <h5 class="mb-0">Schedule</h5>
+        </div>
+        <div class="card-body p-0 m-0">
+            <div class="filter_container border border-top-0 p-2">
+                <div class="row no-gutters">
+                    <div class="col py-2 pl-0">
+                        <div class="input-group input-group-sm rounded-0">
+                            <input type="text" class="form-control datepicker" name="from_date" placeholder="From Date">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-light-center">-</div>
+                            </div>
+                            <input type="text" class="form-control datepicker" name="to_date" placeholder="To Date">
+                        </div>
+                    </div>
+                    <div class="col-3 p-2">
+                        <select name="target_type" class="form-control form-control-sm rounded-0">
+                            <option value="">Select Product</option>
+                            {% for item in target_choice %}
+                                <option value="{{ item.0 }}">{{ item.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-1 py-2 pr-0">
+                        <button class="btn btn-primary w-100 rounded-0" id="get_schedule">GO</button>
+                    </div>
+                </div>
+            </div>
+            <div class="output_container  border border-top-0 p-2 fz-15">
+                <div class="table_container border-left border-top">
+                    <div class="row no-gutters table-head bg-secondary-light fw-7 schedule_header">
+                        <div class="col border-right border-bottom p-2">Type</div>
+                        <div class="col border-right border-bottom p-2">Count</div>
+                    </div>
+                    <div class="table_body schedule_data_container">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card behavior_earning_container">
+        <div class="alert alert-primary m-0 rounded-0">
+            <h5 class="mb-0">Behavior and Earning</h5>
+        </div>
+        <div class="card-body p-2 m-0 border border-top-0">
+            <ul class="nav nav-pills border border-blue no-shadow fz-15 fw-8" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link rounded-0 active" data-toggle="tab" href="#behavior">Behavior</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-0" data-toggle="tab" href="#earning">Earning</a>
+                </li>
+            </ul>
+            <div class="tab-content bg-primary p-2 fz-15">
+                <div id="behavior" class="tab-pane active bg-white">
+                    <div class="filter_container border border-top-0 p-2">
+                        <div class="row no-gutters">
+                            <div class="col py-2 pl-0">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" class="form-control datepicker" name="from_date"
+                                           placeholder="From Date">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">-</div>
+                                    </div>
+                                    <input type="text" class="form-control datepicker" name="to_date"
+                                           placeholder="To Date">
+                                </div>
+                            </div>
+                            <div class="col-3 p-2">
+                                <select name="product" class="form-control form-control-sm rounded-0">
+                                    <option value="">Select Product</option>
+                                    {% for item in all_services %}
+                                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-1 py-2 pr-0">
+                                <button class="btn btn-primary w-100 rounded-0" id="get_behavior">GO</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="output_container  border border-top-0 p-2">
+                        <div class="table_container border-left border-top">
+                            <div class="row no-gutters table-head fw-7">
+                                <div class="col border-right border-bottom p-2">Application</div>
+                                <div class="col border-right border-bottom p-2">Profession</div>
+                                <div class="col border-right border-bottom p-2">Product</div>
+                                <div class="col border-right border-bottom p-2">Status</div>
+                            </div>
+                            <div class="table_body behavior_data_container">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="earning" class="tab-pane fade bg-white">
+                    <div class="filter_container border border-top-0 p-2">
+                        <div class="row no-gutters">
+                            <div class="col py-2 pl-0">
+                                <div class="input-group input-group-sm rounded-0">
+                                    <input type="text" class="form-control datepicker" name="from_date"
+                                           placeholder="From Date">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text bg-light-center">-</div>
+                                    </div>
+                                    <input type="text" class="form-control datepicker" name="to_date"
+                                           placeholder="To Date">
+                                </div>
+                            </div>
+                            <div class="col-3 p-2">
+                                <select name="product" class="form-control form-control-sm rounded-0">
+                                    <option value="">Select Product</option>
+                                    {% for item in all_services %}
+                                        <option value="{{ item.0 }}">{{ item.1 }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-1 py-2 pr-0">
+                                <button class="btn btn-primary w-100 rounded-0" id="get_earning">GO</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="output_container  border border-top-0 p-2">
+                        <div class="table_container border-left border-top">
+                            <div class="row no-gutters table-head fw-7">
+                                <div class="col border-right border-bottom p-2">Name</div>
+                                <div class="col border-right border-bottom p-2">Institute</div>
+                                <div class="col border-right border-bottom p-2">Product</div>
+                                <div class="col border-right border-bottom p-2">Earning</div>
+                            </div>
+                            <div class="table_body earning_data_container">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            $('html').on('click', 'button#get_personal_overview', function () {
+                let query_params = $(this).closest('.filter_container').find('input,select').serialize()
+                get_personal_overview(query_params)
+            })
+            $('html').on('click', 'button#get_schedule', function () {
+                let query_params = $(this).closest('.filter_container').find('input,select').serialize()
+                get_schecule(query_params)
+            })
+
+            $('html').on('click', 'button#get_commission', function () {
+                let query_params = $(this).closest('.filter_container').find('input,select').serialize()
+                get_commission(query_params)
+            })
+            $('html').on('click', 'button#get_behavior', function () {
+                let query_params = $(this).closest('.filter_container').find('input,select').serialize()
+                get_behavior(query_params)
+            })
+            $('html').on('click', 'button#get_earning', function () {
+                let query_params = $(this).closest('.filter_container').find('input,select').serialize()
+                get_earning(query_params)
+            })
+
+
+        })
+        let get_personal_overview = function (query_params) {
+            axios.get('/accounts/user/personal_overview/?' + query_params)
+                .then(function (response) {
+                    let result = response.data
+                    console.log(result)
+                    $('.personal_overview_container').find('.application_count').text(result.application_count)
+                    $('.personal_overview_container').find('.lead_count').text(result.lead_count)
+                    $('.personal_overview_container').find('.search_count').text(result.search_count)
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        let get_schecule = function (query_params) {
+
+            axios.get('/accounts/user/schedule/?' + query_params)
+                .then(function (response) {
+                    let result = response.data
+                    let target_type = getQueryParams('target_type', query_params)
+                    let schedule_header = null
+                    if (target_type == 1) {
+                        schedule_header = $('#application_schedule_header').html()
+                    } else if (target_type == 3) {
+                        schedule_header = $('#lead_schedule_header').html()
+                    } else if (target_type == 4) {
+                        schedule_header = $('#search_schedule_header').html()
+                    }
+
+                    $('.schedule_header').html(schedule_header)
+
+                    $('.schedule_data_container').html('')
+                    result.forEach(function (item) {
+                        let single_schedule = $($('#lead_schedule').html())
+                        if (target_type == 1) {
+                            single_schedule = $($('#application_schedule').html())
+                        } else if (target_type == 3) {
+                            single_schedule = $($('#lead_schedule').html())
+                        } else if (target_type == 4) {
+                            single_schedule = $($('#search_schedule').html())
+                        }
+                        single_schedule.find('.row_data').each(function () {
+                            let field_name = $(this).attr('data-field')
+                            let field_name_set = field_name.split('.')
+                            if (field_name_set.length == 2) {
+                                $(this).text(item[field_name_set[0]][field_name_set[1]])
+                            } else {
+                                $(this).text(item[field_name])
+                            }
+
+                        })
+                        $('.schedule_data_container').append(single_schedule)
+                    })
+
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+        let get_commission = function (query_params) {
+            axios.get('/accounts/user/commission/?' + query_params)
+                .then(function (response) {
+                    let result = response.data
+                    console.log(result)
+                    Object.entries(result).forEach(([key, value]) => {
+                        $('.commission_container').find('.product_commission_amount[data-product="' + key + '"]').text(value)
+                    })
+                })
+                .catch(function (error) {
+                    console.log(error.response.data.detail);
+                    $.growl.warning({message: error.response.data.detail});
+                });
+        }
+
+        let get_behavior = function (query_params) {
+            $('.behavior_data_container').html('')
+            axios.get('/accounts/user/behavior/?' + query_params)
+                .then(function (response) {
+                    let result = response.data
+                    if (result.length) {
+                        result.forEach(function (item, key) {
+                            let single_application_behavior = $($('#behavior_row').html())
+                            single_application_behavior.find('.row_data').each(function () {
+                                let field_name = $(this).attr('data-field')
+                                $(this).text(item[field_name])
+                            })
+
+                            $('.behavior_data_container').append(single_application_behavior)
+
+                        })
+                    } else {
+                        $('.behavior_data_container').html('<div class="border-right border-bottom p-2 text-center fz-18 fw-7">No data found.</div>')
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log(error.response.data.detail);
+                    $.growl.warning({message: error.response.data.detail});
+                });
+        }
+
+        let get_earning = function (query_params) {
+            $('.earning_data_container').html('')
+            axios.get('/accounts/user/earning/?' + query_params)
+                .then(function (response) {
+                    let result = response.data
+                    if (result.length) {
+                        result.forEach(function (item, key) {
+                            let single_application_earning = $($('#earning_row').html())
+                            single_application_earning.find('.row_data').each(function () {
+                                let field_name = $(this).attr('data-field')
+                                $(this).text(item[field_name])
+                            })
+
+                            $('.earning_data_container').append(single_application_earning)
+
+                        })
+                    } else {
+                        $('.earning_data_container').html('<div class="border-right border-bottom p-2 text-center fz-18 fw-7">No data found.</div>')
+                    }
+
+                })
+                .catch(function (error) {
+                    console.log(error.response.data.detail);
+                    $.growl.warning({message: error.response.data.detail});
+                });
+        }
+
+
+    </script>
+    <script type="text/html" id="behavior_row">
+        <div class="row no-gutters single_application_behavior">
+            <div class="col border-right border-bottom p-2 row_data" data-field="code"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="profession"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="application_type"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="status"></div>
+        </div>
+    </script>
+    <script type="text/html" id="earning_row">
+        <div class="row no-gutters single_application_earning">
+            <div class="col border-right border-bottom p-2 row_data" data-field="name"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="institute"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="product"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="earning"></div>
+        </div>
+    </script>
+    <script type="text/html" id="lead_schedule_header">
+        <div class="col border-right border-bottom p-2">Name</div>
+        <div class="col border-right border-bottom p-2">Mobile</div>
+        <div class="col border-right border-bottom p-2">Schedule Date</div>
+    </script>
+    <script type="text/html" id="application_schedule_header">
+        <div class="col border-right border-bottom p-2">Application Id</div>
+        <div class="col border-right border-bottom p-2">Name</div>
+        <div class="col border-right border-bottom p-2">Mobile</div>
+        <div class="col border-right border-bottom p-2">Schedule Date</div>
+    </script>
+    <script type="text/html" id="search_schedule_header">
+        <div class="col border-right border-bottom p-2">Name</div>
+        <div class="col border-right border-bottom p-2">Mobile</div>
+        <div class="col border-right border-bottom p-2">Schedule Date</div>
+    </script>
+
+    <script type="text/html" id="lead_schedule">
+        <div class="row no-gutters single_lead_schedule">
+            <div class="col border-right border-bottom p-2 row_data" data-field="name"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="mobile_no"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="schecule.date"></div>
+        </div>
+    </script>
+    <script type="text/html" id="application_schedule">
+        <div class="row no-gutters single_lead_schedule">
+            <div class="col border-right border-bottom p-2 row_data" data-field="code"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="name"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="mobile_no"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="schecule.date"></div>
+        </div>
+    </script>
+    <script type="text/html" id="search_schedule">
+        <div class="row no-gutters single_lead_schedule">
+            <div class="col border-right border-bottom p-2 row_data" data-field="name"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="mobile_no"></div>
+            <div class="col border-right border-bottom p-2 row_data" data-field="schecule.date"></div>
+        </div>
+    </script>
+{% endblock %}

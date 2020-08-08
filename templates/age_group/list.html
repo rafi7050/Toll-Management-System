@@ -1,0 +1,72 @@
+{% extends 'layouts/default/main.html' %}
+{% block title %}Age Group{% endblock %}
+{% block page_title %}Age Group List{% endblock page_title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card pt-0">
+                <div class="card-header bg-transparent">
+                    <h4></h4>
+                    <div class="card-header-action">
+                        <a href="{% url 'age_group_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i> New Age Group</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive userTable">
+                        <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">From Age</th>
+                                <th scope="col">To Age</th>
+                                <th scope="col">Updated At</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <nav class="d-inline-block">
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                'serverSide': true,
+                'ajax': '/api/v1/age_group/?format=datatables',
+                'columns': [
+                    {
+                        'data': 'id',
+                        'class': 'text-center',
+                        "searchable": false,
+                        render: function (data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {'data': 'age_from'},
+                    {'data': 'age_from'},
+                    {'data': 'updated_at'},
+                    {
+                        "data": null,
+                        'class': 'text-center',
+                        "bSortable": false,
+                        "mRender": function (data) {
+                            return `
+                            <a class="btn btn-outline-warning" href=/age_group/edit/${data['id']}><i class="fa fa-edit"></i></a>
+{#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
+                            `;
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+{% endblock %}
