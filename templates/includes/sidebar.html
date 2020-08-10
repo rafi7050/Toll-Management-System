@@ -36,23 +36,23 @@
                         </li>
                     </ul>
                 </li>
-{#                <li class="dropdown">#}
-{#                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">#}
-{#                        <i class="fas fa-user"></i> <span>Manage Customer</span>#}
-{#                    </a>#}
-{#                    <ul class="dropdown-menu">#}
-{#                        <li>#}
-{#                            <a class="nav-link" href="#">#}
-{#                                <i class="fas fa-list"></i>Customer list#}
-{#                            </a>#}
-{#                        </li>#}
+                <li class="dropdown">
+                    <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                        <i class="fas fa-user"></i> <span>Manage Customer</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="nav-link" href="{% url 'customer_list' %}">
+                                <i class="fas fa-list"></i>Customer list
+                            </a>
+                        </li>
 {#                        <li>#}
 {#                            <a class="nav-link" href="#">#}
 {#                                <i class="fas fa-user-plus"></i>Create Customer#}
 {#                            </a>#}
 {#                        </li>#}
-{#                    </ul>#}
-{#                </li>#}
+                    </ul>
+                </li>
             {% endif %}
 
             <li class="menu-header">Product Section</li>
