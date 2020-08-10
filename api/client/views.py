@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.client.serializers import UserSerializer
+from apps.accounts.models import UserProfile
 from apps.helpers.otp import OTPGenerate
 
 
@@ -43,6 +44,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         instance = serializer.save()
         instance.set_password(instance.password)
+        # UserProfile.objects.create(user=instance,user_type=2)
         instance.userprofile.user_type = 2
         instance.save()
 

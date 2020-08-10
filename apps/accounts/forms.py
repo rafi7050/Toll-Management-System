@@ -59,19 +59,19 @@ class GroupForm(forms.ModelForm):
         self.fields['permissions'].widget = TabularPermissionsWidget(verbose_name='perm', is_stacked=False,
                                                                      permission=permission)
 
-    def clean_name(self):
-        name = self.cleaned_data['name']
-        except_list = ['www', 'admin']
-        if '-' in name:
-            raise ValidationError('Hyphen/Dash is not allowed', code='invalid')
-        sdomain = self.request.sdomain.sdomain.split('.')[0]
-        if sdomain in except_list:
-            sdomain = 'bcbd'
-        if sdomain in name:
-            data = name
-        else:
-            data = sdomain + "-" + name
-        return data
+    # def clean_name(self):
+    #     name = self.cleaned_data['name']
+    #     except_list = ['www', 'admin']
+    #     if '-' in name:
+    #         raise ValidationError('Hyphen/Dash is not allowed', code='invalid')
+    #     sdomain = self.request.sdomain.sdomain.split('.')[0]
+    #     if sdomain in except_list:
+    #         sdomain = 'bcbd'
+    #     if sdomain in name:
+    #         data = name
+    #     else:
+    #         data = sdomain + "-" + name
+    #     return data
 
 
 class GroupProfileForm(forms.ModelForm):
@@ -121,8 +121,7 @@ class UserCreateForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(UserCreateForm, self).__init__(*args, **kwargs)
-        self.fields['groups'].queryset = Group.objects.filter(
-            groupprofile__institute=self.request.user.userprofile.institute)
+        self.fields['groups'].queryset = Group.objects.all()
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -242,10 +241,10 @@ class UserAvailabilityCreateForm(forms.ModelForm):
 
 class CustomerCreateForm(forms.ModelForm):
     username = forms.CharField(label="Mobile No")
-
+    first_name = forms.CharField(label='Full Name')
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'email']
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -275,18 +274,18 @@ class CustomerCreateForm(forms.ModelForm):
 
 class CustomerProfileCreateForm(forms.ModelForm):
     dob = forms.CharField(widget=forms.TextInput(attrs={'class': 'datepicker'}), label='Date Of Birth', required=False)
-    call_time = forms.CharField(widget=forms.TextInput(attrs={'class': 'datetimepicker'}), label='Call Time',
-                                required=False)
+    # call_time = forms.CharField(widget=forms.TextInput(attrs={'class': 'datetimepicker'}), label='Call Time',
+    #                             required=False)
 
     class Meta:
         model = UserProfile
-        exclude = ['user', 'created_by', 'updated_by', 'created_at', 'updated_at', 'is_institute_admin', 'institute']
+        exclude = ['user', 'created_by', 'updated_by', 'created_at', 'updated_at', 'is_institute_admin', 'location','status','call_time','remarks','user_type']
 
-    def clean_call_time(self):
-        data = self.cleaned_data['call_time']
-        if not data:
-            data = None
-        return data
+    # def clean_call_time(self):
+    #     data = self.cleaned_data['call_time']
+    #     if not data:
+    #         data = None
+    #     return data
 
     def clean_dob(self):
         data = self.cleaned_data['dob']

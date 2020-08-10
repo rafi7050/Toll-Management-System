@@ -1,26 +1,33 @@
 import base64
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.views import LoginView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.urls import reverse_lazy
 
 from django.views import View
-from django.views.generic import DetailView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_datatables.filters import DatatablesFilterBackend
 
+from . import forms, serializers
 from apps.accounts.forms import CustomAuthenticationForm
 
 from django.contrib.auth import login as auth_login, logout
 
-
-
 # Create your views here.
+from apps.accounts.models import UserProfile
 from apps.accounts.serializers import UserSerializer
+from apps.accounts.utils import PassRequestToFormViewMixin, SubdomainMixin
 from apps.helpers.otp import OTPGenerate
 
 
@@ -90,12 +97,10 @@ class CustomLockView(LoginView):
         return context
 
 
-
 class RegisterViewSet(viewsets.ModelViewSet):
     http_method_names = ['post']
     queryset = User.objects.none()
     serializer_class = UserSerializer
-
 
     authentication_classes = ()  # Add this line
     permission_classes = ()  # Add this line
@@ -122,7 +127,6 @@ class RegisterViewSet(viewsets.ModelViewSet):
         serializer.save()
 
 
-
 class OtpResend(APIView):
     authentication_classes = ()  # Add this line
     permission_classes = ()  # Add this line
@@ -131,10 +135,10 @@ class OtpResend(APIView):
         mobile_no = self.request.query_params.get('mobile', None)
 
         if mobile_no is None:
-            raise ValidationError({'error':'Please provide your mobile number.'})
+            raise ValidationError({'error': 'Please provide your mobile number.'})
         user = User.objects.filter(username=mobile_no).first()
         if user is None:
-            raise ValidationError({'error':'You have to register first.'})
+            raise ValidationError({'error': 'You have to register first.'})
         otp = OTPGenerate.token(self, mobile_no)
 
         return Response({'Otp Generate Successfully'})
@@ -150,26 +154,26 @@ class PasswordReset(APIView):
         otp = self.request.data.get('otp', None)
 
         if mobile_no is None:
-            raise ValidationError({'error':'Please provide your mobile number.'})
+            raise ValidationError({'error': 'Please provide your mobile number.'})
 
         if password is None:
-            raise ValidationError({'error':'Please provide your new password.'})
+            raise ValidationError({'error': 'Please provide your new password.'})
 
         if otp is None:
-            raise ValidationError({'error':'Please provide your otp'})
+            raise ValidationError({'error': 'Please provide your otp'})
 
         user = User.objects.filter(username=mobile_no).first()
 
         if user is None:
-            raise ValidationError({'error':'Please provide your valid mobile number.'})
+            raise ValidationError({'error': 'Please provide your valid mobile number.'})
 
         if user.userprofile.otp is None:
-            raise ValidationError({'error':'You have to request for reset password first.'})
+            raise ValidationError({'error': 'You have to request for reset password first.'})
 
         token = user.userprofile.otp
 
         if not str(otp) == str(token):
-            raise ValidationError({'error':'Please provide valid OTP.'})
+            raise ValidationError({'error': 'Please provide valid OTP.'})
 
         data = {
             'username': mobile_no,
@@ -180,6 +184,84 @@ class PasswordReset(APIView):
         serializer.save()
 
         return Response({'Password reset successfully.'})
+
+
+# User Related
+
+
+class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'auth.view_user'
+    model = UserProfile
+    template_name = 'accounts/user/list.html'
+    context_object_name = 'users'
+
+    def get_queryset(self):
+        queryset = UserProfile.objects.filter(user__is_staff=True).exclude(user__is_superuser=True).select_related(
+            'user').prefetch_related('user__groups')
+        return queryset
+
+
+class UserCreateView(LoginRequiredMixin, PermissionRequiredMixin, PassRequestToFormViewMixin, CreateView):
+    permission_required = 'auth.add_user'
+    form_class = forms.UserCreateMultiForm
+    template_name = 'accounts/user/add.html'
+    success_url = reverse_lazy('user_list')
+
+    def form_valid(self, form):
+        # Save the user first, because the profile needs a user before it
+        # can be saved.
+        user = form['user'].save(commit=False)
+        user.is_staff = True
+        user.save()
+        form['user'].save_m2m()
+        if self.request.user.is_superuser:
+            user.is_staff = True
+
+        profile = form['profile'].save(commit=False)
+
+        profile.user = user
+        # profile.institute = self.request.user.userprofile.institute
+        profile.created_by = self.request.user
+        profile.updated_by = self.request.user
+        profile.save()
+        return super(UserCreateView, self).form_valid(form)
+
+
+class UserUpdateView(LoginRequiredMixin, PermissionRequiredMixin, PassRequestToFormViewMixin, UpdateView):
+    permission_required = 'auth.change_user'
+    model = User
+    form_class = forms.UserUpdateMultiForm
+    template_name = 'accounts/user/update.html'
+    success_url = reverse_lazy('user_list')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_form_kwargs(self):
+        kwargs = super(UserUpdateView, self).get_form_kwargs()
+        kwargs.update(instance={
+            'user': self.object,
+            'profile': self.object.userprofile,
+        })
+        return kwargs
+
+    def form_valid(self, form):
+        return super(UserUpdateView, self).form_valid(form)
+
+
+class UserDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'auth.delete_user'
+    model = User
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('user_list')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -194,3 +276,158 @@ class UserDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+
+# Group Related
+
+
+class GroupListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'auth.view_group'
+    model = Group
+    template_name = 'accounts/team/list.html'
+    context_object_name = 'groups'
+
+    def get_queryset(self):
+        queryset = Group.objects.all().select_related('groupprofile')
+        return queryset
+
+
+class GroupCreateView(LoginRequiredMixin, PermissionRequiredMixin, PassRequestToFormViewMixin, SuccessMessageMixin,
+                      CreateView):
+    permission_required = 'auth.add_group'
+    form_class = forms.GroupMultiForm
+    template_name = 'accounts/team/add.html'
+    success_url = reverse_lazy('team_list')
+    success_message = "Requested team added successfully"
+
+    def form_valid(self, form):
+        # Save the user first, because the profile needs a user before it
+        # can be saved.
+        group = form['group'].save()
+        profile = form['profile'].save(commit=False)
+        profile.name = group
+        # institute = self.request.user.userprofile.institute
+        profile.created_by = self.request.user
+        profile.updated_by = self.request.user
+        # profile.institute = institute
+        profile.save()
+        return super(GroupCreateView, self).form_valid(form)
+
+
+class GroupUpdateView(PassRequestToFormViewMixin, PermissionRequiredMixin, SuccessMessageMixin, UpdateView):
+    permission_required = 'auth.change_group'
+    model = Group
+    form_class = forms.GroupMultiForm
+    template_name = 'accounts/team/add.html'
+    success_url = reverse_lazy('team_list')
+    success_message = "Requested team updated successfully"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_form_kwargs(self):
+        kwargs = super(GroupUpdateView, self).get_form_kwargs()
+        kwargs.update(instance={
+            'group': self.object,
+            'profile': self.object.groupprofile,
+        })
+        return kwargs
+
+
+class GroupDeleteView(LoginRequiredMixin, PermissionRequiredMixin, SuccessMessageMixin, DeleteView):
+    permission_required = 'auth.delete_group'
+    model = Group
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('team_list')
+    success_message = "%(name)s was deleted successfully"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        # if self.request.user.userprofile.institute.id != 1 and self.object.groupprofile.institute.id != self.request.user.userprofile.institute.id:
+        #     raise Http404()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        messages.success(self.request, self.success_message % obj.__dict__)
+        return super(GroupDeleteView, self).delete(request, *args, **kwargs)
+
+
+# Customer Related
+
+class CustomerListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = 'auth.view_user'
+    model = UserProfile
+    template_name = 'accounts/customer/list.html'
+    context_object_name = 'customers'
+    queryset = UserProfile.objects.filter(user_type=2,user__is_staff=False)
+
+
+
+class CustomerCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = 'auth.add_user'
+    form_class = forms.CustomerCreateMultiForm
+    template_name = 'accounts/customer/add.html'
+    success_url = reverse_lazy('customer_list')
+
+    def form_valid(self, form):
+        user = form['user'].save()
+        profile = form['profile'].save(commit=False)
+        profile.user = user
+        profile.save()
+        return super(CustomerCreateView, self).form_valid(form)
+
+
+class CustomerUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = 'auth.change_user'
+    model = User
+    form_class = forms.CustomerCreateMultiForm
+    template_name = 'accounts/customer/add.html'
+    success_url = reverse_lazy('customer_list')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_form_kwargs(self):
+        kwargs = super(CustomerUpdateView, self).get_form_kwargs()
+        kwargs.update(instance={
+            'user': self.object,
+            'profile': self.object.userprofile,
+        })
+        return kwargs
+
+
+class CustomerDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = 'auth.delete_user'
+    model = User
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('customer_list')
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+
+class CustomerDetailsView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    permission_required = 'auth.view_user'
+    model = User
+    template_name = 'accounts/customer/details.html'
+    context_object_name = 'customer'
+
+
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.filter(user__is_staff=False,user_type=2)
+    serializer_class = serializers.UserProfileSerializer
+    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend, SearchFilter)
+    search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name')
+    filter_fields = ['user__groups', 'location']
+

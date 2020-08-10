@@ -1,0 +1,101 @@
+{% extends 'layouts/default/main.html' %}
+{% load static %}
+
+{% block page_title %}Customer List{% endblock page_title %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card pt-0">
+                <div class="card-header bg-transparent">
+                    <h4></h4>
+{#                    {% if perms.auth.add_user %}#}
+{#                        <div class="card-header-action">#}
+{#                            <a href="{% url 'customer_create' %}" class="btn btn-primary"><i class="fas fa-plus"></i>#}
+{#                                New#}
+{#                                Customer </a>#}
+{#                        </div>#}
+{#                    {% endif %}#}
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive userTable">
+                        <table id="datatable" class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Email</th>
+
+                                {% if perms.auth.change_user or perms.auth.delete_user %}
+                                    <th scope="col">Action</th>
+                                {% endif %}
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <nav class="d-inline-block">
+
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(document).ready(function () {
+            let table = $('#datatable').DataTable({
+                'serverSide': true,
+                'ajax': '/api/v1/customer/?format=datatables',
+                'columns': [
+                    {
+                       'data': 'id', 'class': 'text-center', "searchable": false, "bSortable": false,
+                       render: function (data, type, row, meta) {
+                           return meta.row + meta.settings._iDisplayStart + 1;
+                       }
+                   },
+                    {
+                        'data': 'profile_image',
+                        "searchable": false,
+                        "bSortable": false,
+                        "mRender":function (data) {
+
+                            if (data){
+                                return "<img src='"+data+"' height='60px'/>"
+                            } else{
+                                return data
+                            }
+                        }
+                    },
+                    {'data': 'username', 'name': 'user.username'},
+                    {'data': 'full_name', "searchable": false, "bSortable": false,},
+                    {'data': 'email','name': 'user.username'},
+
+                    {
+                        "data": 'user',
+                        'class': 'text-center',
+                        "bSortable": false,
+                        "searchable": false,
+                        "mRender": function (data) {
+                            console.log(data)
+                            return '<a class="btn btn-info" href=/accounts/customer/' + data + '/view/><i class="fa fa-eye"></i></a>'+
+                            '<a class="btn btn-outline-warning" href=/accounts/customer/' + data + '/update><i class="fa fa-edit"></i></a>' +
+                                '<a class="btn btn-outline-danger" href=/accounts/customer/' + data + '/delete><i class="fa fa-trash"></i></a>';
+                        }
+                    }
+                ]
+            });
+        })
+    </script>
+{% endblock %}

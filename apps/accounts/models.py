@@ -20,7 +20,7 @@ class GroupProfile(TimeStamp, OperatorStamp):
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name.name.split('-')[1]
+        return self.name.name
 
 
 class UserProfileManager(models.Manager):
@@ -71,14 +71,16 @@ class UserProfile(TimeStamp, OperatorStamp):
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
-    print(created, instance)
-    if created:
+    if created and not instance.is_staff:
         UserProfile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
+    try:
+        instance.userprofile.save()
+    except:
+        pass
 
 
 class UserAvailability(models.Model):

@@ -1,0 +1,6 @@
+img.img-circle {
+    width: 54px;
+    height: 54px;
+    border: 2px solid #cee8f3;
+    border-radius: 50px;
+}

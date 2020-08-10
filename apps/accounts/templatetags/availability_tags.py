@@ -21,10 +21,10 @@ def availability(self, value):
         return False
 
 
-@register.filter(name='files_in_hand')
-def files_in_hand(self, value):
-    count = Application.objects.filter(assign_member=value, status__in=[1, 2]).count()
-    return count
+# @register.filter(name='files_in_hand')
+# def files_in_hand(self, value):
+#     count = Application.objects.filter(assign_member=value, status__in=[1, 2]).count()
+#     return count
 
 
 @register.filter(name='strip_domain')

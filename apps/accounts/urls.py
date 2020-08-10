@@ -9,26 +9,24 @@ from . import views as accounts_views
 from pricing.urls import router
 
 # router.register(r'profile', accounts_views.UserProfileViewSet)
-# router.register(r'customer', accounts_views.CustomerViewSet)
+router.register(r'customer', accounts_views.CustomerViewSet)
 # router.register(r'user', accounts_views.UserViewSet)
 # router.register(r'group', accounts_views.GroupProfileViewSet)
 router.register(r'register', accounts_views.RegisterViewSet)
 
 urlpatterns = [
     # ACCOUNT MANAGEMENT
-    # path('user/add/', accounts_views.UserCreateView.as_view(), name='user_add'),
-    # path('user/', accounts_views.UserListView.as_view(), name='user_list'),
-    # path('user/<int:pk>/update/', accounts_views.UserUpdateView.as_view(), name='user_update'),
-    # path('user/<int:pk>/delete/', accounts_views.UserDeleteView.as_view(), name='user_delete'),
+    path('user/', accounts_views.UserListView.as_view(), name='user_list'),
+    path('user/add/', accounts_views.UserCreateView.as_view(), name='user_add'),
+    path('user/<int:pk>/update/', accounts_views.UserUpdateView.as_view(), name='user_update'),
+    path('user/<int:pk>/delete/', accounts_views.UserDeleteView.as_view(), name='user_delete'),
     path('profile/', accounts_views.UserDetailView.as_view(), name='user_profile'),
 
-
-    # path('customer/', accounts_views.CustomerListView.as_view(), name='customer_list'),
-    # path('customer/add/', accounts_views.CustomerCreateView.as_view(), name='customer_create'),
-    # path('customer/<int:pk>/update/', accounts_views.CustomerUpdateView.as_view(), name='customer_update'),
-    # path('customer/<int:pk>/delete/', accounts_views.CustomerDeleteView.as_view(), name='customer_delete'),
-    # path('customer/<int:pk>/view/', accounts_views.CustomerDetailsView.as_view(), name='customer_view'),
-
+    path('customer/', accounts_views.CustomerListView.as_view(), name='customer_list'),
+    path('customer/add/', accounts_views.CustomerCreateView.as_view(), name='customer_create'),
+    path('customer/<int:pk>/update/', accounts_views.CustomerUpdateView.as_view(), name='customer_update'),
+    path('customer/<int:pk>/delete/', accounts_views.CustomerDeleteView.as_view(), name='customer_delete'),
+    path('customer/<int:pk>/view/', accounts_views.CustomerDetailsView.as_view(), name='customer_view'),
 
     path('login/', accounts_views.CustomLoginView.as_view(template_name='accounts/login.html'), name='login'),
     path('lock/', accounts_views.CustomLockView.as_view(template_name='accounts/lock.html'), name='lock'),
@@ -59,11 +57,10 @@ urlpatterns = [
     ), name='password_reset_complete'),
 
     # role
-    # path('team/add/', accounts_views.GroupCreateView.as_view(), name='team_add'),
-    # path('team/<int:pk>/update/', accounts_views.GroupUpdateView.as_view(), name='team_update'),
-    # path('team/<int:pk>/delete/', accounts_views.GroupDeleteView.as_view(), name='team_delete'),
-    # path('team/', accounts_views.GroupListView.as_view(), name='team_list'),
-
+    path('team/', accounts_views.GroupListView.as_view(), name='team_list'),
+    path('team/add/', accounts_views.GroupCreateView.as_view(), name='team_add'),
+    path('team/<int:pk>/update/', accounts_views.GroupUpdateView.as_view(), name='team_update'),
+    path('team/<int:pk>/delete/', accounts_views.GroupDeleteView.as_view(), name='team_delete'),
 
     # path('send_mail/', accounts_views.testing_customer_mail)
 

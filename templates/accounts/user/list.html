@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'layouts/default/main.html' %}
 {% load static availability_tags %}
 
 {% block page_title %}User List{% endblock page_title %}
@@ -48,7 +48,7 @@
                                         <td class="align-middle">{{ user.user.email }}</td>
                                         <td class="align-middle">
                                             {% for g in user.user.groups.all %}
-                                                {{ g.name|capfirst|strip_domain }} {% if forloop.last %}{% else %},{% endif %}
+                                                {{ g.name|capfirst }} {% if forloop.last %}{% else %},{% endif %}
                                             {% endfor %}
                                         </td>
                                         <td class="align-middle">{{ user.created_by }}</td>
