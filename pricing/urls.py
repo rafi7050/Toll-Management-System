@@ -41,3 +41,8 @@ urlpatterns = [
                   path('api/clients/v1/', include(client_router.urls)),
 
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+handler404 = 'apps.helpers.views.handler404'
+handler403 = 'apps.helpers.views.handler403'
+handler500 = 'apps.helpers.views.handler500'

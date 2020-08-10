@@ -1,11 +1,13 @@
 import base64
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 
 from django.views import View
+from django.views.generic import DetailView
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -38,8 +40,8 @@ class CustomLoginView(LoginView):
         response = super(CustomLoginView, self).render_to_response(context, **response_kwargs)
         cookies = self.request.COOKIES
 
-        if cookies.get('un'):
-            return HttpResponseRedirect('/accounts/lock/')
+        # if cookies.get('un'):
+        #     return HttpResponseRedirect('/accounts/lock/')
         return response
 
     def form_valid(self, form):
@@ -178,3 +180,17 @@ class PasswordReset(APIView):
         serializer.save()
 
         return Response({'Password reset successfully.'})
+
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'accounts/profile.html'
+    context_object_name = 'user'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+
+        return context
+
+    def get_object(self, queryset=None):
+        return self.request.user

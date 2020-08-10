@@ -1,0 +1,15 @@
+{% extends 'layouts/default/main_single_page.html' %}
+
+{% block content %}
+    <div class="card card-primary">
+        <div class="card-body">
+            <div class="page-inner">
+                <h1>404</h1>
+                <div class="page-description">
+                    The page you were looking for could not be found.
+                </div>
+            </div>
+            <a href="{% url 'dashboard' %}">Back to home?</a>
+        </div>
+    </div>
+{% endblock %}
