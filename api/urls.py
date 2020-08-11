@@ -14,7 +14,7 @@ client_router.register(r'client_order', order.ClientOrderViewSet, basename='clie
 urlpatterns = [
     # path(r'api/user/', views.UserView.as_view()),
     path('login/', client.CustomerLogin.as_view(), name='user_auth'),
-    path('signout/', client.Logout.as_view(), name='signout'),
+    path('logout/', client.Logout.as_view(), name='client_logout'),
     # path('api/tax_token/', TaxTokenCalculator.as_view(), name='tax_token'),
     # path('api/otp_verify/', OTPGenerate.as_view(), name='otp_token'),
     # path('api/otp_regenerate/', views.OtpResend.as_view(), name='otp_token'),

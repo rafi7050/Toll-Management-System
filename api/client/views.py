@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -57,12 +57,11 @@ class Logout(APIView):
 
     def get(self, request, format=None):
         # simply delete the token to force a login
-        # print(request)
-        # try:
-        #     TimedAuthToken.objects.filter(user=request.user.id).first().delete()
-        #     return Response(status=status.HTTP_200_OK)
-        # except:
-        #     return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        try:
+            Token.objects.filter(user=request.user.id,key=request.auth.key).first().delete()
+            return Response(status=status.HTTP_200_OK,data={'Successfully Logout.'})
+        except:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         return Response({})
 
 
