@@ -3,11 +3,13 @@ from django.urls import path, include
 from api.client import views as client
 from api.package import views as package
 from api.order import views as order
+from api.product.views import ProductViewSet
 
 from pricing.urls import client_router
 
 client_router.register(r'signup', client.RegisterViewSet, basename='client_register')
 client_router.register(r'package', package.PackageViewSet, basename='public_package')
+client_router.register(r'product', ProductViewSet, basename='public_product')
 client_router.register(r'client_package', package.ClientPackageViewSet, basename='client_package')
 client_router.register(r'client_order', order.ClientOrderViewSet, basename='client_order_list')
 
