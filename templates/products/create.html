@@ -18,6 +18,13 @@
                         {% csrf_token %}
                         {% include 'includes/form.html' %}
                     </div>
+                    <button class="btn invisible  btn-primary mr-2">
+                        Submit
+                    </button>
+                    <div class="card-footer text-right">
+                        <a href="{% url 'product_list' %}" class="btn btn-danger">Cancel</a>
+                        <button class="btn btn-primary">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>
