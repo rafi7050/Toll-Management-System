@@ -33,7 +33,7 @@ class RegisterViewSet(viewsets.ModelViewSet):
         }
         if user_data.get('mobile', None):
             if User.objects.filter(username=user_data.get('mobile', None)).exists():
-                raise ValidationError({'error': 'This prone is already in use'})
+                raise ValidationError({'error': 'This phone is already in use'})
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
