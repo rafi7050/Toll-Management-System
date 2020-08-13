@@ -37,6 +37,31 @@ class PackageProductsSerializer(serializers.ModelSerializer):
 class PackageSerializer(serializers.ModelSerializer):
     products = PackageProductsSerializer(source='product_to_package', read_only=True, many=True)
 
+    total_amount = serializers.SerializerMethodField()
+    regular_price = serializers.SerializerMethodField()
+
+    # products = PackageProductSerializer(many=True,required=False,write_only=True)
+
+    def get_regular_price(self, obj):
+        products = obj.products.through.objects.filter(package=obj)
+
+        regular_price = 0
+        for item in products:
+            regular_price += float(item.quantity) * float(item.product.price)
+        return regular_price
+
+    def get_total_amount(self, obj):
+        products = obj.products.through.objects.filter(package=obj)
+        discount = obj.discount_percentage
+        total_amount = 0
+        for item in products:
+            total_amount += item.quantity * item.product.price
+
+        if total_amount:
+            discount_amount = total_amount * discount / 100
+            total_amount = total_amount - discount_amount
+        return round(total_amount, 2)
+
     class Meta:
         model = Package
         exclude = ('created_at','updated_at','created_by','updated_by','package_type',)

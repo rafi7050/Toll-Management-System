@@ -8,11 +8,13 @@ from apps.sales.models import Order
 
 
 class PackageViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
     queryset = Package.objects.filter(package_type=1)
     serializer_class = PackageSerializer
 
 
 class ClientPackageViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
     queryset = Package.objects.none()
     serializer_class = PackageSerializer
 
