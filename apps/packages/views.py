@@ -78,7 +78,7 @@ class PackageEditView(UpdateView):
                 titles.instance = self.object
 
                 titles.save()
-        return super(PackageCreateView, self).form_valid(form)
+        return super(PackageEditView, self).form_valid(form)
 
 
 class PackageViewSet(viewsets.ModelViewSet):

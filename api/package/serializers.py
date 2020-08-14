@@ -3,6 +3,11 @@ from rest_framework import serializers
 from apps.packages.models import Package, PackageProduct
 from apps.products.models import Product
 
+class PackageProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PackageProduct
+        fields = '__all__'
+
 
 class ProductsSerializer(serializers.ModelSerializer):
     unit = serializers.CharField(source='get_unit_display')

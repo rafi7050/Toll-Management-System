@@ -6121,3 +6121,35 @@ const uniques = dict =>
 $(function () {
     editor_init('tinymce_editor')
 });
+
+function order_form_submit() {
+            let url = '/api/clients/v1/order/'
+            var sample_order = {
+                "total_amount": "342",
+                "customer": "33",
+                "mobile_number": "3534543",
+                "address_line_1": "34535",
+                "address_line_2": "435",
+                "place": "Aamartaka.com, Dhaka, Bangladesh",
+                "latitude": "23.7847301",
+                "longitude": "90.4008518",
+                "zip": "3434",
+                "zone": "3",
+                "order_details": [
+                    {"package": "1", "price": "180.5", "quantity": "1", "total_price": "180.5"},
+                    {"product": "1", "price": "180.5", "quantity": "1", "total_price": "180.5"},
+                    {"product": "2", "price": "90", "quantity": "2", "total_price": "90"},
+                    {
+                        "package": "2",
+                        "price": "80.75",
+                        "quantity": "2",
+                        "total_price": "161.5"
+                    }
+                ]
+            }
+            axios.post(url, sample_order, {
+                headers: {"X-CSRFToken": "{{ csrf_token }}","Authorization":"Token 2894d9da62990747a615468c4aee05b685e5abc2"},
+            }).then(function (response) {
+
+            })
+        }

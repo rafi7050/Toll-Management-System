@@ -12,6 +12,7 @@ client_router.register(r'package', package.PackageViewSet, basename='public_pack
 client_router.register(r'product', ProductViewSet, basename='public_product')
 client_router.register(r'client_package', package.ClientPackageViewSet, basename='client_package')
 client_router.register(r'client_order', order.ClientOrderViewSet, basename='client_order_list')
+client_router.register(r'order', order.OrderViewSet, basename='client_order_create')
 
 urlpatterns = [
     # path(r'api/user/', views.UserView.as_view()),
