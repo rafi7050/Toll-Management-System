@@ -61,6 +61,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         except:
             pass
 
+        order_data['customer'] = self.request.user
+
         serializer = self.get_serializer(data=order_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
