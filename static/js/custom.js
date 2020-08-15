@@ -6126,7 +6126,6 @@ function order_form_submit() {
             let url = '/api/clients/v1/order/'
             var sample_order = {
                 "total_amount": "342",
-                "customer": "33",
                 "mobile_number": "3534543",
                 "address_line_1": "34535",
                 "address_line_2": "435",
