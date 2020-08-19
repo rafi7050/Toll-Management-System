@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from api.order.serializers import OrderSerializer, OrderDetailsSerializer
 from api.package.serializers import PackageSerializer, PackageProductSerializer
+from apps.helpers.views import ClientPagination
 from apps.packages.models import Package
 from apps.products.models import Product
 from apps.sales.models import Order
@@ -16,6 +17,8 @@ from apps.sales.models import Order
 class ClientOrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.none()
     serializer_class = OrderSerializer
+    pagination_class = ClientPagination
+
 
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line

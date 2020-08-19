@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import pagination
 
 
 def handler403(request, *args, **kwargs):
@@ -40,3 +41,7 @@ def pusher_authentication(request):
 #     numbers = [1, 3, 5]
 #     results = pool.map(square, numbers)
 #     return HttpResponse(results)
+
+
+class ClientPagination(pagination.PageNumberPagination):
+    page_size = 5
