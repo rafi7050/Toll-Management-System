@@ -47,24 +47,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive userTable">
-                        <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Code</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Mobile</th>
-                                <th scope="col">Total Amount</th>
-                                <th scope="col">Status</th>
-                                <th scope="col">Updated At</th>
-                                {#                                <th scope="col">Status</th>#}
-                                <th scope="col">Action</th>
-                            </tr>
-                            </thead>
-                        </table>
-                    </div>
-{#                    <div id="order_item_container"></div>#}
+                    <div id="order_item_container"></div>
                 </div>
                 <div class="card-footer text-right">
                     <nav class="d-inline-block">
@@ -79,56 +62,9 @@
     <script type="text/javascript">
         $(document).ready(function () {
             do_filter()
-            var table = $('#datatable').DataTable({
-                'serverSide': true,
-                ajax: '/api/v1/orders/?format=datatables',
-                'columns': [
-                    {
-                        'data': 'id',
-                        'class': 'text-center',
-                        "searchable": false,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    {'data': 'code'},
-                    {'data': 'customer_name', 'name': 'customer.first_name'},
-                    {'data': 'mobile_number'},
-                    {'data': 'total_amount'},
-                    {
-                        'data': 'order_status',
-                        render: function (data, type, row, meta) {
-                            let status = ORDER_STATUS[data]
-                            let status_style = status.replace(' ', '_')
-                            return '<span class="status_' + status_style + '">' + status + '</span>'
-                        }
-                    },
-                    {'data': 'updated_at'},
-                    {
-                        "data": null,
-                        'class': 'text-center',
-                        "bSortable": false,
-                        "mRender": function (data) {
-                            return `
-                            <a class="btn btn-outline-warning" href=/sales/order/edit/${data['id']}><i class="fa fa-edit"></i></a>
-                            <button class="btn btn-outline-warning application-update forward_modal" data-ajax-url="/sales/order/${data['id']}/status_update/" data-type="update_history" >
-                                <i class="icon-update application-icon"></i>
-                            </button>
-                            <button class="btn btn-outline-warning invoice_print forward_modal" data-ajax-url="/sales/order/${data['id']}/invoice/" data-type="invoice_print" >
-                            <i class="icon-update application-icon"></i>
-                            </button>
 
-{#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
-                            `;
-                        }
-                    }
-                ]
-            });
         });
 
-        let reload_table = function () {
-            $('#datatable').DataTable().ajax.reload();
-        }
     </script>
 
     <script>
@@ -269,6 +205,14 @@
                     template.find('.address_line_1').text(item.address_line_1)
                     template.find('.address_line_2').text(item.address_line_2)
                     template.find('.place').text(item.place)
+                    template.find('.forward_modal').each(function () {
+                        let ajax_url = $(this).attr('data-ajax-url')
+                        ajax_url = ajax_url.replace('order_id',item.id)
+                        $(this).attr('data-ajax-url',ajax_url)
+                    })
+                    let edit_url = template.find('.edit_order').attr('href')
+                    edit_url = edit_url.replace('order_id',item.id)
+                    template.find('.edit_order').attr('href',edit_url)
                     order_item_container.append(template)
                 })
             })
@@ -290,7 +234,18 @@
                 <div class="item"><i class="fa fa-map-marker-alt" aria-hidden="true"></i> <span class="place"></span>
                 </div>
             </div>
-            <div class="col"></div>
+            <div class="col-1">
+                    <a class="btn btn-outline-warning edit_order" href="/sales/order/edit/order_id"><i class="fa fa-edit"></i></a>
+                    <button class="btn btn-outline-warning application-update forward_modal"
+                            data-ajax-url="/sales/order/order_id/status_update/" data-type="update_history">
+                        <i class="icon-update application-icon"></i>
+                    </button>
+                    <button class="btn btn-outline-warning invoice_print forward_modal" data-ajax-url="/sales/order/order_id/invoice/" data-type="invoice_print">
+                        <i class="icon-update application-icon"></i>
+                    </button>
+
+
+            </div>
         </div>
     </script>
 {% endblock %}

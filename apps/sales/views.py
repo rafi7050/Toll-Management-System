@@ -30,6 +30,12 @@ class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'sales/order/list.html'
 
+class OrderListNewView(LoginRequiredMixin, ListView):
+    # class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    # permission_required = 'sales.view_order'
+    model = Order
+    template_name = 'sales/order/new_list.html'
+
 
 class OrderCreateView(CreateView):
     model = Order

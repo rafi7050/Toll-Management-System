@@ -15,6 +15,7 @@ UNIT = (
     (1, 'KG'),
     (2, 'Bundle'),
     (3, 'Piece'),
+    (4, 'Dozen'),
 )
 
 SIZE = (

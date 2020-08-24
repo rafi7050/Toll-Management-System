@@ -10,7 +10,9 @@ let property_house_type_obj = {
 
 let unit = {
     1: 'KG',
-    2: 'BUNDLE'
+    2: 'BUNDLE',
+    3: 'Piece',
+    4: 'Dozen',
 }
 
 let ORDER_STATUS = {

@@ -11,6 +11,7 @@ router.register(r'order/status_update', views.StatusUpdateViewSet)
 router.register(r'order/zone_order', views.ZoneOrderViewSet,basename='zone_order')
 urlpatterns = [
     path('order/',views.OrderListView.as_view(),name='order_list'),
+    path('order_new/',views.OrderListNewView.as_view(),name='order_list_new'),
     path('order/create/',views.OrderCreateView.as_view(),name='order_create'),
     path('order/edit/<int:pk>',views.OrderUpdateView.as_view(),name='order_edit'),
     path('order/<int:order_id>/status_update/',views.StatusUpdateView.as_view(),name='order_status_update'),
