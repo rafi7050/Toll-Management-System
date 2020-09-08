@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView, UpdateView
+from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.response import Response
@@ -79,6 +79,15 @@ class PackageEditView(UpdateView):
 
                 titles.save()
         return super(PackageEditView, self).form_valid(form)
+
+
+class PackageDeleteView(DeleteView):
+    model = Package
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('package_list')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 class PackageViewSet(viewsets.ModelViewSet):

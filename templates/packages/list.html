@@ -45,7 +45,7 @@
 {% block js %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#datatable').DataTable({
+            var table =$('#datatable').DataTable({
                 'serverSide': true,
                 'ajax': '/api/v1/packages/?format=datatables',
                 'columns': [
@@ -71,11 +71,37 @@
                         "mRender": function (data) {
                             return `
                             <a class="btn btn-outline-warning" href=/packages/edit/${data['id']}><i class="fa fa-edit"></i></a>
-{#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
+                            <a class="btn btn-outline-danger delete-btn" href=/packages/delete/${data['id']}><i class="fa fa-trash"></i></a>
                             `;
                         }
                     }
                 ]
+            });
+
+            $('body').on('click', '.delete-btn', function (e) {
+                e.preventDefault();
+                let link = $(this).attr('href');
+                var data = table.row(this.closest('tr')).data();
+                swal({
+                    title: "Are you sure?",
+                    text: "you want to delete this package",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            swal("Poof! Your selected data has been deleted!", {
+                                icon: "success",
+                            });
+                            window.setTimeout(function () {
+                                window.location.href = link;
+                            }, 500)
+
+                        } else {
+                            {#swal("Your imaginary file is safe!");#}
+                        }
+                    });
             });
         });
     </script>
