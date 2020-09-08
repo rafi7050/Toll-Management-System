@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView, CreateView, UpdateView
+from django.views.generic import ListView, TemplateView, CreateView, UpdateView, DeleteView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework_datatables.filters import DatatablesFilterBackend
@@ -42,6 +42,14 @@ class ProductEditView(UpdateView):
             post.created_by = self.request.user
             post.save()
         return super().form_valid(form)
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    template_name = 'delete_confirm.html'
+    success_url = reverse_lazy('product_list')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
