@@ -67,9 +67,9 @@ class OrderedPackageSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         order_type = self.context.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(package=obj, order__order_status__in=[1], order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(package=obj, order__order_status__in=[2], order__created_at__lt=today_start)
         else:
-            order_details = OrderDetails.objects.filter(package=obj, order__order_status__in=[1], order__created_at__gte=today_start)
+            order_details = OrderDetails.objects.filter(package=obj, order__created_at__gte=today_start)
 
         quantity = 0
 
@@ -96,9 +96,9 @@ class ZoneOrderSerializer(serializers.ModelSerializer):
         order_type = self.context.get('order_type', 'active')
         today = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
         if order_type == 'active':
-            return Order.objects.filter(order_status=1, zone=obj, created_at__lt=today).count()
+            return Order.objects.filter(order_status=2, zone=obj, created_at__lt=today).count()
         else:
-            return Order.objects.filter(order_status=1, zone=obj, created_at__gte=today).count()
+            return Order.objects.filter( zone=obj, created_at__gte=today).count()
 
     class Meta:
         model = Zone

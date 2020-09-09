@@ -205,20 +205,20 @@ class OrderedProductSizeViewSet(APIView):
     def get(self, request):
         order_type = self.request.query_params.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(order__order_status__in=[1], order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(order__order_status__in=[2], order__created_at__lt=today_start)
         else:
-            order_details = OrderDetails.objects.filter(order__order_status__in=[1], order__created_at__gte=today_start)
-        order_products = order_details.filter(package__packageproduct__product__isnull=False).values(
-            'package__packageproduct__quantity', 'package__packageproduct__product').annotate(count=Count('package'))
+            order_details = OrderDetails.objects.filter(order__created_at__gte=today_start)
+        order_products = order_details.filter(package__product_to_package__product__isnull=False).values(
+            'package__product_to_package__quantity', 'package__product_to_package__product').annotate(count=Count('package'))
         order_product_quantity = []
         for item in order_products:
-            product_id = item.get('package__packageproduct__product', None)
+            product_id = item.get('package__product_to_package__product', None)
             product = Product.objects.filter(id=product_id).first()
-            quantity = str(item.get('package__packageproduct__quantity', None))
+            quantity = str(item.get('package__product_to_package__quantity', None))
             unit = product.get_unit_display()
             product_size = quantity + ' ' + unit
             single_product = {
-                'quantity': item.get('package__packageproduct__quantity', None),
+                'quantity': item.get('package__product_to_package__quantity', None),
                 'count': item.get('count', None),
                 'id': product.id,
                 'name': product.name,
