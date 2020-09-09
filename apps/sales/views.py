@@ -325,10 +325,11 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
         return self.request.query_params
 
 
-class ActiveOrderInvoiceList(PDFTemplateView):
+class ActiveOrderInvoiceList(TemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
 
     def get_context_data(self, **kwargs):
         context = {}
-        context['order_list'] = Order.objects.filter(order_status=2, created_at__lt=today_start)
+        order_list = Order.objects.filter(order_status=2, created_at__lt=today_start)
+        context['order_list'] = order_list
         return context
