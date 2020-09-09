@@ -7751,7 +7751,8 @@ a.delete-row {
     font-weight: 800;
 }
 
-.status_In_Progress {
+.status_In_Progress,
+.status_Confirmed {
     background: #ffaa00;
     padding: 5px 10px;
     color: #fff;
@@ -7759,7 +7760,8 @@ a.delete-row {
     font-weight: 800;
 }
 
-.status_Done {
+.status_Done,
+.status_Delivered {
     background: #008aff;
     padding: 5px 10px;
     color: #fff;

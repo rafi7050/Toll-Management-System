@@ -24,24 +24,14 @@
                     <hr/>
                     <div class="contact_details border-bottom" style="font-size: 13px;">
                         <div class="row">
-                            <div class="col-6">
+                            <div class="col-12">
                                 <address>
-                                    <strong>Billed To:</strong><br>
+                                    <strong>To:</strong><br>
                                     {{ order.customer.get_full_name }}<br>
-                                    {{ order.address_line_1 }}<br>
-                                    {{ order.address_line_2 }}<br>
-                                    {{ order.place }}
+                                    {{ order.address_line_1 }} {{ order.address_line_2 }} {{ order.place }}
                                 </address>
                             </div>
-                            <div class="col-6 text-right">
-                                <address>
-                                    <strong>Shipped To:</strong><br>
-                                    {{ order.customer.get_full_name }}<br>
-                                    {{ order.address_line_1 }}<br>
-                                    {{ order.address_line_2 }}<br>
-                                    {{ order.place }}
-                                </address>
-                            </div>
+
                         </div>
                     </div>
                     <div class="order_details row" style="font-size: 8px !important;">

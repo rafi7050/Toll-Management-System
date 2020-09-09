@@ -17,6 +17,9 @@ let unit = {
 
 let ORDER_STATUS = {
     1: 'New',
-    2: 'In Progress',
-    3: 'Done',
+    2: 'Confirmed',
+    3: 'Delivered',
+    4: 'Customer Busy',
+    5: 'Order Cancel',
+    6: 'Phone Not Received',
 }

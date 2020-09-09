@@ -96,9 +96,9 @@
                     {'data': 'mobile_number'},
                     {'data': 'total_amount'},
                     {
-                        'data': 'order_status',
+                        'data': 'order_status_name','name':'order_status',
                         render: function (data, type, row, meta) {
-                            let status = ORDER_STATUS[data]
+                            let status = data
                             let status_style = status.replace(' ', '_')
                             return '<span class="status_' + status_style + '">' + status + '</span>'
                         }

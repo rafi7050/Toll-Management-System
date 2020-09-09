@@ -329,5 +329,5 @@ class ActiveOrderInvoiceList(PDFView):
 
     def get_context_data(self, **kwargs):
         context = {}
-        context['order_list'] = Order.objects.filter(order_status=1, created_at__lt=today_start)
+        context['order_list'] = Order.objects.filter(order_status=2, created_at__lt=today_start)
         return context
