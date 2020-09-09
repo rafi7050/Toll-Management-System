@@ -162,23 +162,23 @@
                                     <div class="g-6">{{ item.total_price }}</div>
                                 </div>
                                 <div class="div pl-2">
-                                    <div class="row"
+                                    <div class="grid"
                                          style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;">
-                                        <div class="col-2_5">Product</div>
-                                        <div class="col">Quantity</div>
-                                        <div class="col">Price</div>
-                                        <div class="col-2_5">Regular Price</div>
-                                        <div class="col">Discount</div>
-                                        <div class="col-2">Total Price</div>
+                                        <div class="g-5">Product</div>
+                                        <div class="g-3">Quantity</div>
+                                        <div class="g-3">Price</div>
+                                        <div class="g-5">Regular Price</div>
+                                        <div class="g-3">Discount</div>
+                                        <div class="g-5">Total Price</div>
                                     </div>
                                     {% for package_product in item.package.packageproduct_set.all %}
                                         <div class="row border-bottom" style="font-style: italic;">
-                                            <div class="col-2_5">+ {{ package_product.product }}</div>
-                                            <div class="col">{{ package_product.quantity }}</div>
-                                            <div class="col">{{ package_product.product.price }}</div>
-                                            <div class="col-2_5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
-                                            <div class="col">{{ item.package.discount_percentage }}%</div>
-                                            <div class="col-2">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
+                                            <div class="g-5">+ {{ package_product.product }}</div>
+                                            <div class="g-3">{{ package_product.quantity }}</div>
+                                            <div class="g-3">{{ package_product.product.price }}</div>
+                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
+                                            <div class="g-3">{{ item.package.discount_percentage }}%</div>
+                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
                                         </div>
                                     {% endfor %}
                                 </div>
