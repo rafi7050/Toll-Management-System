@@ -128,8 +128,17 @@
     address {
         margin-bottom: 10px;
     }
-    .contact_details{
+
+    .contact_details {
         margin-bottom: 5px;
+    }
+
+    .single_item_cost {
+        {#background: #f2f3f8;#}
+        margin: 10px 0px;
+        padding: 5px;
+        border-bottom: 8px solid #1dc9b7;
+        background-color: #f2f3f852;
     }
 
 
@@ -138,8 +147,7 @@
     <div class="grid">
         {% for order in order_list %}
             <div style="width: 50%;padding: 5px;">
-                <div class="single_item_cost"
-                     style="background: #f2f3f8;margin: 10px 0px;padding: 5px;border-bottom: 8px solid #1dc9b7;">
+                <div class="single_item_cost">
                     <div class="invoice-title grid" style="font-size: 17px;font-weight: 800;">
                         <div class="g-12">Invoice</div>
                         <div class="g-12 text-right">Order # {{ order }}</div>
