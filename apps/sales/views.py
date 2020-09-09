@@ -324,7 +324,7 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
         return self.request.query_params
 
 
-class ActiveOrderInvoiceList(PDFView):
+class ActiveOrderInvoiceList(TemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
 
     def get_context_data(self, **kwargs):

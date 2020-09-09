@@ -11,7 +11,7 @@
         max-width: 20.833333333%;
     }
 
-    .row {
+    .crow {
         display: -ms-flexbox;
         display: flex;
         -ms-flex-wrap: wrap;
@@ -46,14 +46,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="order_details row" style="font-size: 8px !important;">
-                        <div class="col">
-                            <div class="row"
-                                 style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
-                                <div class="col">Package</div>
-                                <div class="col">Quantity</div>
-                                <div class="col">Price</div>
-                                <div class="col">Total Price</div>
+                    <div class="order_details m-0" style="font-size: 8px !important;">
+                        <div class="">
+                            <div class="crow" style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
+                                <div class="col-md-3">Package</div>
+                                <div class="col-md-3">Quantity</div>
+                                <div class="col-md-3">Price</div>
+                                <div class="col-md-3">Total Price</div>
                             </div>
                             {% for item in order.orderdetails_set.all %}
                                 <div class="row"
