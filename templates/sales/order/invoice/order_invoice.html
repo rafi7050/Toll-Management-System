@@ -11,7 +11,7 @@
         max-width: 20.833333333%;
     }
 
-    .crow {
+    .grid {
         display: -ms-flexbox;
         display: flex;
         -ms-flex-wrap: wrap;
@@ -23,9 +23,107 @@
 
         -webkit-box-direction: inherit;
     }
+
+    .grid .g-1 {
+        width: 4.16666666667% !important;
+    }
+
+    .grid .g-2 {
+        width: 8.33333333333% !important;
+    }
+
+    .grid .g-3 {
+        width: 12.5% !important;
+    }
+
+    .grid .g-4 {
+        width: 16.6666666667% !important;
+    }
+
+    .grid .g-5 {
+        width: 20.8333333333% !important;
+    }
+
+    .grid .g-6 {
+        width: 25% !important;
+    }
+
+    .grid .g-7 {
+        width: 29.1666666667% !important;
+    }
+
+    .grid .g-8 {
+        width: 33.3333333333% !important;
+    }
+
+    .grid .g-9 {
+        width: 37.5% !important;
+    }
+
+    .grid .g-10 {
+        width: 41.6666666667% !important;
+    }
+
+    .grid .g-11 {
+        width: 45.8333333333% !important;
+    }
+
+    .grid .g-12 {
+        width: 50% !important;
+    }
+
+    .grid .g-13 {
+        width: 54.1666666667% !important;
+    }
+
+    .grid .g-14 {
+        width: 58.3333333333% !important;
+    }
+
+    .grid .g-15 {
+        width: 62.5% !important;
+    }
+
+    .grid .g-16 {
+        width: 66.6666666667% !important;
+    }
+
+    .grid .g-17 {
+        width: 70.8333333333% !important;
+    }
+
+    .grid .g-18 {
+        width: 75% !important;
+    }
+
+    .grid .g-19 {
+        width: 79.1666666667% !important;
+    }
+
+    .grid .g-20 {
+        width: 83.3333333333% !important;
+    }
+
+    .grid .g-21 {
+        width: 87.5% !important;
+    }
+
+    .grid .g-22 {
+        width: 91.6666666667% !important;
+    }
+
+    .grid .g-23 {
+        width: 95.8333333333% !important;
+    }
+
+    .grid .g-24 {
+        width: 100% !important;
+    }
+
+
 </style>
 <div class="order_cost_details">
-    <div class="crow">
+    <div class="grid">
         {% for order in order_list %}
             <div style="width: 50%;padding: 5px;">
                 <div class="single_item_cost"
@@ -48,19 +146,20 @@
                     </div>
                     <div class="order_details m-0" style="font-size: 8px !important;">
                         <div class="">
-                            <div class="crow" style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
-                                <div style="width: 25% !important;">Package</div>
-                                <div style="width: 25% !important;">Quantity</div>
-                                <div style="width: 25% !important;">Price</div>
-                                <div style="width: 25% !important;">Total Price</div>
+                            <div class="grid"
+                                 style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
+                                <div class="g-6">Package</div>
+                                <div class="g-6">Quantity</div>
+                                <div class="g-6">Price</div>
+                                <div class="g-6">Total Price</div>
                             </div>
                             {% for item in order.orderdetails_set.all %}
-                                <div class="row"
+                                <div class="grid"
                                      style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 8px;">
-                                    <div class="col">{{ item.package }}</div>
-                                    <div class="col">{{ item.quantity }}</div>
-                                    <div class="col">{{ item.price }}</div>
-                                    <div class="col">{{ item.total_price }}</div>
+                                    <div class="g-6">{{ item.package }}</div>
+                                    <div class="g-6">{{ item.quantity }}</div>
+                                    <div class="g-6">{{ item.price }}</div>
+                                    <div class="g-6">{{ item.total_price }}</div>
                                 </div>
                                 <div class="div pl-2">
                                     <div class="row"

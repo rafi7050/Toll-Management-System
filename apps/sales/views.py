@@ -7,6 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
 from django_pdfkit import PDFView
+from wkhtmltopdf.views import PDFTemplateView
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -324,7 +325,7 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
         return self.request.query_params
 
 
-class ActiveOrderInvoiceList(PDFView):
+class ActiveOrderInvoiceList(PDFTemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
 
     def get_context_data(self, **kwargs):
