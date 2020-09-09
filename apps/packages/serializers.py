@@ -12,6 +12,13 @@ class PackageProductSerializer(serializers.ModelSerializer):
 class PackageSerializer(serializers.ModelSerializer):
     total_amount = serializers.SerializerMethodField()
     regular_price = serializers.SerializerMethodField()
+    size_name = serializers.SerializerMethodField()
+
+    def get_size_name(self, obj):
+        try:
+            return obj.get_size_display()
+        except:
+            pass
 
     # products = PackageProductSerializer(many=True,required=False,write_only=True)
 

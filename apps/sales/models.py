@@ -45,7 +45,7 @@ def update_code(sender, instance, **kwargs):
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    package = models.ForeignKey(Package, on_delete=models.SET_NULL, null=True, blank=True)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
     quantity = models.FloatField(null=True, blank=True,default=1)
     total_price = models.FloatField(null=True, blank=True)
@@ -53,8 +53,8 @@ class OrderDetails(models.Model):
 
 class OrderProductDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    package = models.ForeignKey(Package, on_delete=models.SET_NULL, null=True, blank=True)
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
     quantity = models.FloatField(null=True, blank=True,default=1)
     total_price = models.FloatField(null=True, blank=True)

@@ -28,7 +28,7 @@ class AgeGroup(TimeStamp, OperatorStamp):
 
 class NutritionPoint(TimeStamp, OperatorStamp):
     name = models.CharField(max_length=255, null=True, blank=True)
-    nutrition_point = models.FloatField()
+    nutrition_point = models.CharField(max_length=255,verbose_name='Cure Disease Package Name')
 
     def __str__(self):
         return str(self.nutrition_point)

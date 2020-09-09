@@ -19,16 +19,19 @@ UNIT = (
 )
 
 SIZE = (
-    (1,'Small'),
-    (2,'Medium'),
-    (3,'Large'),
+    (1,'2-3 Persons'),
+    (2,'4-5 Persons'),
+    (3,'6-8 Persons'),
 )
 
 
 ORDER_STATUS = (
     (1,'New'),
-    (2,'In Progress'),
-    (3,'Done'),
+    (2,'Confirmed'),
+    (3,'Delivered'),
+    (4,'Customer Busy'),
+    (5,'Order Cancel'),
+    (6,'Phone Not Received'),
 )
 
 FOLLOW_UP_PURPOSE = (

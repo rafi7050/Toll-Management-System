@@ -10,7 +10,7 @@ class Package(TimeStamp, OperatorStamp):
     name = models.CharField(max_length=255)
     size = models.IntegerField(choices=SIZE, default=1)
     age_group = models.ForeignKey(AgeGroup, on_delete=models.CASCADE)
-    nutrition_point = models.ForeignKey(NutritionPoint, on_delete=models.CASCADE)
+    nutrition_point = models.ForeignKey(NutritionPoint, on_delete=models.CASCADE,verbose_name='Cure Disease Package')
     nutrition_details = models.TextField()
     discount_percentage = models.FloatField(default=0)
     suggestion = models.IntegerField(default=10)

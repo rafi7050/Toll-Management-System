@@ -22,3 +22,21 @@ function orderFormSerialize() {
     form_data['order_details'] = saTojoArray(order_details)
     return form_data
 }
+
+var __sidebar = function (sbm = false) {
+    let sidebar_mini_classes = 'sidebar-mini'
+    if (sbm) {
+        $('body').addClass(sidebar_mini_classes)
+    } else {
+        $('body').removeClass(sidebar_mini_classes)
+    }
+}
+
+$(function () {
+    let pathname = ['/packages/','/product/']
+    if (pathname.includes(window.location.pathname)) {
+        __sidebar(true)
+    } else {
+        __sidebar(false)
+    }
+})

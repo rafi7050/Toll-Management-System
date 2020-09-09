@@ -20,6 +20,7 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Name</th>
+                                <th scope="col">Size</th>
                                 <th scope="col">Regular Price</th>
                                 <th scope="col">Discount</th>
                                 <th scope="col">Total Price</th>
@@ -44,7 +45,7 @@
 {% block js %}
     <script type="text/javascript">
         $(document).ready(function () {
-            var table =$('#datatable').DataTable({
+            var table = $('#datatable').DataTable({
                 'serverSide': true,
                 'ajax': '/api/v1/packages/?format=datatables',
                 'columns': [
@@ -57,6 +58,7 @@
                         }
                     },
                     {'data': 'name'},
+                    {'data': 'size_name', 'name': 'size'},
                     {'data': 'regular_price'},
                     {'data': 'discount_percentage'},
                     {'data': 'total_amount'},
