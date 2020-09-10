@@ -16,12 +16,12 @@
         display: flex;
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
-        {#display: -webkit-box;#}
+        display: -webkit-box;
         /*display: -webkit-flex;*/
-        -webkit-flex-wrap: wrap;
+        {#-webkit-flex-wrap: wrap;#}
         /*zoom: 1 !important;*/
 
-        -webkit-box-direction: inherit;
+        {#-webkit-box-direction: inherit;#}
     }
 
     .grid .g-1 {
@@ -142,9 +142,11 @@
     }
 </style>
 <div class="order_cost_details">
-    <div class="grid" style="width: 100%;">
         {% for order in order_list %}
-            <div style="width: 50%;padding: 5px;">
+            {%  if forloop.counter|odd %}
+                <div class="grid" style="width: 100%;">
+            {% endif %}
+            <div class="g-12" style="padding: 5px;">
                 <div class="single_item_cost">
                     <div class="invoice-title grid" style="font-size: 17px;font-weight: 800;">
                         <div class="g-12">Invoice</div>
@@ -233,6 +235,9 @@
                     </div>
                 </div>
             </div>
+            {%  if forloop.counter|even %}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
 </div>

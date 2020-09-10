@@ -32,6 +32,26 @@ def get_package(order_details=None):
 def multiply(value, arg):
     return round((value * arg), 2)
 
+@register.filter
+def devide(value, arg):
+    return round((value / arg), 2)
+
+
+@register.filter
+def modulas(value, arg):
+    return round((value % arg), 2)
+
+@register.filter
+def even(value):
+    if value % 2:
+        return False
+    return True
+
+@register.filter
+def odd(value):
+    if value % 2:
+        return True
+    return False
 
 @register.filter
 def add(value, arg):
