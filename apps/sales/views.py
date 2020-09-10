@@ -31,6 +31,12 @@ class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'sales/order/list.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zone'] = Zone.objects.all()
+        return context
+
+
 class OrderListNewView(LoginRequiredMixin, ListView):
     # class OrderListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     # permission_required = 'sales.view_order'
@@ -209,7 +215,8 @@ class OrderedProductSizeViewSet(APIView):
         else:
             order_details = OrderDetails.objects.filter(order__created_at__gte=today_start)
         order_products = order_details.filter(package__product_to_package__product__isnull=False).values(
-            'package__product_to_package__quantity', 'package__product_to_package__product').annotate(count=Count('package'))
+            'package__product_to_package__quantity', 'package__product_to_package__product').annotate(
+            count=Count('package'))
         order_product_quantity = []
         for item in order_products:
             product_id = item.get('package__product_to_package__product', None)
@@ -235,7 +242,6 @@ class OrderedProductSizeViewSet(APIView):
 class OrderedProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = OrderedProductSerializer
-
 
     def get_serializer_context(self):
         return self.request.query_params
@@ -331,5 +337,15 @@ class ActiveOrderInvoiceList(PDFTemplateView):
     def get_context_data(self, **kwargs):
         context = {}
         order_list = Order.objects.filter(order_status=2, created_at__lt=today_start)
+        print(self.request.GET.get('zone', None), 'Zone+')
+        zone = self.request.GET.get('zone', None)
+        # zone = self.request.GET.get('zone', None)
+        print(zone, "Zone")
+        if zone:
+            try:
+                order_list = order_list.filter(zone=zone)
+            except:
+                pass
         context['order_list'] = order_list
+
         return context

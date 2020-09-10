@@ -14,6 +14,14 @@ class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%B %d, %Y', read_only=True)
     customer_name = serializers.SerializerMethodField()
     order_status_name = serializers.CharField(source='get_order_status_display')
+    zone_name = serializers.SerializerMethodField(read_only=True)
+
+    def get_zone_name(self, obj):
+        try:
+            return obj.zone.name
+        except:
+            pass
+
     def get_customer_name(self, obj):
         customer = obj.customer
         if customer:
@@ -40,11 +48,12 @@ class OrderedProductSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         order_type = self.context.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1], order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1],
+                                                        order__created_at__lt=today_start)
         else:
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1], order__created_at__gte=today_start)
+            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1],
+                                                        order__created_at__gte=today_start)
 
-		
         quantity = 0
 
         for item in order_details:
@@ -67,7 +76,8 @@ class OrderedPackageSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         order_type = self.context.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(package=obj, order__order_status__in=[2], order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(package=obj, order__order_status__in=[2],
+                                                        order__created_at__lt=today_start)
         else:
             order_details = OrderDetails.objects.filter(package=obj, order__created_at__gte=today_start)
 
@@ -98,7 +108,7 @@ class ZoneOrderSerializer(serializers.ModelSerializer):
         if order_type == 'active':
             return Order.objects.filter(order_status=2, zone=obj, created_at__lt=today).count()
         else:
-            return Order.objects.filter( zone=obj, created_at__gte=today).count()
+            return Order.objects.filter(zone=obj, created_at__gte=today).count()
 
     class Meta:
         model = Zone

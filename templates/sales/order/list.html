@@ -40,11 +40,12 @@
                 <div class="card-header bg-transparent">
                     <h4></h4>
                     <div class="card-header-action w-100">
-                        <a href="{% url 'active_order_invoice_pdf' %}" class="btn btn-warning"><i
+                        <a href="{% url 'active_order_invoice_pdf' %}" class="btn btn-warning" id="order_invoice_pdf"><i
                                 class="fas fa-print"></i> Active Order Invoice</a>
                         <a href="{% url 'order_create' %}" class="btn btn-primary  float-right"><i
                                 class="fas fa-plus"></i> New Order</a>
                     </div>
+
                 </div>
                 <div class="card-body">
                     <div class="table-responsive userTable">
@@ -56,6 +57,7 @@
                                 <th scope="col">Name</th>
                                 <th scope="col">Mobile</th>
                                 <th scope="col">Total Amount</th>
+                                <th scope="col">Zone</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Updated At</th>
                                 {#                                <th scope="col">Status</th>#}
@@ -64,7 +66,7 @@
                             </thead>
                         </table>
                     </div>
-{#                    <div id="order_item_container"></div>#}
+                    {#                    <div id="order_item_container"></div>#}
                 </div>
                 <div class="card-footer text-right">
                     <nav class="d-inline-block">
@@ -95,8 +97,9 @@
                     {'data': 'customer_name', 'name': 'customer.first_name'},
                     {'data': 'mobile_number'},
                     {'data': 'total_amount'},
+                    {'data': 'zone_name', 'name': 'zone.id'},
                     {
-                        'data': 'order_status_name','name':'order_status',
+                        'data': 'order_status_name', 'name': 'order_status',
                         render: function (data, type, row, meta) {
                             let status = data
                             let status_style = status.replace(' ', '_')
@@ -122,9 +125,72 @@
                             `;
                         }
                     }
-                ]
+                ],
+                initComplete: function () {
+                    init_data_table();
+                    init_zone();
+                }
             });
+
+            $('body').on('click', '#search', function () {
+                custom_filter();
+            });
+
+            $('body').on('change', '#zone_id', function () {
+                let zone_id = $(this).val()
+                let order_invoice_pdf_url ="{% url 'active_order_invoice_pdf' %}";
+                if (zone_id) {
+                    order_invoice_pdf_url = order_invoice_pdf_url + '?zone=' + zone_id
+                } else {
+                    order_invoice_pdf_url = "{% url 'active_order_invoice_pdf' %}";
+                }
+                $('#order_invoice_pdf').attr('href', order_invoice_pdf_url)
+                custom_filter();
+            });
+
+
+            let custom_filter = function () {
+                /*
+                let start_date = $('#start_date').val();
+                let end_date = $('#end_date').val();
+                let status = $('#lead_status').val()
+                let campaign_id = $('#campaign_id').val()
+                let created_by = $('#created_by').val()
+                if (created_by == undefined) {
+                    created_by = ''
+                }
+
+                let mobile_no = $('#mobile_no').val()
+                let schedule_status = $('[name="schedule_status"]').val()
+                table.ajax.url(
+                    '/api/v1/lead/?format=datatables&start_date=' + start_date + '&end_date=' + end_date + '&status=' + status + '&created_by=' + created_by + '&campaign_id=' + campaign_id + '&schedule_status=' + schedule_status
+                )
+                */
+                let zone_id = $('#zone_id').val()
+                table.columns(5).search(zone_id).draw();
+            }
         });
+
+        let init_data_table = function () {
+            let entries_template = $('#datatable_length').clone(true)
+            let datatable_filter = $('#datatable_filter').find('[type="search"]').clone(true)
+            datatable_filter.attr('placeholder', 'Search').removeClass('form-control-sm');
+            entries_template.find('select').removeClass('form-control-sm');
+
+            let search_field_template = $('<div class="row px-0"></div>');
+            search_field_template.append($('<div class="col pl-0"></div>').append(entries_template));
+            search_field_template.append($('<div class="col"></div>').append('<select class="form-control" id="zone_id"><option value="">Select Campaign</option></select>'));
+
+            search_field_template.append($('<div class="col text-right pr-0"></div>').append('<button class="btn btn-primary btn-lg rounded-0" id="search"><i class="fa fa-search"></i> Search</button>'));
+            $('#datatable_wrapper .row:first').after(search_field_template);
+            $('#datatable_wrapper .row:first').remove();
+        }
+
+        let init_zone = function () {
+            {% for item in zone %}
+                $('#zone_id').append($(`<option value="{{ item.id }}">{{item.name}}</option>`));
+            {% endfor %}
+        }
 
         let reload_table = function () {
             $('#datatable').DataTable().ajax.reload();
