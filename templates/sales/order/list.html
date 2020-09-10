@@ -129,6 +129,7 @@
                 initComplete: function () {
                     init_data_table();
                     init_zone();
+                    init_order_status();
                 }
             });
 
@@ -136,8 +137,8 @@
                 custom_filter();
             });
 
-            $('body').on('change', '#zone_id', function () {
-                let zone_id = $(this).val()
+            $('body').on('change', '#zone_id,#order_status_id', function () {
+                let zone_id = $('#zone_id').val()
                 let order_invoice_pdf_url ="{% url 'active_order_invoice_pdf' %}";
                 if (zone_id) {
                     order_invoice_pdf_url = order_invoice_pdf_url + '?zone=' + zone_id
@@ -167,7 +168,9 @@
                 )
                 */
                 let zone_id = $('#zone_id').val()
+                let order_status_id = $('#order_status_id').val()
                 table.columns(5).search(zone_id).draw();
+                table.columns(6).search(order_status_id).draw();
             }
         });
 
@@ -179,7 +182,8 @@
 
             let search_field_template = $('<div class="row px-0"></div>');
             search_field_template.append($('<div class="col pl-0"></div>').append(entries_template));
-            search_field_template.append($('<div class="col"></div>').append('<select class="form-control" id="zone_id"><option value="">Select Campaign</option></select>'));
+            search_field_template.append($('<div class="col"></div>').append('<select class="form-control" id="zone_id"><option value="">Select Zone</option></select>'));
+            search_field_template.append($('<div class="col"></div>').append('<select class="form-control" id="order_status_id"><option value="">Select Status</option></select>'));
 
             search_field_template.append($('<div class="col text-right pr-0"></div>').append('<button class="btn btn-primary btn-lg rounded-0" id="search"><i class="fa fa-search"></i> Search</button>'));
             $('#datatable_wrapper .row:first').after(search_field_template);
@@ -191,6 +195,14 @@
                 $('#zone_id').append($(`<option value="{{ item.id }}">{{item.name}}</option>`));
             {% endfor %}
         }
+
+        let init_order_status = function () {
+            {% for item in order_status %}
+                $('#order_status_id').append($(`<option value="{{ item.0 }}">{{item.1}}</option>`));
+            {% endfor %}
+        }
+
+
 
         let reload_table = function () {
             $('#datatable').DataTable().ajax.reload();

@@ -34,6 +34,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         context['zone'] = Zone.objects.all()
+        context['order_status'] = ORDER_STATUS
         return context
 
 
@@ -357,9 +358,7 @@ class ActiveOrderInvoiceList(PDFTemplateView):
     def get_context_data(self, **kwargs):
         context = {}
         order_list = Order.objects.filter(order_status=2, created_at__lt=today_start)
-        print(self.request.GET.get('zone', None), 'Zone+')
         zone = self.request.GET.get('zone', None)
-        # zone = self.request.GET.get('zone', None)
         print(zone, "Zone")
         if zone:
             try:
