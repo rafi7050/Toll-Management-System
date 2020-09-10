@@ -246,6 +246,16 @@ class OrderedProductViewSet(viewsets.ModelViewSet):
     def get_serializer_context(self):
         return self.request.query_params
 
+    def get_queryset(self):
+        order_type = self.request.query_params.get('order_type', 'active')
+        if order_type == 'active':
+            order = Order.objects.filter(order_status=2, created_at__lt=today_start)
+        else:
+            order = Order.objects.filter(created_at__gte=today_start)
+        self.queryset = Product.objects.filter(package__orderdetails__order__in=order).distinct()
+
+        return self.queryset
+
 
 class OrderedPackage(LoginRequiredMixin, ListView):
     model = Package
@@ -265,7 +275,7 @@ class OrderedPackageListViewSet(viewsets.ModelViewSet):
             order = Order.objects.filter(order_status=2, created_at__lt=today_start)
         else:
             order = Order.objects.filter(created_at__gte=today_start)
-        self.queryset = Package.objects.filter(orderdetails__order__in=order)
+        self.queryset = Package.objects.filter(orderdetails__order__in=order).distinct()
 
         return self.queryset
 
