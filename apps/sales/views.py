@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
 from django.db.models import Sum, Count
@@ -370,6 +372,9 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
 
 class ActiveOrderInvoiceList(PDFTemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
+    now = datetime.now()
+    date_time = now.strftime("%d-%m-%Y, %H-%M")
+    filename = str(date_time)+'.pdf'
 
     def get_context_data(self, **kwargs):
         context = {}
