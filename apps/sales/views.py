@@ -215,6 +215,7 @@ class OrderedProductSizeViewSet(APIView):
             order_details = OrderDetails.objects.filter(order__order_status__in=[2], order__created_at__lt=today_start)
         else:
             order_details = OrderDetails.objects.filter(order__created_at__gte=today_start)
+
         order_products = order_details.filter(package__product_to_package__product__isnull=False).values(
             'package__product_to_package__quantity', 'package__product_to_package__product').annotate(
             count=Count('package'))
@@ -225,16 +226,31 @@ class OrderedProductSizeViewSet(APIView):
             quantity = str(item.get('package__product_to_package__quantity', None))
             unit = product.get_unit_display()
             product_size = quantity + ' ' + unit
-            single_product = {
+
+            product_size_quantity = {
+                'product_size': product_size,
                 'quantity': item.get('package__product_to_package__quantity', None),
                 'count': item.get('count', None),
-                'id': product.id,
-                'name': product.name,
                 'unit': product.get_unit_display(),
-                'image': product.image.url,
-                'product_size': product_size
             }
-            order_product_quantity.append(single_product)
+
+            try:
+                single_product = next(item for item in order_product_quantity if item["id"] == product_id)
+                try:
+                    single_product['product_size_quantity'].append(product_size_quantity)
+                except:
+                    single_product['product_size_quantity']=[]
+                    single_product['product_size_quantity'].append(product_size_quantity)
+            except:
+                single_product = {
+                    'id': product.id,
+                    'name': product.name,
+                    'image': product.image.url,
+                    'product_size_quantity' : []
+                }
+                single_product['product_size_quantity'].append(product_size_quantity)
+
+                order_product_quantity.append(single_product)
 
         print(order_product_quantity)
         return Response(order_product_quantity)

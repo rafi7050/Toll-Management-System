@@ -3,38 +3,75 @@
 {% block page_title %}Ordered Product Size Quantity List{% endblock page_title %}
 
 {% block content %}
+    <style>
+        .row.table-header {
+            background-color: #f5f5f5;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stable .row {
+            margin: 0px;
+        }
+
+        .table-header .col {
+            padding: 5px;
+        }
+
+        .row.table-body {
+        }
+
+        .stable-bordered {
+            border-top: 1px solid;
+            border-left: 1px solid;
+            border-color: #a9a9a9;
+        }
+
+        .stable-bordered .col, .stable-bordered .col-1, .stable-bordered .col-2, .stable-bordered .col-4 {
+            border: 1px solid;
+            border-top: none;
+            border-left: none;
+        }
+
+        .stable .size-quantity {
+            padding: 0px;
+        }
+
+        .stable-bordered .size-quantity {
+        {#border-right: 0px;#}{#border-bottom: 0px;#}
+        }
+
+        .size-quantity .col:last-child {
+            border-right: none;
+        }
+    </style>
     <div class="row">
         <div class="col-12">
             <div class="card pt-0">
                 <div class="card-body">
-                    <div class="table-responsive userTable">
-			<div class="btn-group" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary order_status" value="active">Active</button>
-                            <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
-                            </button>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-secondary order_status" value="active">Active</button>
+                        <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
+                        </button>
+                    </div>
+                    <section class="section-preview">
+                        <!-- Material checked -->
+                        <div class="switch" style="font-size: 25px;">
+                            <label>
+                                Live
+                                <input type="checkbox" name="order_status" value="upcoming">
+                                <span class="lever"></span> Upcoming
+                            </label>
                         </div>
-                        <!-- Default checked -->
-                        <section class="section-preview">
-                            <!-- Material checked -->
-                            <div class="switch" style="font-size: 25px;">
-                                <label>
-                                    Live
-                                    <input type="checkbox" name="order_status" value="upcoming">
-                                    <span class="lever"></span> Upcoming
-                                </label>
-                            </div>
-                        </section>
-                        <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
-                            <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Image</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Size</th>
-                                <th scope="col">Quantity</th>
-                            </tr>
-                            </thead>
-                        </table>
+                    </section>
+                    <div class="stable stable-bordered" id="product_size_table">
+                        <div class="row table-header">
+                            <div class="col-1">SL</div>
+                            <div class="col">Image</div>
+                            <div class="col">Product</div>
+                            <div class="col-2">Size</div>
+                            <div class="col-2">Quantity</div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer text-right">
@@ -47,43 +84,39 @@
     </div>
 {% endblock %}
 {% block js %}
+    <script type="text/html" id="table_row">
+        <div class="row table-body">
+            <div class="col-1 product_id"></div>
+            <div class="col product_image">
+                <img src="/media/product/latest-890x606.png" style="max-width: 200px; max-height: 75px;">
+            </div>
+            <div class="col product_name"></div>
+            <div class="col-4 size-quantity">
+
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="empty_table_body">
+        <div class="row table-body">
+            <div class="col p-3 text-center" style="font-size: 18px; font-weight: 600;">No data available in table</div>
+        </div>
+    </script>
+    <script type="text/html" id="size-quantity">
+        <div class="row">
+            <div class="col size">3KG</div>
+            <div class="col quantity">3</div>
+        </div>
+    </script>
+
     <script type="text/javascript">
 
-            let table = $('#datatable').DataTable({
-                'serverSide': true,
-                'ajax': '/sales/order/product_size/api/?format=datatables',
-                'columns': [
-                    {
-                        'data': 'id',
-                        'class': 'text-center',
-                        "searchable": false,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    {
-                        'data': 'image', "searchable": false,
-                        "mRender": function (data) {
-                            if (data) {
-                                return `<img src="${data}"  style="max-width: 200px; max-height: 75px;"/>`
-                            } else {
-                                return `<img src="/static/img/no-image-available.jpg" style="max-width: 200px; max-height: 75px;"/>`
-                            }
-                        }
-                    },
-                    {'data': 'name'},
-                    {'data': 'product_size'},
-                    {'data': 'count'},
-                ]
-            });
 
-
-	$(document).ready(function () {
+        $(document).ready(function () {
+            load_table_data()
             $('html').on('click', '.order_status', function () {
                 let order_type = $(this).val()
-                console.log(order_type, 'Order Type')
-                table.ajax.url('/sales/order/product_size/api/?format=datatables&order_type=' + order_type)
-                table.draw()
+                load_table_data(order_type)
             })
             $('html').on('change', '[name="order_status"]', function () {
                 let order_type_checked = $(this).is(':checked')
@@ -91,10 +124,37 @@
                 if (order_type_checked) {
                     order_type = 'upcoming'
                 }
-                table.ajax.url('/sales/order/product_size/api/?format=datatables&order_type=' + order_type)
-                table.draw()
+                load_table_data(order_type)
             })
         });
+
+        let load_table_data = function (order_type = 'active') {
+
+            axios.get('/sales/order/product_size/api/?order_type=' + order_type).then(function (response) {
+                $("#product_size_table").find('.table-body').remove()
+                if (response.data.length) {
+                    console.log(response.data)
+                    response.data.forEach(function (item) {
+                        let table_row = $($('#table_row').html())
+                        table_row.find('.product_id').html(item.id)
+                        table_row.find('.product_name').html(item.name)
+                        table_row.find('.product_image').find('img').attr('src', item.image)
+                        item.product_size_quantity.forEach(function (product_size_quantity) {
+                            let size_quantity = $($('#size-quantity').html())
+                            size_quantity.find('.size').html(product_size_quantity.product_size)
+                            size_quantity.find('.quantity').html(product_size_quantity.count)
+                            table_row.find('.size-quantity').append(size_quantity)
+                        })
+                        $('#product_size_table').find('.table-header').after(table_row)
+                    })
+                } else {
+                    $('#product_size_table').find('.table-header').after($('#empty_table_body').html())
+                }
+            }).catch(function (error) {
+                $("#product_size_table").find('.table-body').remove()
+                $('#product_size_table').find('.table-header').after($('#empty_table_body').html())
+            })
+        }
 
     </script>
 {% endblock %}
