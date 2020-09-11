@@ -160,6 +160,10 @@
                                     <strong>To:</strong><br>
                                     {{ order.customer.get_full_name }}<br>
                                     {{ order.address_line_1 }} {{ order.address_line_2 }} {{ order.place }}
+                                    {% if order.zone %}
+                                        <br/>
+                                        Zone : {{ order.zone }}
+                                    {% endif %}
                                 </address>
                             </div>
                         </div>
