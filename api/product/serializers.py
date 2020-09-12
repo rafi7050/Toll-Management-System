@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.products.models import Product
+from apps.products.models import Product, NutritionPoint, AgeGroup
 
 
 class ProductsSerializer(serializers.ModelSerializer):
@@ -8,4 +8,15 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id','name', 'description', 'image', 'price', 'unit', 'nutrition')
+        fields = ('id', 'name', 'description', 'image', 'price', 'unit', 'nutrition')
+
+
+class NutritionPointSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NutritionPoint
+        fields = ('id', 'name', 'nutrition_point')
+
+class AgeGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AgeGroup
+        fields = ('id', 'name', 'age_from', 'age_to')
