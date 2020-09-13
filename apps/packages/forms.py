@@ -53,6 +53,10 @@ class PackageProductForm(forms.ModelForm):
         model = PackageProduct
         exclude = ()
 
+    def __init__(self, *args, **kwargs):
+        super(PackageProductForm, self).__init__(*args, **kwargs)
+        self.fields['product'].widget.attrs.update({'class': 'select2'})
+
 
 PackageProductFormSet = inlineformset_factory(
     Package, PackageProduct, form=PackageProductForm,
