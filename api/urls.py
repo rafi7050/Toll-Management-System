@@ -10,6 +10,8 @@ from pricing.urls import client_router
 client_router.register(r'signup', client.RegisterViewSet, basename='client_register')
 client_router.register(r'package', package.PackageViewSet, basename='public_package')
 client_router.register(r'package_size', package.PackageSizeViewSet, basename='package_size_api')
+client_router.register(r'family_package_plan', package.FamilyPackagePlanViewSet, basename='family_package_plan_api')
+client_router.register(r'nutrition_package_plan', package.NutritionPackagePlanViewSet, basename='nutrition_package_plan_api')
 client_router.register(r'product', product.ProductViewSet, basename='public_product')
 client_router.register(r'age_group', product.AgeGroupViewSet, basename='age_group_api')
 client_router.register(r'nutrition_point', product.NutritionPointViewSet, basename='nutrition_point_api')

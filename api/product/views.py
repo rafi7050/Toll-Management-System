@@ -1,4 +1,6 @@
 from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from api.product.serializers import AgeGroupSerializer, NutritionPointSerializer
 from apps.products.models import Product, NutritionPoint, AgeGroup
@@ -20,3 +22,7 @@ class AgeGroupViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     queryset = AgeGroup.objects.all()
     serializer_class = AgeGroupSerializer
+
+
+
+

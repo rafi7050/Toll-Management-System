@@ -63,3 +63,40 @@ class PackageSizeViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         package_size = dict(SIZE)
         return Response(package_size)
+
+
+class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    queryset = Package.objects.filter(package_type=1).order_by('suggestion')
+    serializer_class = PackageSerializer
+    authentication_classes = (TokenAuthentication,)  # Add this line
+    permission_classes = (IsAuthenticated,)  # Add this line
+
+    def get_queryset(self):
+        user = self.request.user
+        orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
+        order_ids = orders.values_list('id', flat=True)
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids).values_list('suggestion',
+                                                                                                 flat=True)
+        packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
+        print(packages)
+        self.queryset = self.queryset.exclude(suggestion__in=prev_package_suggestions)[:5]
+        return self.queryset
+
+class NutritionPackagePlanViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    queryset = Package.objects.filter(package_type=1).order_by('suggestion')
+    serializer_class = PackageSerializer
+    authentication_classes = (TokenAuthentication,)  # Add this line
+    permission_classes = (IsAuthenticated,)  # Add this line
+
+    def get_queryset(self):
+        user = self.request.user
+        orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
+        order_ids = orders.values_list('id', flat=True)
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids).values_list('suggestion',
+                                                                                                 flat=True)
+        packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
+        print(packages)
+        self.queryset = self.queryset.exclude(suggestion__in=prev_package_suggestions)[:5]
+        return self.queryset
