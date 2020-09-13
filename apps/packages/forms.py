@@ -11,7 +11,7 @@ class PackageForm(forms.ModelForm):
     class Meta:
         model = Package
         fields = (
-        'name', 'size', 'age_group', 'nutrition_point', 'nutrition_details', 'suggestion', 'discount_percentage')
+            'name', 'size', 'age_group', 'nutrition_point', 'nutrition_details', 'suggestion', 'discount_percentage')
 
     def __init__(self, *args, **kwargs):
         super(PackageForm, self).__init__(*args, **kwargs)
