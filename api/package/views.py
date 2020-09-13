@@ -67,7 +67,7 @@ class PackageSizeViewSet(viewsets.ModelViewSet):
 
 class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
-    queryset = Package.objects.filter(package_type=1).order_by('suggestion')
+    queryset = Package.objects.filter(package_type=1,nutrition_point__isnull=True).order_by('suggestion')
     serializer_class = PackageSerializer
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
@@ -76,7 +76,7 @@ class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
         user = self.request.user
         orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
         order_ids = orders.values_list('id', flat=True)
-        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids).values_list('suggestion',
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids,package_type=1,nutrition_point__isnull=True).values_list('suggestion',
                                                                                                  flat=True)
         packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
         print(packages)
@@ -85,7 +85,7 @@ class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
 
 class NutritionPackagePlanViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
-    queryset = Package.objects.filter(package_type=1).order_by('suggestion')
+    queryset = Package.objects.filter(package_type=1,nutrition_point__isnull=False).order_by('suggestion')
     serializer_class = PackageSerializer
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
@@ -94,7 +94,7 @@ class NutritionPackagePlanViewSet(viewsets.ModelViewSet):
         user = self.request.user
         orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
         order_ids = orders.values_list('id', flat=True)
-        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids).values_list('suggestion',
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids,package_type=1,nutrition_point__isnull=False).values_list('suggestion',
                                                                                                  flat=True)
         packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
         print(packages)
