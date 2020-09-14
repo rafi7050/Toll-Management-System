@@ -48,11 +48,9 @@ class OrderedProductSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         order_type = self.context.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1],
-                                                        order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[2], order__created_at__lt=today_start)
         else:
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[1],
-                                                        order__created_at__gte=today_start)
+            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__created_at__gte=today_start)
 
         quantity = 0
 
