@@ -213,26 +213,26 @@
                                 <div class="g-12"><b>TK <span class="Net_Premium">{{ order.total_amount }}</span></b>
                                 </div>
                             </div>
-                            <div class="grid" style="border-bottom: 1px solid #1dc9b7">
-                                <div class="g-12">+ <span class="vat">15</span>% Vat</div>
-                                <div class="g-12">TK <span
-                                        class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>
-                                </div>
-                            </div>
-                            <div class="grid">
-                                <div class="g-12"><b>Total Premium</b></div>
-                                <div class="g-12"><b>TK <span
-                                        class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>
-                                </div>
-                            </div>
+{#                            <div class="grid" style="border-bottom: 1px solid #1dc9b7">#}
+{#                                <div class="g-12">+ <span class="vat">15</span>% Vat</div>#}
+{#                                <div class="g-12">TK <span#}
+{#                                        class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <div class="grid">#}
+{#                                <div class="g-12"><b>Total Premium</b></div>#}
+{#                                <div class="g-12"><b>TK <span#}
+{#                                        class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>#}
+{#                                </div>#}
+{#                            </div>#}
                             <div class="grid" style="border-bottom: 1px solid #1dc9b7">
                                 <div class="g-12">Delivery Cost</div>
-                                <div class="g-12">TK <span class="Delivery_Cost">50</span></div>
+                                <div class="g-12">TK <span class="Delivery_Cost">30</span></div>
                             </div>
                             <div class="grid">
                                 <div class="g-12"><b>Grand Total</b></div>
                                 <div class="g-12"><b>TK <span
-                                        class="Grand_Total">{{ order.total_amount | percentage_add:15 | add:50 }}</span></b>
+                                        class="Grand_Total">{{ order.total_amount | add:30 }}</span></b>
                                 </div>
                             </div>
                         </div>
