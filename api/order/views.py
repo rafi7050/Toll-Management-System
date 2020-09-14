@@ -8,6 +8,7 @@ from rest_framework.response import Response
 
 from api.order.serializers import OrderSerializer, OrderDetailsSerializer
 from api.package.serializers import PackageSerializer, PackageProductSerializer
+from apps.helpers.models import get_location_zone
 from apps.helpers.views import ClientPagination
 from apps.packages.models import Package
 from apps.products.models import Product
@@ -65,6 +66,13 @@ class OrderViewSet(viewsets.ModelViewSet):
             pass
 
         order_data['customer'] = self.request.user.id
+        latitude = order_data.get('latitude',None)
+        longitude = order_data.get('longitude',None)
+
+        zone = get_location_zone(latitude,longitude)
+
+        if zone:
+            order_data['zone']=zone.id
 
         serializer = self.get_serializer(data=order_data)
         serializer.is_valid(raise_exception=True)

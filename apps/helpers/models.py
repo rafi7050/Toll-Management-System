@@ -96,6 +96,8 @@ def get_location_zone(lat, long):
     area_zone = Zone.objects.all()
     zone = None
     if lat and long:
+        lat = float(lat)
+        long = float(long)
         for item in area_zone:
             polygon_area = item.area
             pt = Point(long, lat)
