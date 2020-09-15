@@ -3,7 +3,7 @@ from django.urls import path
 from apps.products import views
 from pricing.urls import router
 
-router.register(r'product', views.ProductViewSet)
+router.register(r'product', views.ProductViewSet,basename='product_list_api')
 router.register(r'age_group', views.AgeGroupViewSet)
 router.register(r'nutrition_point', views.NutritionPointViewSet)
 urlpatterns = [

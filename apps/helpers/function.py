@@ -24,7 +24,7 @@ def get_package(order_details=None):
             value=Concat('name', Value('')))
 
     return TypeModelChoiceField(
-        queryset=queryset, required=True, empty_label="Select Package",
+        queryset=queryset, required=False, empty_label="Select Package",
         error_messages={'required': 'Please select a package'})
 
 

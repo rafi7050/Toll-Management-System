@@ -26,6 +26,27 @@
 {% block js %}
     <script>
         $(function () {
+            $('.dynamic-form').each(function () {
+                let item_type = $(this).find('.item_type_select select').val()
+                if (item_type == 2) {
+                    $(this).closest('.dynamic-form').find('.package_select').hide().find('select').prop('disabled', true)
+                    $(this).closest('.dynamic-form').find('.product_select').show().find('select').select2()
+                } else {
+                    $(this).closest('.dynamic-form').find('.package_select').show().find('select').select2()
+                    $(this).closest('.dynamic-form').find('.product_select').hide().find('select').prop('disabled', true)
+                }
+            })
+            $('html').on('change', '.item_type_select select', function () {
+                let item_type = $(this).val()
+                if (item_type == 2) {
+                    $(this).closest('.dynamic-form').find('.package_select').hide().find('select').prop('disabled', true)
+                    $(this).closest('.dynamic-form').find('.product_select').show().find('select').prop('disabled', false).change().select2()
+                } else {
+                    $(this).closest('.dynamic-form').find('.package_select').show().find('select').prop('disabled', false).change().select2()
+                    $(this).closest('.dynamic-form').find('.product_select').hide().find('select').prop('disabled', true)
+                }
+
+            });
             $('html').on('change', '.package_select select', function () {
                 let package = $(this).val()
                 let __this = $(this)
@@ -38,8 +59,32 @@
                     }).catch(function (e) {
                         console.log(e)
                     })
+                } else {
+                    __this.closest('.dynamic-form').find('.price_select').find('input').val(0)
+                    calculate_package_price(__this)
                 }
-            })
+            });
+
+            $('html').on('change', '.product_select select', function () {
+                let package = $(this).val()
+                let __this = $(this)
+                if (package) {
+                    let url = '/api/v1/product/' + package + '/';
+                    axios.get(url).then(function (response) {
+                        let price = response.data.price
+                        __this.closest('.dynamic-form').find('.price_select').find('input').val(price)
+                        calculate_package_price(__this)
+                    }).catch(function (e) {
+                        console.log(e)
+                    })
+                } else {
+                    __this.closest('.dynamic-form').find('.price_select').find('input').val(0)
+                    calculate_package_price(__this)
+                }
+            });
+
+
+
 
             $('html').on('change', '.price_select input,.quantity_select input', function () {
                 let __this = $(this)

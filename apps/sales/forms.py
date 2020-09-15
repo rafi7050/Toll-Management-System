@@ -71,7 +71,7 @@ class OrderDetailsForm(forms.ModelForm):
 
     class Meta:
         model = OrderDetails
-        fields = ['package', 'price', 'quantity', 'total_price']
+        fields = ['package','product', 'price', 'quantity', 'total_price','item_type']
 
     def __init__(self, *args, **kwargs):
         instance = kwargs.get('instance',None)
@@ -79,16 +79,18 @@ class OrderDetailsForm(forms.ModelForm):
         super(OrderDetailsForm, self).__init__(*args, **kwargs)
         self.fields['total_price'].widget.attrs['readonly'] = True
         self.fields['price'].widget.attrs['readonly'] = True
+        self.fields['package'].widget.attrs['class']= 'select2'
+        self.fields['product'].widget.attrs['class']= 'select2'
 
         if instance:
             self.fields['package'] = get_package(instance)
 
 OrderDetailsFormset = inlineformset_factory(
-    Order, OrderDetails, form=OrderDetailsForm, fields=['package', 'price', 'quantity', 'total_price'], extra=1,
+    Order, OrderDetails, form=OrderDetailsForm, fields=['item_type','package','product', 'price', 'quantity', 'total_price'], extra=1,
     can_delete=True
 )
 
 OrderDetailsUpdateFormset = inlineformset_factory(
-    Order, OrderDetails, form=OrderDetailsForm, fields=['package', 'price', 'quantity', 'total_price'], extra=0,
+    Order, OrderDetails, form=OrderDetailsForm, fields=['item_type','package','product', 'price', 'quantity', 'total_price'], extra=0,
     can_delete=True
 )

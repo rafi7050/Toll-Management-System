@@ -19,19 +19,18 @@ UNIT = (
 )
 
 SIZE = (
-    (1,'2-3 Persons'),
-    (2,'4-5 Persons'),
-    (3,'6-8 Persons'),
+    (1, '2-3 Persons'),
+    (2, '4-5 Persons'),
+    (3, '6-8 Persons'),
 )
 
-
 ORDER_STATUS = (
-    (1,'New'),
-    (2,'Confirmed'),
-    (3,'Delivered'),
-    (4,'Customer Busy'),
-    (5,'Order Cancel'),
-    (6,'Phone Not Received'),
+    (1, 'New'),
+    (2, 'Confirmed'),
+    (3, 'Delivered'),
+    (4, 'Customer Busy'),
+    (5, 'Order Cancel'),
+    (6, 'Phone Not Received'),
 )
 
 FOLLOW_UP_PURPOSE = (
@@ -86,8 +85,13 @@ USER_PROFESSION_CHOICES = (
 )
 
 PACKAGE_TYPE = (
-    (1,'Public'),
-    (2,'Privet/Custom'),
+    (1, 'Public'),
+    (2, 'Privet/Custom'),
 )
 
 today_start = datetime.datetime.combine(datetime.date.today(), datetime.datetime.min.time())
+
+ORDER_ITEM_TYPE = (
+    (1, 'Package'),
+    (2, 'Product'),
+)
