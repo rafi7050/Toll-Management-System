@@ -7,7 +7,7 @@ from apps.products.models import Product, AgeGroup, NutritionPoint
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['image','name', 'description', 'price','unit', 'nutrition']
+        fields = ['image','name', 'description', 'price','unit','discount_percentage', 'nutrition']
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)

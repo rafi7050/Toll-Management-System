@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.shortcuts import render
 
 # Create your views here.
@@ -218,11 +218,13 @@ class OrderedProductSizeViewSet(APIView):
         else:
             order_details = OrderDetails.objects.filter(order__created_at__gte=today_start)
 
-        order_products = order_details.filter(package__product_to_package__product__isnull=False).values(
-            'package__product_to_package__quantity', 'package__product_to_package__product').annotate(
-            count=Count('package'))
         order_product_quantity = []
-        for item in order_products:
+
+        order_package_products = order_details.filter(package__product_to_package__product__isnull=False).values('package__product_to_package__quantity', 'package__product_to_package__product').annotate(
+            count=Count('package'))
+        print(order_package_products, 'Order Products')
+
+        for item in order_package_products:
             product_id = item.get('package__product_to_package__product', None)
             product = Product.objects.filter(id=product_id).first()
             quantity = str(item.get('package__product_to_package__quantity', None))
@@ -241,14 +243,49 @@ class OrderedProductSizeViewSet(APIView):
                 try:
                     single_product['product_size_quantity'].append(product_size_quantity)
                 except:
-                    single_product['product_size_quantity']=[]
+                    single_product['product_size_quantity'] = []
                     single_product['product_size_quantity'].append(product_size_quantity)
             except:
                 single_product = {
                     'id': product.id,
                     'name': product.name,
                     'image': product.image.url,
-                    'product_size_quantity' : []
+                    'product_size_quantity': []
+                }
+                single_product['product_size_quantity'].append(product_size_quantity)
+
+                order_product_quantity.append(single_product)
+
+        order_products = order_details.filter(product__isnull=False).values('quantity','product_id').annotate(count=Count('product'))
+        print(order_products)
+        for item3 in order_products:
+            product_id = item3.get('product_id',None)
+            quantity = item3.get('quantity',None)
+            count = item3.get('count', None)
+            product = Product.objects.filter(id=product_id).first()
+            unit = product.get_unit_display()
+            product_size = str(quantity) + ' ' + unit
+
+            product_size_quantity = {
+                'product_size': product_size,
+                'quantity': quantity,
+                'count': count,
+                'unit': unit,
+            }
+
+            try:
+                single_product = next(item for item in order_product_quantity if item["id"] == product_id)
+                try:
+                    single_product['product_size_quantity'].append(product_size_quantity)
+                except:
+                    single_product['product_size_quantity'] = []
+                    single_product['product_size_quantity'].append(product_size_quantity)
+            except:
+                single_product = {
+                    'id': product.id,
+                    'name': product.name,
+                    'image': product.image.url,
+                    'product_size_quantity': []
                 }
                 single_product['product_size_quantity'].append(product_size_quantity)
 
@@ -271,7 +308,8 @@ class OrderedProductViewSet(viewsets.ModelViewSet):
             order = Order.objects.filter(order_status=2, created_at__lt=today_start)
         else:
             order = Order.objects.filter(created_at__gte=today_start)
-        self.queryset = Product.objects.filter(package__orderdetails__order__in=order).distinct()
+        self.queryset = Product.objects.filter(
+            Q(package__orderdetails__order__in=order) | Q(orderdetails__order__in=order)).distinct()
 
         return self.queryset
 
@@ -322,12 +360,16 @@ class OrderInvoiceView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         order = Order.objects.filter(id=self.kwargs['order_id']).first()
         order_details = OrderDetails.objects.filter(order=order)
+        order_details_package = order_details.filter(package__isnull=False)
+        order_details_product = order_details.filter(product__isnull=False)
         total_amount = order_details.aggregate(total=Sum('total_price'))
         order_log = OrderActivityLog.objects.filter(order=order)
         file_status = ORDER_STATUS
         context = {
             'order': order,
             'order_details': order_details,
+            'order_details_product': order_details_product,
+            'order_details_package': order_details_package,
             'total_amount': total_amount,
             'file_status': file_status
         }
@@ -374,7 +416,7 @@ class ActiveOrderInvoiceList(PDFTemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
     now = datetime.now()
     date_time = now.strftime("%d-%m-%Y, %H-%M")
-    filename = str(date_time)+'.pdf'
+    filename = str(date_time) + '.pdf'
 
     def get_context_data(self, **kwargs):
         context = {}

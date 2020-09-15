@@ -191,67 +191,114 @@
                                                             <div class="table-responsive">
                                                                 <div class="order_details m-0">
                                                                     <div class="">
-                                                                        <div class="grid"
-                                                                             style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 14px;">
-                                                                            <div class="g-6">Package</div>
-                                                                            <div class="g-6">Quantity</div>
-                                                                            <div class="g-6">Price</div>
-                                                                            <div class="g-6">Total Price</div>
-                                                                        </div>
-                                                                        {% for item in order.orderdetails_set.all %}
+                                                                        {% if order_details_package %}
                                                                             <div class="grid"
-                                                                                 style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 13px;">
-                                                                                <div class="g-6">{{ item.package }}</div>
-                                                                                <div class="g-6">{{ item.quantity }}</div>
-                                                                                <div class="g-6">{{ item.price }}</div>
-                                                                                <div class="g-6">{{ item.total_price }}</div>
+                                                                                 style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 14px;">
+                                                                                <div class="g-6">Package</div>
+                                                                                <div class="g-6">Quantity</div>
+                                                                                <div class="g-6">Price</div>
+                                                                                <div class="g-6">Total Price</div>
                                                                             </div>
-                                                                            <div class="div pl-2">
+                                                                            {% for item in order_details_package %}
                                                                                 <div class="grid"
-                                                                                     style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;font-size: 13px;">
-                                                                                    <div class="g-5">Product</div>
-                                                                                    <div class="g-3">Quantity</div>
-                                                                                    <div class="g-3">Price</div>
-                                                                                    <div class="g-5">Regular Price</div>
-                                                                                    <div class="g-3">Discount</div>
-                                                                                    <div class="g-5">Total Price</div>
+                                                                                     style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 13px;">
+                                                                                    <div class="g-6">{{ item.package }}</div>
+                                                                                    <div class="g-6">{{ item.quantity }}</div>
+                                                                                    <div class="g-6">{{ item.price }}</div>
+                                                                                    <div class="g-6">{{ item.total_price }}</div>
                                                                                 </div>
-
-                                                                                {% for package_product in item.package.product_to_package.all %}
-                                                                                    <div class="grid border-bottom"
-                                                                                         style="font-style: italic; font-size: 12px;">
-                                                                                        <div class="g-5">
-                                                                                            + {{ package_product.product.name }}</div>
-                                                                                        <div class="g-3">{{ package_product.quantity }}</div>
-                                                                                        <div class="g-3">{{ package_product.product.price }}</div>
-                                                                                        <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
-                                                                                        <div class="g-3">{{ item.package.discount_percentage }}%</div>
-                                                                                        <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
+                                                                                <div class="div pl-2">
+                                                                                    <div class="grid"
+                                                                                         style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;font-size: 13px;">
+                                                                                        <div class="g-5">Product
+                                                                                        </div>
+                                                                                        <div class="g-3">
+                                                                                            Quantity
+                                                                                        </div>
+                                                                                        <div class="g-3">Price
+                                                                                        </div>
+                                                                                        <div class="g-5">Regular
+                                                                                            Price
+                                                                                        </div>
+                                                                                        <div class="g-3">
+                                                                                            Discount
+                                                                                        </div>
+                                                                                        <div class="g-5">Total
+                                                                                            Price
+                                                                                        </div>
                                                                                     </div>
-                                                                                {% endfor %}
+
+                                                                                    {% for package_product in item.package.product_to_package.all %}
+                                                                                        <div class="grid border-bottom"
+                                                                                             style="font-style: italic; font-size: 12px;">
+                                                                                            <div class="g-5">
+                                                                                                + {{ package_product.product.name }}</div>
+                                                                                            <div class="g-3">{{ package_product.quantity }}</div>
+                                                                                            <div class="g-3">{{ package_product.product.price }}</div>
+                                                                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
+                                                                                            <div class="g-3">{{ item.package.discount_percentage }}%</div>
+                                                                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
+                                                                                        </div>
+                                                                                    {% endfor %}
+                                                                                </div>
+                                                                            {% endfor %}
+                                                                        {% endif %}
+
+
+                                                                        {% if order_details_product %}
+                                                                            <div class="grid"
+                                                                                 style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;font-size: 13px;">
+                                                                                <div class="g-5">Product
+                                                                                </div>
+                                                                                <div class="g-3">Quantity
+                                                                                </div>
+                                                                                <div class="g-3">Price</div>
+                                                                                <div class="g-5">Regular
+                                                                                    Price
+                                                                                </div>
+                                                                                <div class="g-3">Discount
+                                                                                </div>
+                                                                                <div class="g-5">Total
+                                                                                    Price
+                                                                                </div>
                                                                             </div>
-                                                                        {% endfor %}
+
+                                                                            {% for item in order_details_product %}
+                                                                                <div class="grid border-bottom"
+                                                                                     style="font-style: italic; font-size: 12px;">
+                                                                                    <div class="g-5">
+                                                                                        + {{ item.product }}</div>
+                                                                                    <div class="g-3">{{ item.quantity }}</div>
+                                                                                    <div class="g-3">{{ item.product.price }}</div>
+                                                                                    <div class="g-5">{{ item.product.price | multiply:item.quantity }}</div>
+                                                                                    <div class="g-3">{{ item.product.discount_percentage }}%</div>
+                                                                                    <div class="g-5">{{ item.product.price | multiply:item.quantity | percentage_sub:item.product.discount_percentage }}</div>
+                                                                                </div>
+                                                                            {% endfor %}
+                                                                        {% endif %}
+
+
                                                                         <div class="grid">
                                                                             <div class="g-12"><b>Net Premium</b></div>
                                                                             <div class="g-12"><b>TK <span
                                                                                     class="Net_Premium">{{ order.total_amount }}</span></b>
                                                                             </div>
                                                                         </div>
-{#                                                                        <div class="grid"#}
-{#                                                                             style="border-bottom: 1px solid #1dc9b7">#}
-{#                                                                            <div class="g-12">+ <span#}
-{#                                                                                    class="vat">15</span>% Vat#}
-{#                                                                            </div>#}
-{#                                                                            <div class="g-12">TK <span#}
-{#                                                                                    class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>#}
-{#                                                                            </div>#}
-{#                                                                        </div>#}
-{#                                                                        <div class="grid">#}
-{#                                                                            <div class="g-12"><b>Total Premium</b></div>#}
-{#                                                                            <div class="g-12"><b>TK <span#}
-{#                                                                                    class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>#}
-{#                                                                            </div>#}
-{#                                                                        </div>#}
+                                                                        {#                                                                        <div class="grid"#}
+                                                                        {#                                                                             style="border-bottom: 1px solid #1dc9b7">#}
+                                                                        {#                                                                            <div class="g-12">+ <span#}
+                                                                        {#                                                                                    class="vat">15</span>% Vat#}
+                                                                        {#                                                                            </div>#}
+                                                                        {#                                                                            <div class="g-12">TK <span#}
+                                                                        {#                                                                                    class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>#}
+                                                                        {#                                                                            </div>#}
+                                                                        {#                                                                        </div>#}
+                                                                        {#                                                                        <div class="grid">#}
+                                                                        {#                                                                            <div class="g-12"><b>Total Premium</b></div>#}
+                                                                        {#                                                                            <div class="g-12"><b>TK <span#}
+                                                                        {#                                                                                    class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>#}
+                                                                        {#                                                                            </div>#}
+                                                                        {#                                                                        </div>#}
                                                                         <div class="grid"
                                                                              style="border-bottom: 1px solid #1dc9b7">
                                                                             <div class="g-12">Delivery Cost</div>

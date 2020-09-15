@@ -1,6 +1,7 @@
 import datetime
 from datetime import timedelta
 
+from django.db.models import Q
 from rest_framework import serializers
 
 from apps.helpers.utils import today_start
@@ -48,17 +49,23 @@ class OrderedProductSerializer(serializers.ModelSerializer):
     def get_quantity(self, obj):
         order_type = self.context.get('order_type', 'active')
         if order_type == 'active':
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__order_status__in=[2], order__created_at__lt=today_start)
+            order_details = OrderDetails.objects.filter(order__order_status__in=[2],
+                                                        order__created_at__lt=today_start).filter(
+                Q(package__products__in=[obj.id]) | Q(product_id__in=[obj.id]))
         else:
-            order_details = OrderDetails.objects.filter(package__products__in=[obj.id], order__created_at__gte=today_start)
+            order_details = OrderDetails.objects.filter(order__created_at__gte=today_start).filter(
+                Q(package__products__in=[obj.id]) | Q(product_id__in=[obj.id]))
 
         quantity = 0
 
         for item in order_details:
-            package_product = item.package.products.through.objects.filter(package=item.package, product=obj)
-            for item2 in package_product:
-                print(item2.product, item2.quantity, item.package)
-                quantity += item2.quantity
+            if item.package:
+                package_product = item.package.products.through.objects.filter(package=item.package, product=obj)
+                for item2 in package_product:
+                    print(item2.product, item2.quantity, item.package)
+                    quantity += item2.quantity
+            elif item.product:
+                quantity += item.quantity
         return quantity
 
     class Meta:
