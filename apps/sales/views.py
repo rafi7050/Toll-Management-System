@@ -220,7 +220,8 @@ class OrderedProductSizeViewSet(APIView):
 
         order_product_quantity = []
 
-        order_package_products = order_details.filter(package__product_to_package__product__isnull=False).values('package__product_to_package__quantity', 'package__product_to_package__product').annotate(
+        order_package_products = order_details.filter(package__product_to_package__product__isnull=False).values(
+            'package__product_to_package__quantity', 'package__product_to_package__product').annotate(
             count=Count('package'))
         print(order_package_products, 'Order Products')
 
@@ -256,11 +257,12 @@ class OrderedProductSizeViewSet(APIView):
 
                 order_product_quantity.append(single_product)
 
-        order_products = order_details.filter(product__isnull=False).values('quantity','product_id').annotate(count=Count('product'))
+        order_products = order_details.filter(product__isnull=False).values('quantity', 'product_id').annotate(
+            count=Count('product'))
         print(order_products)
         for item3 in order_products:
-            product_id = item3.get('product_id',None)
-            quantity = item3.get('quantity',None)
+            product_id = item3.get('product_id', None)
+            quantity = item3.get('quantity', None)
             count = item3.get('count', None)
             product = Product.objects.filter(id=product_id).first()
             unit = product.get_unit_display()
@@ -276,7 +278,15 @@ class OrderedProductSizeViewSet(APIView):
             try:
                 single_product = next(item for item in order_product_quantity if item["id"] == product_id)
                 try:
-                    single_product['product_size_quantity'].append(product_size_quantity)
+                    product_size_quantity_obj = single_product['product_size_quantity']
+                    try:
+                        product_size_quantity_obj_product_size = next(
+                            item for item in product_size_quantity_obj if item['product_size'] == product_size)
+                        product_size_quantity_obj_product_size['count'] = float(
+                            product_size_quantity_obj_product_size['count']) + count
+                    except:
+                        single_product['product_size_quantity'].append(product_size_quantity)
+
                 except:
                     single_product['product_size_quantity'] = []
                     single_product['product_size_quantity'].append(product_size_quantity)

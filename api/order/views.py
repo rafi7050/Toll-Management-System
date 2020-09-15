@@ -20,7 +20,6 @@ class ClientOrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     pagination_class = ClientPagination
 
-
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
 
@@ -45,34 +44,34 @@ class OrderViewSet(viewsets.ModelViewSet):
         packages = list(filter(lambda x: x.get('package', None), order_details))
         product = list(filter(lambda x: x.get('product', None), order_details))
 
-        if product:
-            product_serialize_data = self.product_package_create(product)
-            if product_serialize_data:
-                package_id = product_serialize_data.get('id', None)
-                if package_id:
-                    package_price = self.package_price(package_id)
-                    package = {
-                        'package': package_id,
-                        'price': package_price,
-                        'quantity': 1,
-                        'total_price': package_price
-                    }
-
-                    packages.append(package)
+        # if product:
+        #     product_serialize_data = self.product_package_create(product)
+        #     if product_serialize_data:
+        #         package_id = product_serialize_data.get('id', None)
+        #         if package_id:
+        #             package_price = self.package_price(package_id)
+        #             package = {
+        #                 'package': package_id,
+        #                 'price': package_price,
+        #                 'quantity': 1,
+        #                 'total_price': package_price
+        #             }
+        #
+        #             packages.append(package)
         try:
-            order_amount = sum(float(x['total_price']) for x in packages)
+            order_amount = sum(float(x['total_price']) for x in order_details)
             order_data['total_amount'] = order_amount
         except:
             pass
 
         order_data['customer'] = self.request.user.id
-        latitude = order_data.get('latitude',None)
-        longitude = order_data.get('longitude',None)
+        latitude = order_data.get('latitude', None)
+        longitude = order_data.get('longitude', None)
 
-        zone = get_location_zone(latitude,longitude)
+        zone = get_location_zone(latitude, longitude)
 
         if zone:
-            order_data['zone']=zone.id
+            order_data['zone'] = zone.id
 
         serializer = self.get_serializer(data=order_data)
         serializer.is_valid(raise_exception=True)
@@ -81,10 +80,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         order_id = data.get('id', None)
 
         if order_id:
-            for itemp in packages:
+            for itemp in order_details:
                 itemp['order'] = order_id
+                if itemp.get('product', None):
+                    itemp['item_type'] = 2
+                else:
+                    itemp['item_type'] = 1
 
-            order_details_serializer = OrderDetailsSerializer(data=packages, many=True)
+            order_details_serializer = OrderDetailsSerializer(data=order_details, many=True)
             order_details_serializer.is_valid(raise_exception=True)
             order_details_serializer.save()
 
