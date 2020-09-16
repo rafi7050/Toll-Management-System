@@ -31,10 +31,35 @@
         prefix: '{{ formset.prefix }}',
         animateForms: true,
         removed: function () {
+            calculate_total_price()
         },
         added: function () {
+            new_row_set()
         }
     });
 
+    let calculate_total_price = function () {
+        let total_amount = 0
+        $('.total_price_select input').each(function () {
+            let price = parseFloat($(this).val())
+            total_amount += price
+        })
 
+        $('[name="total_amount"]').val(total_amount)
+    }
+
+    let new_row_set = function () {
+        let __this = $('.dynamic-form:last')
+        __this.find('.package_select').find('option').prop('selected', false)
+        __this.find('.product_select').find('option').prop('selected', false)
+        let item_type = __this.find('.item_type_select select').val()
+        if (item_type == 2) {
+            __this.find('.package_select').hide().find('select').prop('disabled', true)
+            __this.find('.product_select').show().find('select').select2()
+        } else {
+            __this.find('.package_select').show().find('select').select2()
+            __this.find('.product_select').hide().find('select').prop('disabled', true)
+        }
+        __this.find('.quantity_select').find('input').val(1)
+    }
 </script>

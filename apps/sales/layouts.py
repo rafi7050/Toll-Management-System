@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 
 
 class Formset(LayoutObject):
-    template = "layouts/default/formset.html"
+    template = "layouts/default/order_formset.html"
 
     def __init__(self, formset_name_in_context, template=None):
         print(formset_name_in_context,'formset in context')
