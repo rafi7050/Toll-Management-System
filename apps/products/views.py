@@ -8,9 +8,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework_datatables.filters import DatatablesFilterBackend
 
-from apps.products.forms import ProductForm, AgeGroupForm, NutritionPointForm
-from apps.products.models import Product, AgeGroup, NutritionPoint
-from apps.products.serializers import ProductSerializer, AgeGroupSerializer, NutritionPointSerializer
+from apps.products.forms import ProductForm, AgeGroupForm, NutritionPointForm, ProductTypeForm
+from apps.products.models import Product, AgeGroup, NutritionPoint, ProductType
+from apps.products.serializers import ProductSerializer, AgeGroupSerializer, NutritionPointSerializer, \
+    ProductTypeSerializer
 
 
 class ProductListView(TemplateView):
@@ -136,6 +137,49 @@ class NutritionPointEditView(UpdateView):
 class NutritionPointViewSet(viewsets.ModelViewSet):
     queryset = NutritionPoint.objects.all()
     serializer_class = NutritionPointSerializer
+
+    filter_backends = (DjangoFilterBackend, DatatablesFilterBackend)
+
+
+
+
+
+# Product Type
+
+class ProductTypeListView(TemplateView):
+    queryset = ProductType.objects.all()
+    template_name = 'product_type/list.html'
+
+class ProductTypeCreateView(CreateView):
+    model = ProductType
+    form_class = ProductTypeForm
+    template_name = 'product_type/create.html'
+    success_url = reverse_lazy('product_type_list')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.created_by = self.request.user
+            post.save()
+        return super().form_valid(form)
+
+class ProductTypeEditView(UpdateView):
+    model = ProductType
+    form_class = ProductTypeForm
+    template_name = 'product_type/create.html'
+    success_url = reverse_lazy('product_type_list')
+
+    def form_valid(self, form):
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.created_by = self.request.user
+            post.save()
+        return super().form_valid(form)
+
+
+class ProductTypeViewSet(viewsets.ModelViewSet):
+    queryset = ProductType.objects.all()
+    serializer_class = ProductTypeSerializer
 
     filter_backends = (DjangoFilterBackend, DatatablesFilterBackend)
 

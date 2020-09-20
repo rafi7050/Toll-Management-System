@@ -46,11 +46,11 @@
                                 <i class="fas fa-list"></i>Customer list
                             </a>
                         </li>
-{#                        <li>#}
-{#                            <a class="nav-link" href="#">#}
-{#                                <i class="fas fa-user-plus"></i>Create Customer#}
-{#                            </a>#}
-{#                        </li>#}
+                        {#                        <li>#}
+                        {#                            <a class="nav-link" href="#">#}
+                        {#                                <i class="fas fa-user-plus"></i>Create Customer#}
+                        {#                            </a>#}
+                        {#                        </li>#}
                     </ul>
                 </li>
             {% endif %}
@@ -73,6 +73,24 @@
                     </li>
                 </ul>
             </li>
+            <li class="dropdown">
+                <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+                    <i class="fas fa-user"></i> <span>Manage Product Type</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="nav-link" href="{% url 'product_type_list' %}">
+                            <i class="fas fa-list"></i>Product Type list
+                        </a>
+                    </li>
+                    <li>
+                        <a class="nav-link" href="{% url 'product_type_create' %}">
+                            <i class="fas fa-user-plus"></i>Create Product Type
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="menu-header">Package Section</li>
             <li class="dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
                     <i class="fas fa-user"></i> <span>Manage Package</span>
@@ -108,6 +126,7 @@
                     </li>
                 </ul>
             </li>
+
 
             <li class="dropdown">
                 <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">

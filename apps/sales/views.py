@@ -404,6 +404,7 @@ class StatusUpdateViewSet(viewsets.ModelViewSet):
 
         order.order_status = status
         order.save()
+        
         return Response({})
 
     def perform_create(self, serializer):

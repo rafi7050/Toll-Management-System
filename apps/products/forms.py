@@ -1,13 +1,13 @@
 from crispy_forms.helper import FormHelper
 from django import forms
 
-from apps.products.models import Product, AgeGroup, NutritionPoint
+from apps.products.models import Product, AgeGroup, NutritionPoint, ProductType
 
 
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['image','name', 'description', 'price','unit','discount_percentage', 'nutrition']
+        fields = ['image','name', 'product_type', 'description', 'price','unit','discount_percentage', 'nutrition']
 
     def __init__(self, *args, **kwargs):
         super(ProductForm, self).__init__(*args, **kwargs)
@@ -39,6 +39,18 @@ class NutritionPointForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NutritionPointForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-8 form-group'
+
+class ProductTypeForm(forms.ModelForm):
+    class Meta:
+        model = ProductType
+        fields = ['name']
+
+    def __init__(self, *args, **kwargs):
+        super(ProductTypeForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3'
