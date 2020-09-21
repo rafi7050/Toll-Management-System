@@ -22,6 +22,7 @@ class AgeGroupViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     queryset = AgeGroup.objects.all()
     serializer_class = AgeGroupSerializer
+    pagination_class = None
 
 
 
