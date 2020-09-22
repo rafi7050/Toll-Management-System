@@ -16,6 +16,7 @@ class NutritionPointViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
     queryset = NutritionPoint.objects.all()
     serializer_class = NutritionPointSerializer
+    pagination_class = None
 
 
 class AgeGroupViewSet(viewsets.ModelViewSet):

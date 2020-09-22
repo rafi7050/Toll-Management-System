@@ -15,7 +15,7 @@ client_router.register(r'nutrition_package_plan', package.NutritionPackagePlanVi
 client_router.register(r'product', product.ProductViewSet, basename='public_product')
 client_router.register(r'age_group', product.AgeGroupViewSet, basename='age_group_api')
 client_router.register(r'nutrition_point', product.NutritionPointViewSet, basename='nutrition_point_api')
-client_router.register(r'product', product.ProductViewSet, basename='public_product')
+# client_router.register(r'product', product.ProductViewSet, basename='public_product')
 client_router.register(r'client_package', package.ClientPackageViewSet, basename='client_package')
 client_router.register(r'client_order', order.ClientOrderViewSet, basename='client_order_list')
 client_router.register(r'order', order.OrderViewSet, basename='client_order_create')
