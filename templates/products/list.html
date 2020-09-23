@@ -24,6 +24,7 @@
                                 <th scope="col">Type</th>
                                 <th scope="col">Price</th>
                                 <th scope="col">Unit</th>
+                                <th scope="col">Priority</th>
                                 <th scope="col">Updated At</th>
                                 {#                                <th scope="col">Status</th>#}
                                 <th scope="col">Action</th>
@@ -75,6 +76,7 @@
                             return unit[data]
                         }
                     },
+                    {'data': 'priority'},
                     {'data': 'updated_at'},
                     {
                         "data": null,

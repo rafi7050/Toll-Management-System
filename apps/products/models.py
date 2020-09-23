@@ -21,6 +21,7 @@ class Product(TimeStamp, OperatorStamp):
     unit = models.IntegerField(choices=UNIT, default=1)
     nutrition = models.TextField()
     discount_percentage = models.FloatField(default=0)
+    priority = models.IntegerField(default=1)
 
     def __str__(self):
         return self.name

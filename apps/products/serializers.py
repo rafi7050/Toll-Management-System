@@ -5,6 +5,7 @@ from apps.products.models import Product, AgeGroup, NutritionPoint, ProductType
 
 class ProductSerializer(serializers.ModelSerializer):
     product_type_name = serializers.SerializerMethodField(read_only=True)
+    updated_at = serializers.DateTimeField(format='%B %d, %Y', read_only=True)
 
     def get_product_type_name(self, obj):
         try:
