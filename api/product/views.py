@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -8,8 +9,12 @@ from .serializers import ProductsSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.filter()
+    queryset = Product.objects.filter().order_by('priority')
     serializer_class = ProductsSerializer
+    pagination_class = None
+
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name','product_type')
 
 
 class NutritionPointViewSet(viewsets.ModelViewSet):
