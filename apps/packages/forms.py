@@ -6,12 +6,17 @@ from django.forms import inlineformset_factory
 from apps.packages.form_set import Formset
 from apps.packages.models import Package, PackageProduct
 
+BOOLEAN_CHOICES = (
+    (False,'No'),
+    (True,'Yes'),
+)
 
 class PackageForm(forms.ModelForm):
+    is_cure_disease_package = forms.ChoiceField(choices=BOOLEAN_CHOICES)
     class Meta:
         model = Package
         fields = (
-            'name', 'size', 'age_group', 'nutrition_point', 'nutrition_details', 'suggestion', 'discount_percentage')
+            'name', 'size', 'age_group', 'nutrition_point', 'nutrition_details', 'suggestion', 'discount_percentage','is_cure_disease_package')
 
     def __init__(self, *args, **kwargs):
         super(PackageForm, self).__init__(*args, **kwargs)
@@ -24,12 +29,12 @@ class PackageForm(forms.ModelForm):
         self.helper.layout = Layout(
             Div(
                 Field('name'),
-                Field('size'),
-
                 Fieldset('Add Product',
                          Formset('package_product')),
                 Field('age_group'),
+                Field('is_cure_disease_package'),
                 Field('nutrition_point'),
+                Field('size'),
                 Field('nutrition_details'),
                 Field('discount_percentage'),
                 Field('suggestion'),

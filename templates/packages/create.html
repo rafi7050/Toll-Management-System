@@ -27,7 +27,30 @@
 {% block js %}
     <script>
         $(function () {
-
+            set_cure_disease_fields()
+            $('html').on('change', '[name="is_cure_disease_package"]', function () {
+                set_cure_disease_fields()
+            })
         });
+
+        let set_cure_disease_fields = function () {
+            let is_cure_disease_package = $('[name="is_cure_disease_package"]').val()
+            if (string_to_boolean(is_cure_disease_package)) {
+                {#$('[name="nutrition_point"]').prop('disabled', false)#}
+                {#$('[name="size"]').prop('disabled', true).find('option').prop('selected',false)#}
+
+                $('[name="nutrition_point"]').prop('required', true)
+                $('[name="size"]').prop('required', false).find('option').prop('selected',false)
+
+                $('#div_id_nutrition_point').show()
+                $('#div_id_size').hide()
+            } else {
+                $('[name="nutrition_point"]').prop('required', false).find('option').prop('selected',false)
+                $('[name="size"]').prop('required', true)
+
+                $('#div_id_nutrition_point').hide()
+                $('#div_id_size').show()
+            }
+        }
     </script>
 {% endblock js %}
