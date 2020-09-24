@@ -72,6 +72,11 @@ class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
 
+    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend,)
+    filter_fields = {
+        'size': ['exact'],
+    }
+
     def get_queryset(self):
         user = self.request.user
         orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
@@ -89,6 +94,11 @@ class NutritionPackagePlanViewSet(viewsets.ModelViewSet):
     serializer_class = PackageSerializer
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
+
+    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend,)
+    filter_fields = {
+        'nutrition_point': ['exact'],
+    }
 
     def get_queryset(self):
         user = self.request.user

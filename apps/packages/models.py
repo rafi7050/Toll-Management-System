@@ -11,6 +11,7 @@ class Package(TimeStamp, OperatorStamp):
     size = models.IntegerField(choices=SIZE, default=1)
     age_group = models.ForeignKey(AgeGroup, on_delete=models.SET_NULL,null=True,blank=True)
     nutrition_point = models.ForeignKey(NutritionPoint, on_delete=models.SET_NULL,null=True,blank=True,verbose_name='Cure Disease Package')
+    is_cure_disease_package=models.BooleanField(default=0,null=True,blank=True)
     nutrition_details = models.TextField()
     discount_percentage = models.FloatField(default=0)
     suggestion = models.IntegerField(default=10)
