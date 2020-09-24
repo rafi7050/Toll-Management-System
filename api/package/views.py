@@ -23,21 +23,21 @@ class PackageViewSet(viewsets.ModelViewSet):
         'size': ['exact'],
     }
 
-    # def get_queryset(self):
-    #     nutrition_point = self.request.GET.get('nutrition_point', None)
-    #     age_group = self.request.GET.get('age_group', None)
-    #     size = self.request.GET.get('size', None)
-    #
-    #     if nutrition_point:
-    #         self.queryset = self.queryset.filter(nutrition_point=nutrition_point)
-    #
-    #     if age_group:
-    #         self.queryset = self.queryset.filter(age_group=age_group)
-    #
-    #     if size:
-    #         self.queryset = self.queryset.filter(size=size)
-    #
-    #     return self.queryset
+    def get_queryset(self):
+        nutrition_point = self.request.GET.get('nutrition_point', None)
+        age_group = self.request.GET.get('age_group', None)
+        size = self.request.GET.get('size', None)
+
+        # if nutrition_point:
+        #     self.queryset = self.queryset.filter(nutrition_point=nutrition_point)
+
+        # if age_group:
+        #     self.queryset = self.queryset.filter(age_group=age_group)
+
+        if size:
+            self.queryset = self.queryset.filter(nutrition_point__isnull=True)
+
+        return self.queryset
 
 
 class ClientPackageViewSet(viewsets.ModelViewSet):
