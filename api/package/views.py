@@ -67,46 +67,49 @@ class PackageSizeViewSet(viewsets.ModelViewSet):
 
 class FamilyPackagePlanViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
-    queryset = Package.objects.filter(package_type=1,nutrition_point__isnull=True).order_by('suggestion')
+    queryset = Package.objects.filter(package_type=1, nutrition_point__isnull=True).order_by('suggestion')
     serializer_class = PackageSerializer
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
 
-    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend,)
-    filter_fields = {
-        'size': ['exact'],
-    }
+    # filter_backends = (DatatablesFilterBackend, DjangoFilterBackend,)
+    # filter_fields = {
+    #     'size': ['exact'],
+    # }
 
     def get_queryset(self):
+        size = self.request.GET.get('size', None)
+
         user = self.request.user
         orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
         order_ids = orders.values_list('id', flat=True)
-        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids,package_type=1,nutrition_point__isnull=True).values_list('suggestion',
-                                                                                                 flat=True)
-        packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
-        print(packages)
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids, package_type=1,
+                                                          nutrition_point__isnull=True).values_list('suggestion',
+                                                                                                    flat=True)
+
+        if size:
+            self.queryset = self.queryset.filter(size=size)
         self.queryset = self.queryset.exclude(suggestion__in=prev_package_suggestions)[:5]
         return self.queryset
 
+
 class NutritionPackagePlanViewSet(viewsets.ModelViewSet):
     http_method_names = ['get']
-    queryset = Package.objects.filter(package_type=1,nutrition_point__isnull=False).order_by('suggestion')
+    queryset = Package.objects.filter(package_type=1, nutrition_point__isnull=False).order_by('suggestion')
     serializer_class = PackageSerializer
     authentication_classes = (TokenAuthentication,)  # Add this line
     permission_classes = (IsAuthenticated,)  # Add this line
 
-    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend,)
-    filter_fields = {
-        'nutrition_point': ['exact'],
-    }
-
     def get_queryset(self):
+        nutrition_point = self.request.GET.get('nutrition_point', None)
         user = self.request.user
         orders = Order.objects.filter(customer=user, order_status=3).order_by('-id')[:30]
         order_ids = orders.values_list('id', flat=True)
-        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids,package_type=1,nutrition_point__isnull=False).values_list('suggestion',
-                                                                                                 flat=True)
-        packages = Package.objects.exclude(suggestion__in=prev_package_suggestions)
-        print(packages)
+        prev_package_suggestions = Package.objects.filter(orderdetails__order__in=order_ids, package_type=1,
+                                                          nutrition_point__isnull=False).values_list('suggestion',
+                                                                                                     flat=True)
+
+        if nutrition_point:
+            self.queryset = self.queryset.filter(nutrition_point=nutrition_point)
         self.queryset = self.queryset.exclude(suggestion__in=prev_package_suggestions)[:5]
         return self.queryset
