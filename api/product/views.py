@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from api.product.serializers import AgeGroupSerializer, NutritionPointSerializer
-from apps.products.models import Product, NutritionPoint, AgeGroup
+from apps.products.models import Product, NutritionPoint, AgeGroup, ProductType
 from .serializers import ProductsSerializer
 
 
@@ -29,6 +29,14 @@ class AgeGroupViewSet(viewsets.ModelViewSet):
     queryset = AgeGroup.objects.all()
     serializer_class = AgeGroupSerializer
     pagination_class = None
+
+
+class ProductTypeViewSet(viewsets.ModelViewSet):
+    http_method_names = ['get']
+    queryset = ProductType.objects.all()
+    serializer_class = ProductTypeSerializer
+    pagination_class = None
+
 
 
 
