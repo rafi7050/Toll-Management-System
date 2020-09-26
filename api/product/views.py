@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from api.product.serializers import AgeGroupSerializer, NutritionPointSerializer
+from api.product.serializers import AgeGroupSerializer, NutritionPointSerializer, ProductTypeSerializer
 from apps.products.models import Product, NutritionPoint, AgeGroup, ProductType
 from .serializers import ProductsSerializer
 
