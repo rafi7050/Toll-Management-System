@@ -19,6 +19,7 @@ class Product(TimeStamp, OperatorStamp):
     price = models.FloatField()
     image = models.ImageField(upload_to='product', blank=True, null=True)
     unit = models.IntegerField(choices=UNIT, default=1)
+    quantity = models.FloatField(default=1)
     nutrition = models.TextField()
     discount_percentage = models.FloatField(default=0)
     priority = models.IntegerField(default=1)
