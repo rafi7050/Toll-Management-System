@@ -5,10 +5,17 @@ from apps.products.models import Product, NutritionPoint, AgeGroup, ProductType
 
 class ProductsSerializer(serializers.ModelSerializer):
     unit = serializers.CharField(source='get_unit_display')
+    final_prize = serializers.SerializerMethodField(read_only=True)
+
+    def get_final_prize(self,obj):
+        try:
+            return obj.price-obj.price*obj.discount_percentage/100
+        except:
+            return obj.price
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'image', 'price', 'unit', 'nutrition', 'priority')
+        fields = ('id', 'name', 'description', 'image', 'price', 'unit', 'nutrition', 'priority','discount_percentage')
 
 
 class NutritionPointSerializer(serializers.ModelSerializer):
