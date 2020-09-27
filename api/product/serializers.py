@@ -47,7 +47,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'name', 'description', 'image', 'price', 'unit', 'nutrition', 'priority', 'discount_percentage',
-                  'regular_prize', 'final_prize')
+                  'regular_prize', 'final_prize','quantity')
 
 
 class NutritionPointSerializer(serializers.ModelSerializer):
