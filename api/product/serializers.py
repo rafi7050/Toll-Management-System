@@ -41,15 +41,15 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     def get_regular_prize(self, obj):
         try:
-            return obj.price * obj.quantity
+            return round(obj.price * obj.quantity)
         except:
-            return obj.price
+            return round(obj.price)
 
     def get_final_prize(self, obj):
         try:
-            return (obj.price * obj.quantity) - (obj.price * obj.quantity) * obj.discount_percentage / 100
+            return round((obj.price * obj.quantity) - (obj.price * obj.quantity) * obj.discount_percentage / 100)
         except:
-            return obj.price
+            return round(obj.price)
 
     class Meta:
         model = Product
