@@ -4,9 +4,16 @@ from apps.products.models import Product, NutritionPoint, AgeGroup, ProductType
 
 
 class ProductsSerializer(serializers.ModelSerializer):
+    unit = serializers.SerializerMethodField(read_only=True)
     quantity_name = serializers.SerializerMethodField(read_only=True)
     final_prize = serializers.SerializerMethodField(read_only=True)
     regular_prize = serializers.SerializerMethodField(read_only=True)
+
+    def get_unit(self, obj):
+        try:
+            return obj.get_unit_display()
+        except:
+            return obj.unit
 
     def get_quantity_name(self, obj):
         try:
@@ -47,7 +54,7 @@ class ProductsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'name', 'description', 'image', 'price', 'unit', 'nutrition', 'priority', 'discount_percentage',
-                  'regular_prize', 'final_prize','quantity','quantity_name')
+                  'regular_prize', 'final_prize', 'quantity', 'quantity_name')
 
 
 class NutritionPointSerializer(serializers.ModelSerializer):
