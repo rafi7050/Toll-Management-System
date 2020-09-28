@@ -29,10 +29,36 @@ class PackageProductsSerializer(serializers.ModelSerializer):
         quantity = obj.quantity
         return price * quantity
 
+    # def get_quantity_name(self, obj):
+    #     unit = obj.product.get_unit_display()
+    #     quantity = obj.quantity
+    #     return str(quantity) + ' ' + unit
+
     def get_quantity_name(self, obj):
         unit = obj.product.get_unit_display()
-        quantity = obj.quantity
-        return str(quantity) + ' ' + unit
+        try:
+            if unit == 'KG':
+                if obj.quantity < 1:
+                    quantity = obj.quantity * 1000
+                    if int(quantity) == quantity:
+                        quantity = int(quantity)
+                    return str(quantity) + ' gm'
+                else:
+                    if int(obj.quantity) == obj.quantity:
+                        return str(int(obj.quantity)) + ' KG'
+                    else:
+                        return str(obj.quantity) + ' KG'
+            else:
+                if int(obj.quantity) == obj.quantity:
+                    return str(int(obj.quantity)) + ' ' + unit
+                else:
+                    return str(obj.quantity) + ' ' + unit
+        except:
+            try:
+                return unit
+            except:
+                pass
+
 
     class Meta:
         model = PackageProduct
