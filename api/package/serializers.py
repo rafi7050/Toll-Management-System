@@ -27,7 +27,7 @@ class PackageProductsSerializer(serializers.ModelSerializer):
     def get_price(self, obj):
         price = obj.product.price
         quantity = obj.quantity
-        return price * quantity
+        return round(price * quantity)
 
     # def get_quantity_name(self, obj):
     #     unit = obj.product.get_unit_display()
