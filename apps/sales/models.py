@@ -21,7 +21,7 @@ class Order(OperatorStamp, TimeStamp):
     code = models.CharField(max_length=50, blank=True, null=True)
     customer = models.ForeignKey(User, related_name='+', on_delete=models.SET_NULL, null=True, blank=True)
     address_line_1 = models.TextField()
-    address_line_2 = models.TextField()
+    address_line_2 = models.TextField(null=True,blank=True)
     place = models.CharField(max_length=255)
     zip = models.CharField(max_length=5)
     latitude = models.CharField(max_length=50, null=True, blank=True)
