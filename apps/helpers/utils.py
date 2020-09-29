@@ -21,7 +21,7 @@ UNIT = (
 SIZE = (
     (1, '2-3 Persons'),
     (2, '4-5 Persons'),
-    (3, '6-8 Persons'),
+    # (3, '6-8 Persons'),
 )
 
 ORDER_STATUS = (
