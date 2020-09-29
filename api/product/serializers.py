@@ -6,8 +6,8 @@ from apps.products.models import Product, NutritionPoint, AgeGroup, ProductType
 class ProductsSerializer(serializers.ModelSerializer):
     unit = serializers.SerializerMethodField(read_only=True)
     quantity_name = serializers.SerializerMethodField(read_only=True)
-    final_prize = serializers.SerializerMethodField(read_only=True)
-    regular_prize = serializers.SerializerMethodField(read_only=True)
+    final_price = serializers.SerializerMethodField(read_only=True)
+    regular_price = serializers.SerializerMethodField(read_only=True)
 
     def get_unit(self, obj):
         try:
@@ -39,13 +39,13 @@ class ProductsSerializer(serializers.ModelSerializer):
             except:
                 pass
 
-    def get_regular_prize(self, obj):
+    def get_regular_price(self, obj):
         try:
             return round(obj.price * obj.quantity)
         except:
             return round(obj.price)
 
-    def get_final_prize(self, obj):
+    def get_final_price(self, obj):
         try:
             return round((obj.price * obj.quantity) - (obj.price * obj.quantity) * obj.discount_percentage / 100)
         except:

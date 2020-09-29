@@ -69,7 +69,7 @@ class PackageSerializer(serializers.ModelSerializer):
     products = PackageProductsSerializer(source='product_to_package', read_only=True, many=True)
 
     total_amount = serializers.SerializerMethodField()
-    final_prize = serializers.SerializerMethodField()
+    final_price = serializers.SerializerMethodField()
     regular_price = serializers.SerializerMethodField()
 
     # products = PackageProductSerializer(many=True,required=False,write_only=True)
@@ -80,7 +80,7 @@ class PackageSerializer(serializers.ModelSerializer):
         regular_price = 0
         for item in products:
             regular_price += float(item.quantity) * float(item.product.price)
-        return regular_price
+        return round(regular_price)
 
     def get_total_amount(self, obj):
         products = obj.products.through.objects.filter(package=obj)
@@ -94,7 +94,7 @@ class PackageSerializer(serializers.ModelSerializer):
             total_amount = total_amount - discount_amount
         return round(total_amount, 2)
 
-    def get_final_prize(self, obj):
+    def get_final_price(self, obj):
         products = obj.products.through.objects.filter(package=obj)
         discount = obj.discount_percentage
         total_amount = 0
