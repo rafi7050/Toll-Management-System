@@ -11,7 +11,8 @@ client_router.register(r'signup', client.RegisterViewSet, basename='client_regis
 client_router.register(r'package', package.PackageViewSet, basename='public_package')
 client_router.register(r'package_size', package.PackageSizeViewSet, basename='package_size_api')
 client_router.register(r'family_package_plan', package.FamilyPackagePlanViewSet, basename='family_package_plan_api')
-client_router.register(r'nutrition_package_plan', package.NutritionPackagePlanViewSet, basename='nutrition_package_plan_api')
+client_router.register(r'nutrition_package_plan', package.NutritionPackagePlanViewSet,
+                       basename='nutrition_package_plan_api')
 client_router.register(r'product', product.ProductViewSet, basename='public_product')
 client_router.register(r'product_type', product.ProductTypeViewSet, basename='public_product_type')
 client_router.register(r'age_group', product.AgeGroupViewSet, basename='age_group_api')
@@ -25,10 +26,12 @@ urlpatterns = [
     # path(r'api/user/', views.UserView.as_view()),
     path('login/', client.CustomerLogin.as_view(), name='user_auth'),
     path('logout/', client.Logout.as_view(), name='client_logout'),
+    path('otp_regenerate/', client.OtpResend.as_view(), name='otp_token'),
+    path('reset_password/', client.PasswordReset.as_view(), name='reset_password'),
     # path('api/tax_token/', TaxTokenCalculator.as_view(), name='tax_token'),
     # path('api/otp_verify/', OTPGenerate.as_view(), name='otp_token'),
     # path('api/otp_regenerate/', views.OtpResend.as_view(), name='otp_token'),
-    # path('api/reset_password/', views.PasswordReset.as_view(), name='reset_password'),
+    # path('api/reset_password/', client.PasswordReset.as_view(), name='reset_password'),
     # path('api/order_price_details/', OrderPricing.as_view(), name='get_order_price_details'),
     # path('api/', include('timed_auth_token.urls')),
     # path('', include(client_router.urls)),
