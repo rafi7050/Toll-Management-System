@@ -98,9 +98,10 @@ class OtpResend(APIView):
     def mail_send(self, user, otp):
         name = user.get_full_name()
         receiver = user.email
-        email = 'mahabub.prog@gmail.com'
+        email = 'mahabub.prog.dev@gmail.com'
         subject = 'Dailyshobji Password Reset'
-        message = 'Your password reset code' + str(otp)
+        message = 'Your password reset code ' + str(otp)
+        print(name,receiver,email,subject,message)
         success = send_mail(
             subject,
             message + '\nThanks\n' + name + '\n' + email,
