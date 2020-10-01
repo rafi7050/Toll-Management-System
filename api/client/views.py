@@ -92,26 +92,26 @@ class OtpResend(APIView):
         if user is None:
             raise ValidationError({'error': 'You have to register first.'})
         otp = OTPGenerate.token(self, mobile_no)
-        self.mail_send(user, otp)
-        return Response({'Otp Generate Successfully'})
+        send = self.mail_send(user, otp)
+        return Response({send})
 
     def mail_send(self, user, otp):
         name = user.get_full_name()
         receiver = user.email
-        email = 'support@dailyshobji.com'
+        email = 'noreplay@dailyshobji.com'
         subject = 'Dailyshobji Password Reset'
-        message = 'Your password reset code ' + str(otp)
+        message = 'Your password reset code : <strong>' + str(otp) +'</strong>'
 
         success = send_mail(
             subject,
             message,
             from_email=email,
             recipient_list=[receiver],
-            fail_silently=False
+            html_message=message
         )
 
         # send_mail('Subject here', 'Here is the message.', 'mahabub.prog.dev@gmail.com', ['mahabub.prog@gmail.com'], fail_silently=False)
-        return True
+        return 'Your password reset code send to '+receiver
 
 
 class PasswordReset(APIView):
