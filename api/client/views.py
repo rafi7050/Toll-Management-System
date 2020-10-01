@@ -97,18 +97,20 @@ class OtpResend(APIView):
 
     def mail_send(self, user, otp):
         # name = user.get_full_name()
-        receiver = user.email
-        email = 'support@aamartaka.com'
-        subject = 'Dailyshobji Password Reset'
-        message = 'Your password reset code ' + str(otp)
+        # receiver = user.email
+        # email = 'support@aamartaka.com'
+        # subject = 'Dailyshobji Password Reset'
+        # message = 'Your password reset code ' + str(otp)
+        #
+        # success = send_mail(
+        #     subject,
+        #     message,
+        #     from_email=email,
+        #     recipient_list=[receiver],
+        #     fail_silently=False
+        # )
 
-        success = send_mail(
-            subject,
-            message,
-            from_email=email,
-            recipient_list=[receiver],
-            fail_silently=False
-        )
+        send_mail('Subject here', 'Here is the message.', 'support@aamartaka.com', ['mahabub.prog@gmail.com'], fail_silently=False)
         return True
 
 
