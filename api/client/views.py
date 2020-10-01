@@ -96,7 +96,7 @@ class OtpResend(APIView):
         return Response({'Otp Generate Successfully'})
 
     def mail_send(self, user, otp):
-        name = user.get_full_name()
+        # name = user.get_full_name()
         receiver = user.email
         email = 'support@aamartaka.com'
         subject = 'Dailyshobji Password Reset'
@@ -104,9 +104,9 @@ class OtpResend(APIView):
 
         success = send_mail(
             subject,
-            message + '\nThanks\n' + name + '\n' + email,
-            email,
-            [receiver],
+            message,
+            from_email=email,
+            recipient_list=[receiver],
         )
         return True
 
