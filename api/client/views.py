@@ -92,7 +92,7 @@ class OtpResend(APIView):
         if user is None:
             raise ValidationError({'error': 'You have to register first.'})
         otp = OTPGenerate.token(self, mobile_no)
-        self.mail_send(user, otp)
+        # self.mail_send(user, otp)
         return Response({'Otp Generate Successfully'})
 
     def mail_send(self, user, otp):
