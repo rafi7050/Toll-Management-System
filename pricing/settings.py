@@ -191,4 +191,4 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 
 DEFAULT_FROM_EMAIL = 'Aamartaka <support@aamartaka.com>'
 
-EMAIL_SUBJECT_PREFIX = '[DailyShobji] '
+# EMAIL_SUBJECT_PREFIX = '[DailyShobji] '

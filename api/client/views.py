@@ -107,6 +107,7 @@ class OtpResend(APIView):
             message,
             from_email=email,
             recipient_list=[receiver],
+            fail_silently=False
         )
         return True
 
