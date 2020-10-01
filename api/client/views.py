@@ -101,7 +101,7 @@ class OtpResend(APIView):
         email = 'support@dailyshobji.com'
         subject = 'Dailyshobji Password Reset'
         message = 'Your password reset code ' + str(otp)
-        print(name,receiver,email,subject,message)
+
         success = send_mail(
             subject,
             message + '\nThanks\n' + name + '\n' + email,
