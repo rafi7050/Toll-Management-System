@@ -189,6 +189,6 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 
-DEFAULT_FROM_EMAIL = 'Aamartaka <support@aamartaka.com>'
+DEFAULT_FROM_EMAIL = 'Aamartaka <support@dailyshobji.com>'
 
-# EMAIL_SUBJECT_PREFIX = '[DailyShobji] '
+EMAIL_SUBJECT_PREFIX = '[DailyShobji] '
