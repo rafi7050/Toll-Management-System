@@ -65,7 +65,7 @@ class OrderedProductSerializer(serializers.ModelSerializer):
                     print(item2.product, item2.quantity, item.package)
                     quantity += item2.quantity
             elif item.product:
-                quantity += item.quantity
+                quantity += (item.quantity*item.product.quantity)
         return quantity
 
     class Meta:

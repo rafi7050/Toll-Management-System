@@ -71,7 +71,7 @@
                 if (package) {
                     let url = '/api/v1/product/' + package + '/';
                     axios.get(url).then(function (response) {
-                        let price = response.data.price
+                        let price = response.data.total_amount
                         __this.closest('.dynamic-form').find('.price_select').find('input').val(price)
                         calculate_package_price(__this)
                     }).catch(function (e) {

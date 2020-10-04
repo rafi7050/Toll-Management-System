@@ -257,16 +257,15 @@ class OrderedProductSizeViewSet(APIView):
 
                 order_product_quantity.append(single_product)
 
-        order_products = order_details.filter(product__isnull=False).values('quantity', 'product_id').annotate(
-            count=Count('product'))
-        print(order_products)
+        order_products = order_details.filter(product__isnull=False).values('quantity', 'product_id').annotate(count=Count('product'))
+        print(order_products,'Products')
         for item3 in order_products:
             product_id = item3.get('product_id', None)
             quantity = item3.get('quantity', None)
             count = item3.get('count', None)
             product = Product.objects.filter(id=product_id).first()
             unit = product.get_unit_display()
-            product_size = str(quantity) + ' ' + unit
+            product_size = str(quantity*product.quantity) + ' ' + unit
 
             product_size_quantity = {
                 'product_size': product_size,
@@ -315,17 +314,17 @@ class OrderedProductViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         order_type = self.request.query_params.get('order_type', 'active')
 
-        try:
-            f = open("guru99.txt", "a+")
-            f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
-            f.close()
-        except:
-            handle1 = open("guru99.txt", "w+")
-            handle1.close()
-
-            f = open("guru99.txt", "a+")
-            f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
-            f.close()
+        # try:
+        #     f = open("guru99.txt", "a+")
+        #     f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
+        #     f.close()
+        # except:
+        #     handle1 = open("guru99.txt", "w+")
+        #     handle1.close()
+        #
+        #     f = open("guru99.txt", "a+")
+        #     f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
+        #     f.close()
 
         if order_type == 'active':
             order = Order.objects.filter(order_status=2, created_at__lt=today_start)
