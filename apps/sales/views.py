@@ -314,6 +314,19 @@ class OrderedProductViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         order_type = self.request.query_params.get('order_type', 'active')
+
+        try:
+            f = open("guru99.txt", "a+")
+            f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
+            f.close()
+        except:
+            handle1 = open("guru99.txt", "w+")
+            handle1.close()
+
+            f = open("guru99.txt", "a+")
+            f.write('\n'+today_start.strftime("%d/%m/%Y %H:%M:%S"))
+            f.close()
+
         if order_type == 'active':
             order = Order.objects.filter(order_status=2, created_at__lt=today_start)
         else:
