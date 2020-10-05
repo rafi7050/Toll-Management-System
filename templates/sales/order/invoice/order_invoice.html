@@ -18,10 +18,10 @@
         flex-wrap: wrap;
         display: -webkit-box;
         /*display: -webkit-flex;*/
-        {#-webkit-flex-wrap: wrap;#}
+    {#-webkit-flex-wrap: wrap;#}
         /*zoom: 1 !important;*/
 
-        {#-webkit-box-direction: inherit;#}
+    {#-webkit-box-direction: inherit;#}
     }
 
     .grid .g-1 {
@@ -134,115 +134,132 @@
     }
 
     .single_item_cost {
-        {#background: #f2f3f8;#}
-        margin: 10px 0px;
+    {#background: #f2f3f8;#} margin: 10px 0px;
         padding: 5px;
         border-bottom: 8px solid #1dc9b7;
         background-color: #f2f3f8aa;
     }
 </style>
 <div class="order_cost_details">
-        {% for order in order_list %}
-            {%  if forloop.counter|odd %}
-                <div class="grid" style="width: 100%;">
-            {% endif %}
-            <div class="g-12" style="padding: 5px;">
-                <div class="single_item_cost">
-                    <div class="invoice-title grid" style="font-size: 17px;font-weight: 800;">
-                        <div class="g-12">Invoice</div>
-                        <div class="g-12 text-right">Order # {{ order }}</div>
+    {% for order in order_list %}
+        {% if forloop.counter|odd %}
+            <div class="grid" style="width: 100%;">
+        {% endif %}
+    <div class="g-12" style="padding: 5px;">
+        <div class="single_item_cost">
+            <div class="invoice-title grid" style="font-size: 17px;font-weight: 800;">
+                <div class="g-12">Invoice</div>
+                <div class="g-12 text-right">Order # {{ order }}</div>
+            </div>
+            <hr/>
+            <div class="contact_details border-bottom" style="font-size: 13px;">
+                <div class="row">
+                    <div class="col-12">
+                        <address>
+                            <strong>To:</strong><br>
+                            {{ order.customer.get_full_name }}<br>
+                            {{ order.address_line_1 }} {{ order.address_line_2 }} {{ order.place }}
+                            {% if order.zone %}
+                                <br/>
+                                Zone : {{ order.zone }}
+                            {% endif %}
+                        </address>
                     </div>
-                    <hr/>
-                    <div class="contact_details border-bottom" style="font-size: 13px;">
-                        <div class="row">
-                            <div class="col-12">
-                                <address>
-                                    <strong>To:</strong><br>
-                                    {{ order.customer.get_full_name }}<br>
-                                    {{ order.address_line_1 }} {{ order.address_line_2 }} {{ order.place }}
-                                    {% if order.zone %}
-                                        <br/>
-                                        Zone : {{ order.zone }}
-                                    {% endif %}
-                                </address>
+                </div>
+            </div>
+            <div class="order_details m-0" style="font-size: 8px !important;">
+                {% order_details_regroup order as order_groups %}
+                <div class="">
+                    {% if order_groups.packages %}
+                        <div class="grid"
+                             style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
+                            <div class="g-6">Package</div>
+                            <div class="g-6">Quantity</div>
+                            <div class="g-6">Price</div>
+                            <div class="g-6">Total Price</div>
+                        </div>
+                        {% for item in order_groups.packages %}
+                            <div class="grid"
+                                 style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 8px;">
+                                <div class="g-6">{{ item.package }}</div>
+                                <div class="g-6">{{ item.quantity }}</div>
+                                <div class="g-6">{{ item.price }}</div>
+                                <div class="g-6">{{ item.total_price }}</div>
+                            </div>
+                            <div class="div pl-2">
+                                <div class="grid"
+                                     style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;">
+                                    <div class="g-5">Product</div>
+                                    <div class="g-3">Quantity</div>
+                                    <div class="g-3">Price</div>
+                                    <div class="g-5">Regular Price</div>
+                                    <div class="g-3">Discount</div>
+                                    <div class="g-5">Total Price</div>
+                                </div>
+
+                                {% for package_product in item.package.product_to_package.all %}
+                                    <div class="grid border-bottom" style="font-style: italic;">
+                                        <div class="g-5">+ {{ package_product.product.name }}</div>
+                                        <div class="g-3">{{ package_product.quantity }}</div>
+                                        <div class="g-3">{{ package_product.product.price }}</div>
+                                        <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
+                                        <div class="g-3">{{ item.package.discount_percentage }}%</div>
+                                        <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if order_groups.products %}
+                        <div class="grid"
+                             style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;">
+                            <div class="g-10">Product
+                            </div>
+                            <div class="g-3">Quantity
+                            </div>
+                            <div class="g-3">Price</div>
+                            <div class="g-3">Discount
+                            </div>
+                            <div class="g-5">Total
+                                Price
                             </div>
                         </div>
+
+                        {% for item in order_groups.products %}
+                            <div class="grid border-bottom"
+                                 style="font-style: italic;">
+                                <div class="g-10">
+                                    + {{ item.product }}-{{ item.product|get_quantity_name }}</div>
+                                <div class="g-3">{{ item.quantity }}</div>
+                                <div class="g-3">{{ item.product.price|multiply:item.product.quantity | multiply:item.quantity }}</div>
+                                {#                                                                                    <div class="g-5">{{ item.product.price | multiply:item.quantity |multiply:item.product.quantity }}</div>#}
+                                <div class="g-3">{{ item.product.discount_percentage }}%</div>
+                                <div class="g-5">{{ item.product.price  | multiply:item.quantity |multiply:item.product.quantity | percentage_sub:item.product.discount_percentage }}</div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="grid">
+                        <div class="g-12"><b>Net Premium</b></div>
+                        <div class="g-12"><b>TK <span class="Net_Premium">{{ order.total_amount }}</span></b>
+                        </div>
                     </div>
-                    <div class="order_details m-0" style="font-size: 8px !important;">
-                        <div class="">
-                            <div class="grid"
-                                 style="border-bottom: 2px solid #6c747b; font-weight: 800;font-size: 9px;">
-                                <div class="g-6">Package</div>
-                                <div class="g-6">Quantity</div>
-                                <div class="g-6">Price</div>
-                                <div class="g-6">Total Price</div>
-                            </div>
-                            {% for item in order.orderdetails_set.all %}
-                                <div class="grid"
-                                     style="border-bottom: 1px solid #7d7878; font-weight: 600;font-size: 8px;">
-                                    <div class="g-6">{{ item.package }}</div>
-                                    <div class="g-6">{{ item.quantity }}</div>
-                                    <div class="g-6">{{ item.price }}</div>
-                                    <div class="g-6">{{ item.total_price }}</div>
-                                </div>
-                                <div class="div pl-2">
-                                    <div class="grid"
-                                         style="border-bottom: 1px solid rgb(186, 193, 199);font-style: italic;font-weight: 600;">
-                                        <div class="g-5">Product</div>
-                                        <div class="g-3">Quantity</div>
-                                        <div class="g-3">Price</div>
-                                        <div class="g-5">Regular Price</div>
-                                        <div class="g-3">Discount</div>
-                                        <div class="g-5">Total Price</div>
-                                    </div>
-
-                                    {% for package_product in item.package.product_to_package.all %}
-                                        <div class="grid border-bottom" style="font-style: italic;">
-                                            <div class="g-5">+ {{ package_product.product.name }}</div>
-                                            <div class="g-3">{{ package_product.quantity }}</div>
-                                            <div class="g-3">{{ package_product.product.price }}</div>
-                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity }}</div>
-                                            <div class="g-3">{{ item.package.discount_percentage }}%</div>
-                                            <div class="g-5">{{ package_product.product.price | multiply:package_product.quantity | percentage_sub:item.package.discount_percentage }}</div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            {% endfor %}
-                            <div class="grid">
-                                <div class="g-12"><b>Net Premium</b></div>
-                                <div class="g-12"><b>TK <span class="Net_Premium">{{ order.total_amount }}</span></b>
-                                </div>
-                            </div>
-{#                            <div class="grid" style="border-bottom: 1px solid #1dc9b7">#}
-{#                                <div class="g-12">+ <span class="vat">15</span>% Vat</div>#}
-{#                                <div class="g-12">TK <span#}
-{#                                        class="Vat_Amount">{{ order.total_amount | percentage:15 }}</span>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                            <div class="grid">#}
-{#                                <div class="g-12"><b>Total Premium</b></div>#}
-{#                                <div class="g-12"><b>TK <span#}
-{#                                        class="Total_premium">{{ order.total_amount | percentage_add:15 }}</span></b>#}
-{#                                </div>#}
-{#                            </div>#}
-
-                            <div class="grid" style="border-bottom: 1px solid #1dc9b7">
-                                <div class="g-12">Delivery Cost</div>
-                                <div class="g-12">TK <span class="Delivery_Cost">30</span></div>
-                            </div>
-                            <div class="grid">
-                                <div class="g-12"><b>Grand Total</b></div>
-                                <div class="g-12"><b>TK <span
-                                        class="Grand_Total">{{ order.total_amount | add:30 }}</span></b>
-                                </div>
-                            </div>
+                    <div class="grid" style="border-bottom: 1px solid #1dc9b7">
+                        <div class="g-12">Delivery Cost</div>
+                        <div class="g-12">TK <span class="Delivery_Cost">30</span></div>
+                    </div>
+                    <div class="grid">
+                        <div class="g-12"><b>Grand Total</b></div>
+                        <div class="g-12"><b>TK <span
+                                class="Grand_Total">{{ order.total_amount | add:30 }}</span></b>
                         </div>
                     </div>
                 </div>
             </div>
-            {%  if forloop.counter|even %}
-                </div>
-            {% endif %}
-        {% endfor %}
+        </div>
     </div>
+    {% if forloop.counter|even %}
+        </div>
+    {% endif %}
+    {% endfor %}
+</div>
 </div>

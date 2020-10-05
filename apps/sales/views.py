@@ -124,7 +124,7 @@ def OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 
 
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
+    queryset = Order.objects.all().order_by('-id')
     serializer_class = OrderSerializer
 
     def create(self, request, *args, **kwargs):
@@ -436,6 +436,7 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
 
 
 class ActiveOrderInvoiceList(PDFTemplateView):
+# class ActiveOrderInvoiceList(TemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
     now = datetime.now()
     date_time = now.strftime("%d-%m-%Y, %H-%M")

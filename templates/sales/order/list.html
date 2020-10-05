@@ -79,40 +79,40 @@
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        $(document).ready(function () {
-            do_filter()
-            var table = $('#datatable').DataTable({
-                'serverSide': true,
-                ajax: '/api/v1/orders/?format=datatables',
-                'columns': [
-                    {
-                        'data': 'id',
-                        'class': 'text-center',
-                        "searchable": false,
-                        render: function (data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
-                        }
-                    },
-                    {'data': 'code'},
-                    {'data': 'customer_name', 'name': 'customer.first_name'},
-                    {'data': 'mobile_number'},
-                    {'data': 'total_amount'},
-                    {'data': 'zone_name', 'name': 'zone.id'},
-                    {
-                        'data': 'order_status_name', 'name': 'order_status',
-                        render: function (data, type, row, meta) {
-                            let status = data
-                            let status_style = status.replace(' ', '_')
-                            return '<span class="status_' + status_style + '">' + status + '</span>'
-                        }
-                    },
-                    {'data': 'updated_at'},
-                    {
-                        "data": null,
-                        'class': 'text-center',
-                        "bSortable": false,
-                        "mRender": function (data) {
-                            return `
+        var table = $('#datatable').DataTable({
+            'serverSide': true,
+            'stateSave': true,
+            ajax: '/api/v1/orders/?format=datatables',
+            "order": [[0, 'desc']],
+            'columns': [
+                {
+                    'data': 'id',
+                    'class': 'text-center',
+                    "searchable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {'data': 'code'},
+                {'data': 'customer_name', 'name': 'customer.first_name'},
+                {'data': 'mobile_number'},
+                {'data': 'total_amount'},
+                {'data': 'zone_name', 'name': 'zone.id'},
+                {
+                    'data': 'order_status_name', 'name': 'order_status',
+                    render: function (data, type, row, meta) {
+                        let status = data
+                        let status_style = status.replace(' ', '_')
+                        return '<span class="status_' + status_style + '">' + status + '</span>'
+                    }
+                },
+                {'data': 'updated_at'},
+                {
+                    "data": null,
+                    'class': 'text-center',
+                    "bSortable": false,
+                    "mRender": function (data) {
+                        return `
                             <a class="btn btn-outline-warning" href=/sales/order/edit/${data['id']}><i class="fa fa-edit"></i></a>
                             <button class="btn btn-outline-warning application-update forward_modal" data-ajax-url="/sales/order/${data['id']}/status_update/" data-type="update_history" >
                                 <i class="icon-update application-icon"></i>
@@ -123,15 +123,20 @@
 
 {#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
                             `;
-                        }
                     }
-                ],
-                initComplete: function () {
-                    init_data_table();
-                    init_zone();
-                    init_order_status();
                 }
-            });
+            ],
+            initComplete: function () {
+                init_data_table();
+                init_zone();
+                init_order_status();
+            }
+        });
+        var state = table.state.loaded();
+        console.log(state, 'State', table)
+        $(document).ready(function () {
+            do_filter()
+
 
             $('body').on('click', '#search', function () {
                 custom_filter();
@@ -139,7 +144,7 @@
 
             $('body').on('change', '#zone_id,#order_status_id', function () {
                 let zone_id = $('#zone_id').val()
-                let order_invoice_pdf_url ="{% url 'active_order_invoice_pdf' %}";
+                let order_invoice_pdf_url = "{% url 'active_order_invoice_pdf' %}";
                 if (zone_id) {
                     order_invoice_pdf_url = order_invoice_pdf_url + '?zone=' + zone_id
                 } else {
@@ -203,9 +208,10 @@
         }
 
 
-
         let reload_table = function () {
-            $('#datatable').DataTable().ajax.reload();
+            {#console.log(table.ajax.url())#}
+           table.ajax.reload()
+
         }
     </script>
 

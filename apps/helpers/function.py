@@ -99,3 +99,12 @@ def get_quantity_name(obj):
             return obj.get_unit_display()
         except:
             pass
+
+@register.simple_tag(name="order_details_regroup")
+def order_details_regroup(order):
+    print(order.customer)
+    order_details = order.orderdetails_set.all()
+    order_details_packages = order_details.filter(package__isnull=False)
+    order_details_products = order_details.filter(product__isnull=False)
+    print(order_details_packages,order_details_products)
+    return {'packages':order_details_packages,'products':order_details_products}

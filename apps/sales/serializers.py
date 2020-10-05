@@ -13,6 +13,7 @@ from apps.sales.models import Order, OrderDetails, OrderActivityLog
 
 class OrderSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%B %d, %Y', read_only=True)
+    updated_at = serializers.DateTimeField(format='%B %d, %Y', read_only=True)
     customer_name = serializers.SerializerMethodField()
     order_status_name = serializers.CharField(source='get_order_status_display')
     zone_name = serializers.SerializerMethodField(read_only=True)
