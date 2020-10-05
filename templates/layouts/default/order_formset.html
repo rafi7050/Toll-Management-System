@@ -5,16 +5,41 @@
         <div class="{% cycle 'row1' 'row2' %} formset_row-{{ formset.prefix }} row p-0 m-0">
             {% for field in form.visible_fields %}
                 {% if not field.name == 'DELETE' %}
-                    <div class="col {{ field.name }}_select">
-                        {# Include the hidden fields in the form #}
-                        {% if forloop.first %}
-                            {% for hidden in form.hidden_fields %}
-                                {{ hidden }}
-                            {% endfor %}
-                        {% endif %}
-                        {{ field.errors.as_ul }}
-                        {{ field|as_crispy_field }}
-                    </div>
+                    {% if field.name in 'price,quantity' %}
+                         <div class="col-1 {{ field.name }}_select">
+                            {# Include the hidden fields in the form #}
+                            {% if forloop.first %}
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                            {% endif %}
+                            {{ field.errors.as_ul }}
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% elif field.name in 'item_type,total_price' %}
+                        <div class="col-2 {{ field.name }}_select">
+                            {# Include the hidden fields in the form #}
+                            {% if forloop.first %}
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                            {% endif %}
+                            {{ field.errors.as_ul }}
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% else %}
+                        <div class="col {{ field.name }}_select">
+                            {# Include the hidden fields in the form #}
+                            {% if forloop.first %}
+                                {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                {% endfor %}
+                            {% endif %}
+                            {{ field.errors.as_ul }}
+                            {{ field|as_crispy_field }}
+                        </div>
+                    {% endif %}
+
                 {% endif %}
             {% endfor %}
         </div>
