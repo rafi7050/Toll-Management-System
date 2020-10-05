@@ -1,5 +1,5 @@
 {% extends 'layouts/default/main.html' %}
-{% block title %}Ordered Product{% endblock %}
+{% block title %}Ordered Product Size Quantity{% endblock %}
 {% block page_title %}Ordered Product Size Quantity List{% endblock page_title %}
 
 {% block content %}
@@ -51,12 +51,12 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <button type="button" class="btn btn-secondary order_status" value="active">Active
-                                </button>
-                                <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
-                                </button>
-                            </div>
+{#                            <div class="btn-group" role="group" aria-label="Basic example">#}
+{#                                <button type="button" class="btn btn-secondary order_status" value="active">Active#}
+{#                                </button>#}
+{#                                <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming#}
+{#                                </button>#}
+{#                            </div>#}
                             <section class="section-preview">
                                 <!-- Material checked -->
                                 <div class="switch" style="font-size: 25px;">
@@ -68,8 +68,17 @@
                                 </div>
                             </section>
                         </div>
+                        <div class="col text-left">
+                            <button type="button" class="btn btn-outline-primary" onclick="printDiv('product_size_table')"><i
+                                        class="fas fa-print"></i> Print
+                                </button>
+                        </div>
                         <div class="col text-right">
-                            <button type="button" class="btn btn-outline-primary" onclick="getPDFFileButton()"><i class="fas fa-cloud-download-alt"></i> PDF Download</button>
+
+
+                            <button type="button" class="btn btn-outline-primary" onclick="getPDFFileButton()"><i
+                                    class="fas fa-cloud-download-alt"></i> PDF Download
+                            </button>
                         </div>
                     </div>
 
@@ -169,6 +178,17 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
     <script>
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+
+            window.print();
+
+            document.body.innerHTML = originalContents;
+        }
+
         let pdf_generate = function () {
             {#import { robotoFont } from '../../fonts/roboto.font';#}
             var doc = new jsPDF('p', 'pt', 'letter');
