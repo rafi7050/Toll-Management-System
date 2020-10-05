@@ -49,21 +49,31 @@
         <div class="col-12">
             <div class="card pt-0">
                 <div class="card-body">
-                    <div class="btn-group" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-secondary order_status" value="active">Active</button>
-                        <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
-                        </button>
-                    </div>
-                    <section class="section-preview">
-                        <!-- Material checked -->
-                        <div class="switch" style="font-size: 25px;">
-                            <label>
-                                Live
-                                <input type="checkbox" name="order_status" value="upcoming">
-                                <span class="lever"></span> Upcoming
-                            </label>
+                    <div class="row">
+                        <div class="col">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-secondary order_status" value="active">Active
+                                </button>
+                                <button type="button" class="btn btn-secondary order_status" value="upcoming">Upcoming
+                                </button>
+                            </div>
+                            <section class="section-preview">
+                                <!-- Material checked -->
+                                <div class="switch" style="font-size: 25px;">
+                                    <label>
+                                        Live
+                                        <input type="checkbox" name="order_status" value="upcoming">
+                                        <span class="lever"></span> Upcoming
+                                    </label>
+                                </div>
+                            </section>
                         </div>
-                    </section>
+                        <div class="col text-right">
+                            <button type="button" class="btn btn-outline-primary" onclick="getPDFFileButton()"><i class="fas fa-cloud-download-alt"></i> PDF Download</button>
+                        </div>
+                    </div>
+
+
                     <div class="stable stable-bordered" id="product_size_table">
                         <div class="row table-header">
                             <div class="col-1">SL</div>
@@ -156,5 +166,72 @@
             })
         }
 
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <script>
+        let pdf_generate = function () {
+            {#import { robotoFont } from '../../fonts/roboto.font';#}
+            var doc = new jsPDF('p', 'pt', 'letter');
+            {#let doc = new jsPDF({orientation: 'p', format: 'a4'})#}
+            {#console.log(document.getElementById('product_size_table').innerHTML)#}
+            {#doc.addFileToVFS('Roboto-Regular-normal.ttf');#}
+            {#doc.addFont('Roboto-Regular', 'normal');#}
+            {#doc.setFont('Roboto-Regular');#}
+            doc.fromHTML(document.getElementById('product_size_table').innerHTML, 1, 1, {
+                elementHandlers: function () {
+                    return true
+                }
+            }, function () {
+                doc.save('test')
+            })
+
+            /*
+                        doc.addHTML($('#product_size_table')[0], function () {
+                            doc.save('Test.pdf');
+                        });
+
+             */
+        }
+
+        let convartToPDF = function () {
+            html2canvas(document.getElementById('product_size_table'),
+                {
+                    onrendered: function (canvas) {
+
+                        //create image from web page
+                        var img = canvas.toDataURL("image/png");
+
+                        //create pdf object and add image to it, and then save
+                        var doc = new jsPDF('p', 'pt', 'letter');
+                        doc.addImage(img, 'JPEG', 25, 25, 297);
+                        doc.save('abcd.pdf');
+
+                    }
+                });
+        }
+
+        function getPDFFileButton() {
+            // Select which div with id that need to be printed
+            // to print body $('body')
+            // here printing div with content id $("#content")
+            // using html canvas to save as required pdf to image to preserve css
+            return html2canvas(document.getElementById('product_size_table'), {
+                background: "#ffffff",
+                onrendered: function (canvas) {
+                    var myImage = canvas.toDataURL("image/jpeg,1.0");
+                    // Adjust width and height
+                    var imgWidth = (canvas.width * 20) / 150;
+                    var imgHeight = (canvas.height * 20) / 150;
+                    // jspdf changes
+                    var pdf = new jsPDF('p', 'mm', 'a4');
+                    pdf.addImage(myImage, 'JPEG', 10, 10, imgWidth, imgHeight); // 2: 19
+                    pdf.save('Ordered Product Size Quantity.pdf');
+                }
+            });
+        }
+
+        $("#btnPrint").on("click", function () {
+            getPDFFileButton()
+        });
     </script>
 {% endblock %}
