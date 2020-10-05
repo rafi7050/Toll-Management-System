@@ -4,6 +4,29 @@ from django.db import models
 from apps.helpers.models import OperatorStamp, TimeStamp
 from apps.helpers.utils import UNIT
 
+def QuantityUnitName(obj):
+    try:
+        if obj.get_unit_display() == 'KG':
+            if obj.quantity < 1:
+                quantity = obj.quantity * 1000
+                if int(quantity) == quantity:
+                    quantity = int(quantity)
+                return str(quantity) + ' gm'
+            else:
+                if int(obj.quantity) == obj.quantity:
+                    return str(int(obj.quantity)) + ' KG'
+                else:
+                    return str(obj.quantity) + ' KG'
+        else:
+            if int(obj.quantity) == obj.quantity:
+                return str(int(obj.quantity)) + ' ' + obj.get_unit_display()
+            else:
+                return str(obj.quantity) + ' ' + obj.get_unit_display()
+    except:
+        try:
+            return obj.get_unit_display()
+        except:
+            pass
 
 class ProductType(TimeStamp, OperatorStamp):
     name = models.CharField(max_length=255)
@@ -25,7 +48,7 @@ class Product(TimeStamp, OperatorStamp):
     priority = models.IntegerField(default=1)
 
     def __str__(self):
-        return self.name
+        return self.name +' - '+QuantityUnitName(self)
 
 
 class AgeGroup(TimeStamp, OperatorStamp):
