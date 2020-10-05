@@ -81,12 +81,13 @@ class OrderDetailsForm(forms.ModelForm):
         self.fields['price'].widget.attrs['readonly'] = True
         self.fields['package'].widget.attrs['class']= 'select2'
         self.fields['product'].widget.attrs['class']= 'select2'
+        self.fields['quantity'].widget.attrs['min'] = 1
 
         if instance:
             self.fields['package'] = get_package(instance)
 
 OrderDetailsFormset = inlineformset_factory(
-    Order, OrderDetails, form=OrderDetailsForm, fields=['item_type','package','product', 'price', 'quantity', 'total_price'], extra=1,
+        Order, OrderDetails, form=OrderDetailsForm, fields=['item_type','package','product', 'price', 'quantity', 'total_price'], extra=1,
     can_delete=True
 )
 
