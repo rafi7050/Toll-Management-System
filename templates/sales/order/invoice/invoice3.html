@@ -168,7 +168,7 @@
                                                             <address>
                                                                 <strong>To:</strong><br>
                                                                 {{ order.customer.get_full_name }}<br>
-                                                                {{ order.address_line_1 }} {{ order.address_line_2 }} {{ order.place }}
+                                                                {{ order.address_line_1 }}{% if order.address_line_2 %} {{ order.address_line_2 }}{% endif %} {{ order.place }}
                                                             </address>
                                                         </div>
                                                         <div class="col-6 text-right">
@@ -180,7 +180,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="panel panel-default" style="color: #0a0a0a !important;">

@@ -229,7 +229,7 @@
                             <div class="grid border-bottom"
                                  style="font-style: italic;">
                                 <div class="g-10">
-                                    + {{ item.product }}-{{ item.product|get_quantity_name }}</div>
+                                    + {{ item.product.name }}-{{ item.product|get_quantity_name }}</div>
                                 <div class="g-3">{{ item.quantity }}</div>
                                 <div class="g-3">{{ item.product.price|multiply:item.product.quantity | multiply:item.quantity }}</div>
                                 {#                                                                                    <div class="g-5">{{ item.product.price | multiply:item.quantity |multiply:item.product.quantity }}</div>#}

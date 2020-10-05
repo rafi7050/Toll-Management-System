@@ -31,6 +31,13 @@
             $('html').on('change', '[name="is_cure_disease_package"]', function () {
                 set_cure_disease_fields()
             })
+            $('html').find('.product_select select').each(function () {
+                $(this).select2("destroy");
+                $(this).find('option').each(function () {
+                    $(this).text(RemoveQuantityUnitFromProduct($(this).text()))
+                })
+                $(this).select2();
+            })
         });
 
         let set_cure_disease_fields = function () {
@@ -40,17 +47,23 @@
                 {#$('[name="size"]').prop('disabled', true).find('option').prop('selected',false)#}
 
                 $('[name="nutrition_point"]').prop('required', true)
-                $('[name="size"]').prop('required', false).find('option').prop('selected',false)
+                $('[name="size"]').prop('required', false).find('option').prop('selected', false)
 
                 $('#div_id_nutrition_point').show()
                 $('#div_id_size').hide()
             } else {
-                $('[name="nutrition_point"]').prop('required', false).find('option').prop('selected',false)
+                $('[name="nutrition_point"]').prop('required', false).find('option').prop('selected', false)
                 $('[name="size"]').prop('required', true)
 
                 $('#div_id_nutrition_point').hide()
                 $('#div_id_size').show()
             }
+        }
+
+
+        let RemoveQuantityUnitFromProduct = function (product) {
+            var lastDash = product.lastIndexOf('-'); // find the last -
+            return product.substr(0, lastDash);
         }
     </script>
 {% endblock js %}

@@ -13,6 +13,7 @@ class PackageSerializer(serializers.ModelSerializer):
     total_amount = serializers.SerializerMethodField()
     regular_price = serializers.SerializerMethodField()
     size_name = serializers.SerializerMethodField()
+    updated_at = serializers.DateTimeField(format='%B %d, %Y', read_only=True)
 
     def get_size_name(self, obj):
         try:
