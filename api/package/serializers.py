@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.packages.models import Package, PackageProduct
 from apps.products.models import Product
 
+
 class PackageProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = PackageProduct
@@ -14,7 +15,7 @@ class ProductsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('name', 'description', 'image', 'price', 'unit', 'nutrition','discount_percentage')
+        fields = ('name', 'description', 'image', 'price', 'unit', 'nutrition', 'discount_percentage')
 
 
 class PackageProductsSerializer(serializers.ModelSerializer):
@@ -23,11 +24,17 @@ class PackageProductsSerializer(serializers.ModelSerializer):
     price = serializers.SerializerMethodField(read_only=True)
     product_name = serializers.CharField(source='product.name', read_only=True)
     product_image = serializers.CharField(source='product.image.url', read_only=True)
+    discount_percentage = serializers.CharField(source='product.discount_percentage', read_only=True)
 
     def get_price(self, obj):
         price = obj.product.price
+        discount_percentage = obj.product.discount_percentage
         quantity = obj.quantity
-        return round(price * quantity)
+        try:
+            total_price = (price - price * discount_percentage / 100) * quantity
+            return round(total_price,2)
+        except:
+            return round(price * quantity)
 
     # def get_quantity_name(self, obj):
     #     unit = obj.product.get_unit_display()
@@ -58,7 +65,6 @@ class PackageProductsSerializer(serializers.ModelSerializer):
                 return unit
             except:
                 pass
-
 
     class Meta:
         model = PackageProduct
@@ -106,8 +112,6 @@ class PackageSerializer(serializers.ModelSerializer):
             total_amount = total_amount - discount_amount
         return round(total_amount)
 
-
-
     class Meta:
         model = Package
-        exclude = ('created_at','updated_at','created_by','updated_by','package_type',)
+        exclude = ('created_at', 'updated_at', 'created_by', 'updated_by', 'package_type',)
