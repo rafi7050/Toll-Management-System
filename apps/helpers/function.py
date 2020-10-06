@@ -100,6 +100,16 @@ def get_quantity_name(obj):
         except:
             pass
 
+@register.filter
+def get_unit_name(obj):
+    try:
+        if int(obj.quantity) == obj.quantity:
+            return str(int(obj.quantity)) + ' ' + obj.get_unit_display()
+        else:
+            return str(obj.quantity) + ' ' + obj.get_unit_display()
+    except:
+        obj.unit
+
 @register.simple_tag(name="order_details_regroup")
 def order_details_regroup(order):
     print(order.customer)
