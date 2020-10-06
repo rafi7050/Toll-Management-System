@@ -91,4 +91,120 @@
 
 
     </script>
+
+     <script>
+
+
+        $('html').on('click', '.forward_modal', function (e) {
+            $('#ajaxModal').modal('show').find('.modal-content').html('')
+            let _this = this
+            let application_id = $(this).attr('data-value');
+            let status = $(this).attr('data-status');
+            let modal_type = $(this).attr('data-type');
+            let modal_class = modal_type + '_modal'
+            e.preventDefault();
+            let ajax_url = $(this).attr('data-ajax-url')
+
+            $('#ajaxModal').modal('show').find('.modal-content').load($(this).attr('data-ajax-url'), function () {
+                $('#ajaxModal').find('.modal-dialog.modal-dialog-centered').removeClass()
+                    .addClass(modal_class).addClass('modal-dialog modal-dialog-centered')
+                $('.datepicker').datetimepicker({
+                    timepicker: false,
+                    format: 'Y-m-d'
+                });
+                $('.datetimepicker').datetimepicker({
+                    format: 'Y-m-d H:i'
+                });
+                let type = $('#ajaxModal').find('.modal-content').find('[name="type"]').val()
+                if (modal_type == 'sms_history') {
+                    sms_get(application_id, type)
+                    let phone_number = $(_this).attr('data-mobile');
+                    let customer_name = $(_this).attr('data-user_name');
+
+                    $('#ajaxModal').find('.modal-content').find('.sms_number').val(phone_number)
+                    $('#ajaxModal').find('.modal-content').find('.send_all_documents,.send_extra_documents').attr('data-user_name', customer_name)
+                    let textarea = $('#ajaxModal').find('.modal-content').find('textarea')
+                    let result = $('#ajaxModal').find('.modal-content').find('.results');
+
+                    $(textarea).on('input', function () {
+                        var v = wordCount(this.value);
+                        result.text(v)
+                    })
+
+                } else if (modal_type == 'mail_history') {
+                    mail_get(application_id, type);
+                    let customer_name = $(_this).attr('data-user_name');
+                    let email = $(_this).attr('data-email');
+                    $('#ajaxModal').find('.modal-content').find('.email_address').val(email)
+                    $('#ajaxModal').find('.modal-content').find('.send_all_documents,.send_extra_documents').attr('data-user_name', customer_name)
+                } else if (modal_type == 'followup_history') {
+                    followup_get(application_id);
+                    let option_group2 = $('[name="current_status"]')
+                    option_group2.find('optgroup').each(function () {
+                        let options = $(this).find('option').attr('data-group', $(this).attr('label'))
+                        option_group2.append(options)
+                        $(this).remove()
+                        option_group2.find('option').hide()
+
+                    })
+                    $('html').on('change', '[name="call_purpose"]', function () {
+                        let group = $(this).val()
+                        option_group2.find('option').prop('selected', false)
+                        option_group2.find('option').hide()
+                        option_group2.find('option[data-group="' + group + '"]').show()
+                    })
+                } else if (modal_type == 'forward_history') {
+                    forward_get(application_id);
+                    let institute = $('[name="selectinstitute"]');
+                    $('.no-member').hide();
+                    institute.on('change', function () {
+                        team_get($(this).val());
+                        area_get($(this).val());
+                    })
+                    team_get(institute.val());
+                    area_get(institute.val());
+
+                    $(this).find('.forwardarea').hide();
+                } else if (modal_type == 'update_history') {
+                    {#applicationupdate_get(application_id);#}
+                    $('.decline, .hold, .disbursed, .under_review').hide();
+                } else if (modal_type == 'document') {
+                    {#app_document_get(application_id, string_to_boolean("{{ request.user.is_staff }}"));#}
+                }
+            });
+
+        });
+
+        $("html").on('click', '.file_update_btn', function (e) {
+            e.preventDefault();
+            $(this).closest('#ajaxModal').find('.alert').remove();
+            let application_id = $(this).closest('.modal-content').find('[name="application_id"]').val()
+            console.log($(this).closest('form').serializeArray())
+            let data = objectifyForm($(this).closest('form').serializeArray())
+            data['order'] = application_id
+            if (!data['status_value']) {
+                data['status_value'] = null
+            }
+            console.log(data)
+            axios.post('/api/v1/order/status_update/', data, {
+                headers: {"X-CSRFToken": "{{ csrf_token }}"},
+            })
+                .then(function (response) {
+                    $.growl.notice({
+                        message: 'File updated successfully'
+                    });
+                    {#applicationupdate_get(application_id);#}
+                    reload_table()
+                    $("#ajaxModal .close").click()
+                    {#do_filter()#}
+                })
+                .catch(function (error) {
+                    if (error.response.data.status) {
+                        $('.fileupdate_modal_content').before(perform_error_html('Please check your input'))
+                    } else {
+                        $('.fileupdate_modal_content').before(perform_error_html(error.response.data.detail))
+                    }
+                });
+        })
+    </script>
 {% endblock %}
