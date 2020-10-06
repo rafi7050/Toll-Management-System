@@ -9,17 +9,85 @@
             <h4>Name: {{ customer.get_full_name|upper }}</h4>
             <p class="m-0">Mobile: {{ customer.username }}</p>
             <p>Email: {{ customer.email }}</p>
-
-
         </div>
     </div>
+    <div class="card">
+        <div class="card-header bg-whitesmoke">
+            <div class="card-title"><h3>Order History</h3></div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive userTable">
+                <table id="datatable" class="bg-white table table-striped table-bordered" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Total Amount</th>
+                        <th scope="col">Zone</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Updated At</th>
+                        {#                                <th scope="col">Status</th>#}
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}
 {% block js %}
+
     <script type="text/javascript">
+        var customer = "{{ customer.id }}"
+        var table = $('#datatable').DataTable({
+            'serverSide': true,
+            'stateSave': true,
+            ajax: '/api/v1/orders/?format=datatables&customer=' + customer,
+            "order": [[0, 'desc']],
+            'columns': [
+                {
+                    'data': 'id',
+                    'class': 'text-center',
+                    "searchable": false,
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                {'data': 'code'},
+                {'data': 'total_amount'},
+                {'data': 'zone_name', 'name': 'zone.id'},
+                {
+                    'data': 'order_status_name', 'name': 'order_status',
+                    render: function (data, type, row, meta) {
+                        let status = data
+                        let status_style = status.replace(' ', '_')
+                        return '<span class="status_' + status_style + '">' + status + '</span>'
+                    }
+                },
+                {'data': 'updated_at'},
+                {
+                    "data": null,
+                    'class': 'text-center',
+                    "bSortable": false,
+                    "mRender": function (data) {
+                        return `
+                            <button class="btn btn-outline-warning invoice_print forward_modal" data-ajax-url="/sales/order/${data['id']}/invoice/" data-type="invoice_print" >
+                            <i class="fas fa-eye"></i>
+                            </button>
 
-
-
-
+{#                            <a class="btn btn-outline-danger" href=/deposit_extra/${data['id']}/delete><i class="fa fa-trash"></i></a>#}
+                            `;
+                    }
+                }
+            ],
+            initComplete: function () {
+                init_data_table();
+                init_zone();
+                init_order_status();
+            }
+        });
 
 
     </script>

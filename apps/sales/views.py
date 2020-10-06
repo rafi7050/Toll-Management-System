@@ -8,7 +8,10 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, TemplateView
+from django_filters.rest_framework import DjangoFilterBackend
 from django_pdfkit import PDFView
+from rest_framework.filters import SearchFilter
+from rest_framework_datatables.filters import DatatablesFilterBackend
 from wkhtmltopdf.views import PDFTemplateView
 from rest_framework import viewsets, status
 from rest_framework.exceptions import ValidationError
@@ -126,6 +129,17 @@ def OrderDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all().order_by('-id')
     serializer_class = OrderSerializer
+
+    filter_backends = (DatatablesFilterBackend, DjangoFilterBackend, SearchFilter)
+    # search_fields = ('user__username', 'user__email', 'user__first_name', 'user__last_name')
+    filter_fields = ['customer', ]
+
+    def get_queryset(self):
+        customer = self.request.query_params.get('customer', None)
+        if customer:
+            self.queryset = self.queryset.filter(customer=customer)
+
+        return self.queryset
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -257,15 +271,16 @@ class OrderedProductSizeViewSet(APIView):
 
                 order_product_quantity.append(single_product)
 
-        order_products = order_details.filter(product__isnull=False).values('quantity', 'product_id').annotate(count=Count('product'))
-        print(order_products,'Products')
+        order_products = order_details.filter(product__isnull=False).values('quantity', 'product_id').annotate(
+            count=Count('product'))
+        print(order_products, 'Products')
         for item3 in order_products:
             product_id = item3.get('product_id', None)
             quantity = item3.get('quantity', None)
             count = item3.get('count', None)
             product = Product.objects.filter(id=product_id).first()
             unit = product.get_unit_display()
-            product_size = str(quantity*product.quantity) + ' ' + unit
+            product_size = str(quantity * product.quantity) + ' ' + unit
 
             product_size_quantity = {
                 'product_size': product_size,
@@ -416,7 +431,7 @@ class StatusUpdateViewSet(viewsets.ModelViewSet):
 
         order.order_status = status
         order.save()
-        
+
         return Response({})
 
     def perform_create(self, serializer):
@@ -436,7 +451,7 @@ class ZoneOrderViewSet(viewsets.ModelViewSet):
 
 
 class ActiveOrderInvoiceList(PDFTemplateView):
-# class ActiveOrderInvoiceList(TemplateView):
+    # class ActiveOrderInvoiceList(TemplateView):
     template_name = 'sales/order/invoice/order_invoice.html'
     now = datetime.now()
     date_time = now.strftime("%d-%m-%Y, %H-%M")
