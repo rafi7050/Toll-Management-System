@@ -9,8 +9,8 @@ from apps.sales.models import Order, OrderDetails
 
 
 class OrderForm(forms.ModelForm):
-    latitude = forms.CharField(widget=forms.HiddenInput())
-    longitude = forms.CharField(widget=forms.HiddenInput())
+    latitude = forms.CharField(widget=forms.HiddenInput(),required=False)
+    longitude = forms.CharField(widget=forms.HiddenInput(),required=False)
     customer = get_customer()
 
     class Meta:
