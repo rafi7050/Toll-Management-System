@@ -7,6 +7,17 @@ from apps.sales.models import Order, OrderDetails
 class OrderDetailsSerializer(serializers.ModelSerializer):
     package_details = PackageSerializer(source='package', read_only=True)
 
+    name = serializers.SerializerMethodField(read_only=True)
+
+    def get_name(self, obj):
+        try:
+            return obj.package.name
+        except:
+            try:
+                return obj.product.name
+            except:
+                pass
+
     class Meta:
         model = OrderDetails
         fields = '__all__'
