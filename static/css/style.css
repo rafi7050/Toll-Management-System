@@ -2585,7 +2585,7 @@ pre {
 }
 
 body.sidebar-gone .main-sidebar {
-    left: -250px;
+    left: -350px;
 }
 
 body.sidebar-mini .hide-sidebar-mini {
