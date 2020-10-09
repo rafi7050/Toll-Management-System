@@ -44,10 +44,13 @@
         .size-quantity .col:last-child {
             border-right: none;
         }
+
+
     </style>
     <div class="row">
         <div class="col-12">
             <div class="card pt-0">
+                
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
@@ -81,18 +84,28 @@
                             </button>
                         </div>
                     </div>
+<!-- -->
 
-
-                    <div class="stable stable-bordered" id="product_size_table">
+                    <div class="stable stable-bordered table-responsive userTable" id="product_size_table">
+                   
                         <div class="row table-header">
                             <div class="col-1">SL</div>
-                            <div class="col">Image</div>
+                          <div class="col">Image</div>
                             <div class="col">Product</div>
                             <div class="col-2">Size</div>
                             <div class="col-2">Quantity</div>
                         </div>
                     </div>
+                     
+                  
+
+
+
+<!---->                    
                 </div>
+   
+
+
                 <div class="card-footer text-right">
                     <nav class="d-inline-block">
 
@@ -103,6 +116,7 @@
     </div>
 {% endblock %}
 {% block js %}
+
     <script type="text/html" id="table_row">
         <div class="row table-body">
             <div class="col-1 product_id"></div>

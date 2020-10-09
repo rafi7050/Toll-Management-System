@@ -35,11 +35,24 @@
         </div>
     </div>
 {% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowreorder/1.2.7/css/rowReorder.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.6/css/responsive.dataTables.min.css">
+{% endblock css %}
 {% block js %}
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.2.7/js/dataTables.rowReorder.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('#datatable').DataTable({
                 'serverSide': true,
+                'stateSave': true,
+            rowReorder: {
+                selector: 'td:nth-child(2)'
+            },
+            'responsive': true,
                 'ajax': '/api/v1/product_type/?format=datatables',
                 'columns': [
                     {
