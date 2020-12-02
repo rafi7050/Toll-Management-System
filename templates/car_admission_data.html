@@ -1,0 +1,108 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap 4 Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+      p {
+    margin-top: 0;
+    margin-bottom: 0rem;
+    color: white;
+    
+}
+.tt{
+
+  background-color: #343a40;
+}
+
+label {
+    display: inline-block;
+    margin-bottom: .5rem;
+    margin-left: 16px;
+}
+.btn {
+   
+    margin-left: 16px;
+    margin-bottom: 10px;
+}
+  </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        <form  class="form-inline" action="{% url 'core:search' %}">
+            <input type="text" name="q" class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-success" type="submit">Search</button>
+          </form>
+      </nav>
+<div class="container">
+
+
+
+
+    <div class="row">
+      
+        <div class="col-sm-6">
+          
+          <form method="post" class="tt">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
+
+
+        </div>
+        <div class="col-sm-6">
+
+
+            <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Number</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {%for p in data%}
+                  <tr>
+                    <td>{{p.name}}</td>
+                    <td>{{p.number}}</td>
+                    <td>{{p.amount}}</td>
+                    <td>{{p.date_now}}</td>
+                    <td>
+                        
+                    
+                        <button class="btn btn-primary">
+                          <a href="{%url 'core:car_details' id=p.id %}"><p>View</p></a>
+                        </button>
+                         
+                      </td>
+                  </tr>
+                  {%endfor%}
+                </tbody>
+              </table>
+
+
+
+        </div>
+      </div>
+
+
+
+</div>
+
+</body>
+</html>
+{%endblock%}
