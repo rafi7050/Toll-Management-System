@@ -7,13 +7,15 @@ from .forms import CreateUserForm
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
 
+@login_required(login_url='core:login')
 def index(request):
     return render(request,'index.html')
 
 
-
+@login_required(login_url='login')
 def car_admission(request):
     form = Car_Admission_from(request.POST , request.FILES)
     data = Car_Admission.objects.all()
@@ -40,7 +42,7 @@ def car_details(request, id):
     return render(request, 'car_details.html', context)
 
 
-
+@login_required(login_url='login')
 def search(request):
     queryset = Car_Admission.objects.all()
     query = request.GET.get('q')
@@ -56,17 +58,22 @@ def search(request):
 
 
 def register(request):
-    form = CreateUserForm()
 
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Account was created for ' + user)
+    if request.user.is_authenticated:
+        return redirect('core:index')
+    else:
+
+        form = CreateUserForm()
+
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user = form.cleaned_data.get('username')
+                messages.success(request, 'Account was created for ' + user)
 
 
-            return redirect('core:login')
+                return redirect('core:login')
 
     context = {'form':form}
     return render(request, 'register.html', context)
