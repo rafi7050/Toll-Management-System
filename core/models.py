@@ -7,7 +7,7 @@ class Car_Admission(models.Model):
     number = models.CharField(max_length=200)
     car_type = models.CharField(max_length=200)
     amount = models.IntegerField(max_length=11)
-    date_now = models.DateField(blank=True)
+    date_now = models.DateTimeField(auto_now_add=True)
    
  
 
